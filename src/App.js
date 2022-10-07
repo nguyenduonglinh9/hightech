@@ -7,7 +7,6 @@ import LayoutMain from "./components/Layout/LayoutMain";
 function App() {
   return (
     <Router>
-      <div className="App">
         <Routes>
           {privateRoutes.map((route, index) => {
             const Page = route.component;
@@ -39,7 +38,6 @@ function App() {
             
           })}
         </Routes>
-      </div>
     </Router>
   );
 }

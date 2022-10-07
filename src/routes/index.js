@@ -6,7 +6,7 @@ import Promotion from "../pages/Promotion";
 
 const privateRoutes = [
   {
-    path: "/login",
+    path: "/",
     component: Login,
     layout: null,
   },

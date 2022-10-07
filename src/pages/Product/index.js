@@ -2,7 +2,6 @@ import styles from "./Product.module.css";
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import classNames from "classnames/bind";
-import { Link } from "react-router-dom";
 import HorizontalScroll from "react-horizontal-scrolling";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +22,7 @@ function Product() {
 
   let navigate = useNavigate();
   if (isLoggin == false) {
-    navigate('/login');
+    navigate('/');
   }
   
 

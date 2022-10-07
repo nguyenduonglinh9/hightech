@@ -26,11 +26,10 @@ function LayoutMain({ children }) {
 
   let username = JSON.parse(localStorage.getItem('data')).username
 
-  
 
   const handleLogout = () => {
     localStorage.setItem("data", JSON.stringify({ isLoggin : false }));
-    navigate('/login');
+    navigate('/');
   }
 
   

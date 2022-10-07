@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { Link } from "react-router-dom";
 import { useState, useEffect, createContext } from "react";
 import { useNavigate } from "react-router-dom";
-import Lottie from "lottie-react";
+import  Lottie  from 'lottie-react';
 import Wrong from './assets/fonts/icon3d/Wrong.json';
 import Congratulation from './assets/fonts/icon3d/congratulation.json';
 import classNames from "classnames/bind";
