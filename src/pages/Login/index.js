@@ -1,33 +1,49 @@
 import styles from "./Login.module.css";
 import clsx from "clsx";
-import { Link } from "react-router-dom";
-import { useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import  Lottie  from 'lottie-react';
 import Wrong from './assets/fonts/icon3d/Wrong.json';
 import Congratulation from './assets/fonts/icon3d/congratulation.json';
 import classNames from "classnames/bind";
+import emailjs from "@emailjs/browser";
+
+
 
 const UserContext = createContext();
 
+
 function Login() {
-   let navigate = useNavigate();
+  let navigate = useNavigate();
+
+  
 
   if ((JSON.parse(localStorage.getItem("data"))).isLoggin==true) {
     navigate('/product');
   }
+
+  const refLogin = useRef();
     // window.addEventListener("beforeunload", () => {
     //   localStorage.setItem("isLoggin", false);
     // });
+  const numberCode = useRef()
 
   const [isLoggin, setIsLoggin] = useState(false)
   const [user, setUser] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState('');
-  const [message, setMessage] = ('')
+  const [message, setMessage] = ('');
+  const [code, setCode] = useState('')
 
   const cx = classNames.bind(styles);
+  let number = Math.random();
+
+  const test = user.filter((item) => item.username === username);
+
+  console.log(test);
+
+  
 
   useEffect(() => {
     fetch("http://localhost:3001/userAdmin")
@@ -40,6 +56,8 @@ function Login() {
   }, []);
   //validate from
   const handleLogin = () => {
+    const test = user.filter(item => item.username === username);
+
     if (username.length <= 0 || password.length <= 0) {
       setErr('vui lòng không để trống ô nhập');
       localStorage.setItem(
@@ -48,38 +66,80 @@ function Login() {
           isLoggin: false,
         })
       );
+      return true
     }
-    else if (username != user[0].username) {
-      setErr("Nhập sai tài khoản hoặc mật khẩu");
+    else if (test.length===0) {
+      setErr("Nhập sai tài khoản hoặc mật khẩu ");
      localStorage.setItem(
        "data",
        JSON.stringify({
          isLoggin: false,
        })
-     );
-    } else if (password != user[0].password) {
-      setErr("Nhập sai tài khoản hoặc mật khẩu");
+      );
+    } else if (test.length > 0 && test[0].password != password) {
+      setErr("Nhập sai tài khoản hoặc mật khẩu 2");
       localStorage.setItem(
         "data",
         JSON.stringify({
           isLoggin: false,
         })
       );
-    } else {
-      setErr('Đúng rồi chúc mừng');
-      localStorage.setItem('data', JSON.stringify({
-        username,
-        isLoggin : true
-      }));
+      return true;
+    } else if (test.length > 0 && test[0].password == password) {
+      numberCode.current =
+        Math.floor(Math.random() * (999999 - 100000)) + 100000;
+      emailjs.send(
+        "service_prky1qy",
+        "template_zmoe0kh",
+        {
+          Username: username,
+          numberrandom: numberCode.current,
+          email: user[0].email,
+        },
+        "lya-8-DbFC46J0mXS"
+      );
+      setErr("Vui lòng nhập mã bảo mật");
+
+      console.log(user[0].email);
+      // localStorage.setItem('data', JSON.stringify({
+      //   username,
+      //   isLoggin : true
+      // }));
+      // setTimeout(() => {
+      //   navigate('/product');
+      // },1000)
+    }
+  }
+
+  const handleLoginCode = () => {
+    if (code == numberCode.current) {
+      
+      setErr('Đăng Nhập Thành Công');
+
       setTimeout(() => {
-        navigate('/product');
-      },1000)
+        localStorage.setItem(
+          "data",
+          JSON.stringify({
+            username,
+            isLoggin: true,
+          })
+        );
+        navigate("/product");
+      }, 3000);
+
+      
+
+      
+    }
+
+    else {
+      setErr('Mã bảo mật sai vui lòng thử lại')
     }
   }
   
   return (
     <>
-      <div className={clsx(styles.container)}>
+      <div ref={refLogin} className={clsx(styles.container)}>
         <div className={clsx(styles.container_circe_1)}></div>
         <div className={clsx(styles.container_circe_2)}></div>
         <div className={clsx(styles.box)}>
@@ -155,16 +215,29 @@ function Login() {
             onClick={(e) => e.stopPropagation()}
             className={clsx(cx("modal"))}
           >
-            <div style={{ width: "100px", height: "100px" }}>
-              <Lottie
-                loop={true}
-                animationData={
-                  err === "Đúng rồi chúc mừng" ? Congratulation : Wrong
-                }
-              ></Lottie>
+            <div style={{ width: "fit-content", height: "fit-content" }}>
+              {err === "Vui lòng nhập mã bảo mật" ? (
+                <form className={clsx(cx("modalMail"))}>
+                  <input
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                  ></input>
+                  <button onClick={handleLoginCode}>PRESS</button>
+                </form>
+              ) : (
+                <Lottie
+                  loop={true}
+                  animationData={
+                    err === "Đăng Nhập Thành Công" ? Congratulation : Wrong
+                  }
+                ></Lottie>
+              )}
             </div>
             <p>{err}</p>
-            {err !== "Đúng rồi chúc mừng" ? (
+            {
+            err !== "Đúng rồi chúc mừng" &&
+            err !== "Vui lòng nhập mã bảo mật" &&
+            err !== "Đăng Nhập Thành Công" ? (
               <button
                 onClick={() => setErr("")}
                 className={clsx(cx("modal_button"))}
