@@ -1,50 +1,34 @@
 import styles from "./Login.module.css";
 import clsx from "clsx";
-import { useState, useEffect, createContext, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import  Lottie  from 'lottie-react';
-import Wrong from './assets/fonts/icon3d/Wrong.json';
-import Congratulation from './assets/fonts/icon3d/congratulation.json';
+import Lottie from "lottie-react";
+import Wrong from "./assets/fonts/icon3d/Wrong.json";
+import Congratulation from "./assets/fonts/icon3d/congratulation.json";
 import classNames from "classnames/bind";
 import emailjs from "@emailjs/browser";
 
-
-
-const UserContext = createContext();
-
-
 function Login() {
-  let navigate = useNavigate();
 
+  // if (JSON.parse(localStorage.getItem("data")).isLoggin == true)
+  // {
+  //   navigate("/product");
+  // }
+  
   
 
-  if ((JSON.parse(localStorage.getItem("data"))).isLoggin==true) {
-    navigate('/product');
-  }
-
   const refLogin = useRef();
-    // window.addEventListener("beforeunload", () => {
-    //   localStorage.setItem("isLoggin", false);
-    // });
-  const numberCode = useRef()
+  const numberCode = useRef();
+  const cx = classNames.bind(styles);
+  let navigate = useNavigate();
 
-  const [isLoggin, setIsLoggin] = useState(false)
   const [user, setUser] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState('');
-  const [message, setMessage] = ('');
-  const [code, setCode] = useState('')
+  const [err, setErr] = useState("");
+  const [code, setCode] = useState("");
 
-  const cx = classNames.bind(styles);
-  let number = Math.random();
-
-  const test = user.filter((item) => item.username === username);
-
-  console.log(test);
-
-  
-
+  //Fetch data tài khoản admin cấp cao
   useEffect(() => {
     fetch("http://localhost:3001/userAdmin")
       .then((res) => {
@@ -54,29 +38,32 @@ function Login() {
         setUser((prev) => [...prev, ...users]);
       });
   }, []);
-  //validate from
-  const handleLogin = () => {
-    const test = user.filter(item => item.username === username);
 
+  //validate from
+  const test = user.filter((item) => item.username === username);
+  const handleLogin = () => {
+    //nếu bỏ trống ô nhập
     if (username.length <= 0 || password.length <= 0) {
-      setErr('vui lòng không để trống ô nhập');
+      setErr("vui lòng không để trống ô nhập");
       localStorage.setItem(
         "data",
         JSON.stringify({
           isLoggin: false,
         })
       );
-      return true
     }
-    else if (test.length===0) {
+    //nếu sai username
+    else if (test.length === 0) {
       setErr("Nhập sai tài khoản hoặc mật khẩu ");
-     localStorage.setItem(
-       "data",
-       JSON.stringify({
-         isLoggin: false,
-       })
+      localStorage.setItem(
+        "data",
+        JSON.stringify({
+          isLoggin: false,
+        })
       );
-    } else if (test.length > 0 && test[0].password != password) {
+    }
+    //nếu đúng username nhưng sai password
+    else if (test.length > 0 && test[0].password != password) {
       setErr("Nhập sai tài khoản hoặc mật khẩu 2");
       localStorage.setItem(
         "data",
@@ -84,10 +71,13 @@ function Login() {
           isLoggin: false,
         })
       );
-      return true;
-    } else if (test.length > 0 && test[0].password == password) {
+    }
+    //nếu đúng username và password
+    else if (test.length > 0 && test[0].password == password) {
+      //tạo mã bảo mật random
       numberCode.current =
         Math.floor(Math.random() * (999999 - 100000)) + 100000;
+      //thực hiện gửi mã bảo mật vào mail
       emailjs.send(
         "service_prky1qy",
         "template_zmoe0kh",
@@ -99,44 +89,34 @@ function Login() {
         "lya-8-DbFC46J0mXS"
       );
       setErr("Vui lòng nhập mã bảo mật");
-
-      console.log(user[0].email);
-      // localStorage.setItem('data', JSON.stringify({
-      //   username,
-      //   isLoggin : true
-      // }));
-      // setTimeout(() => {
-      //   navigate('/product');
-      // },1000)
     }
-  }
+  };
 
   const handleLoginCode = () => {
+    //nếu nhập đúng mã bảo mật
     if (code == numberCode.current) {
-      
-      setErr('Đăng Nhập Thành Công');
-
+      setErr("Đăng Nhập Thành Công");
+      //sau 3 giây chuyển màn hình /product
       setTimeout(() => {
         localStorage.setItem(
           "data",
           JSON.stringify({
             username,
+            avatar: test[0].avatar,
+            permission : test[0].permission,
             isLoggin: true,
+
           })
         );
         navigate("/product");
       }, 3000);
-
-      
-
-      
     }
-
+    //nếu sai mã bảo mật
     else {
-      setErr('Mã bảo mật sai vui lòng thử lại')
+      setErr("Mã bảo mật sai vui lòng thử lại");
     }
-  }
-  
+  };
+
   return (
     <>
       <div ref={refLogin} className={clsx(styles.container)}>
@@ -234,8 +214,7 @@ function Login() {
               )}
             </div>
             <p>{err}</p>
-            {
-            err !== "Đúng rồi chúc mừng" &&
+            {err !== "Đúng rồi chúc mừng" &&
             err !== "Vui lòng nhập mã bảo mật" &&
             err !== "Đăng Nhập Thành Công" ? (
               <button
@@ -253,5 +232,4 @@ function Login() {
     </>
   );
 }
-
 export default Login;

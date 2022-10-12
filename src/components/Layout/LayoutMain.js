@@ -1,4 +1,4 @@
-import styles from "./LayoutMain.module.css";
+import styles from "./LayoutMain.module.scss";
 import clsx from "clsx";
 import classNames from "classnames/bind";
 import { Link } from "react-router-dom";
@@ -17,14 +17,30 @@ import {
 import { FcBusinessman } from "react-icons/fc";
 import { useRef, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import AOS from "aos";
+import { FaSearch } from "react-icons/fa";
 
 function LayoutMain({ children }) {
 
   const cx = classNames.bind(styles);
   const useRefActive = useRef();
   let navigate = useNavigate();
+  AOS.init()
 
   let username = JSON.parse(localStorage.getItem('data')).username
+  let avatar = JSON.parse(localStorage.getItem("data")).avatar;
+  let permission = JSON.parse(localStorage.getItem("data")).permission;
+
+  const [toggleUserOption, setToggleUserOption] = useState(false);
+
+  const handleToggleOn = (e) => {
+    setToggleUserOption(true);
+    e.stopPropagation();
+    
+  }
+  const handleToggleOff = () => {
+    setToggleUserOption(false);
+  };
 
 
   const handleLogout = () => {
@@ -170,22 +186,55 @@ function LayoutMain({ children }) {
             </li>
           </ul>
         </div>
-        <div className={clsx(cx("user"))}>
-          <FcBusinessman
-            style={{
-              width: "40px",
-              height: "40px",
-              backgroundColor: "#5041bc",
-              borderRadius: "50%",
-            }}
-          ></FcBusinessman>
-          <p>XIN CHÀO {username}</p>
-        </div>
+
         <div onClick={handleLogout} className={clsx(cx("logout"))}>
           <p>THOÁT</p>
         </div>
       </div>
-      <div className={clsx(cx("content"))}>{children}</div>
+      <div className={clsx(cx("content"))}>
+        <div onClick={handleToggleOff} className={clsx(cx("header"))}>
+          <form className={clsx(cx("header-from-search"))}>
+            <div className={clsx(cx("header-from-search-group"))}>
+              <input
+                placeholder=" "
+                className={clsx(cx("header-from-input"))}
+              ></input>
+              <div className={clsx(cx("header-from-button"))}>
+                <FaSearch />
+              </div>
+            </div>
+          </form>
+          <div onClick={(e) => handleToggleOn(e)} className={clsx(cx("user"))}>
+            <img
+              src={avatar}
+              style={{
+                width: "40px",
+                height: "40px",
+                backgroundColor: "#5041bc",
+                borderRadius: "50%",
+              }}
+            ></img>
+          </div>
+          <div
+            className={clsx(cx("user-option"), {
+              [styles.userOptionActive]: toggleUserOption,
+            })}
+          >
+            <img
+              style={{
+                width: "60px",
+                height: "60px",
+                backgroundColor: "#5041bc",
+                borderRadius: "50%",
+              }}
+              src={avatar}
+            ></img>
+            <h3>HELLO {username} !</h3>
+            <p>Permisson : {permission}</p>
+          </div>
+        </div>
+        <div onClick={handleToggleOff}>{children}</div>
+      </div>
     </div>
   );
 }

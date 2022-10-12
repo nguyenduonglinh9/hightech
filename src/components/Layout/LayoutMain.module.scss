@@ -1,0 +1,236 @@
+:root {
+  --maincolor: #343A3F;;
+}
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+  
+}
+.asideNav {
+  flex: 1;
+  height: 100%;
+  background-color: #343A3F;
+  align-self: center;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+
+.headerLogo {
+  display: flex;
+  position: relative;
+  height: 100px;
+  align-items: center;
+}
+.headerLogo_circle1 {
+  width: 30px;
+  height: 30px;
+  background-color: #ff7f57;
+  border-radius: 50%;
+  position: absolute;
+  transform: translateX(200%);
+}
+.headerLogo_circle2 {
+  width: 50px;
+  height: 50px;
+  background-color: #ffc629;
+  border-radius: 50%;
+  position: absolute;
+  transform: translateX(150%);
+}
+.headerLogo > h2 {
+  position: absolute;
+  transform: translateX(50%);
+  color: white;
+  pointer-events: none;
+}
+.headerLogo > h2::after {
+  content: "";
+  width: 200px;
+  height: 1px;
+  background-color: #d8d8d8;
+  position: absolute;
+  bottom: -100%;
+  left: -40px;
+}
+.bodyNav > ul {
+  padding: 0px;
+  margin: top 20px;
+  text-decoration: none;
+}
+.bodyNav > ul li {
+  list-style: none;
+  padding: 15px 20px;
+  margin: 10px 10px;
+  text-align: center;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+.bodyNav > ul li:hover {
+  background-color: white;
+  border-radius: 5px;
+  color: #343A3F;
+}
+.bodyNav_group {
+  display: flex;
+  justify-content: space-between;
+}
+:-webkit-scrollbar {
+  width: 5px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: white;
+  border-radius: 1px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: white;
+}
+.content {
+  flex: 5;
+  background-color: #F5F7FB;
+  transform: translateX(100%);
+  animation: fadeIn 1s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.user {
+  border-radius: 50%;
+  display: flex;
+  cursor: pointer;
+  transition:0.25s ease;
+}
+.user:hover {
+  transform: scale(1.1);
+  position: relative;
+}
+.logout {
+  width: 200px;
+  height: 50px;
+  background-color: #fff;
+  margin: 15px auto;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+.logout:hover {
+  background-color: var(--maincolor);
+  color: #fff;
+}
+.active {
+  background-color: white;
+  border-radius: 5px;
+  color: var(--maincolor) !important;
+}
+.header {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  position:sticky;
+  top: 0;
+  width: auto;
+  margin: auto;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  z-index: 30000;
+}
+.header-from-search{
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  width: -moz-fit-content;
+  width: fit-content;
+ 
+}
+.header-from-search-group{
+  width: -moz-fit-content;
+  width: fit-content;
+  position: relative;
+}
+.header-from-input {
+  padding: 12px;
+  width: 360px;
+  border-radius: 20px;
+  background-color: #fff;
+  border: 1px solid #252849;
+  position: relative;
+  color:#252849;
+  font-size:16px;
+}
+.header-from-button {
+  color:#252849 ;
+  transition: 0.25s ease;
+  position: absolute;
+  right:0px;
+  top: 50%;
+  transform:translateY(-50%);
+  padding: 0px 20px;
+}
+.header-from-input:not(:placeholder-shown) + .header-from-button,
+.header-from-input:focus + .header-from-button {
+  transform: translateX(120%) translateY(-50%);
+  height: 48px;
+  width: 48px;
+  padding: 0px;
+  background-color: black;
+  border-radius: 20px;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.user-option{
+  position: absolute;
+  width: 200px;
+  height: 300px;
+  background-color: #fff;
+  right: 0;
+  top: 110%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+  margin-right: 10px;
+  border-radius: 10px;
+  opacity: 0;
+  display: none;
+}
+.userOptionActive{
+  opacity: 1;
+  display: flex;
+  transform-origin: top right;
+  animation: fadeInUserOption 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.user-option img{
+  align-self: center;
+  outline: none;
+  border: none;
+  margin: 10px 0;
+}
+.user-option h3{
+  align-self: center;
+  margin: 0px;
+  color: #333;
+}
+.user-option p{
+  align-self: center;
+   margin: 0px;
+    color: #333;
+}
+@keyframes fadeIn {
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes fadeInUserOption {
+  from{
+    transform: scale(0);
+  }
+  to{
+    transform: scale(1);
+  }
+}

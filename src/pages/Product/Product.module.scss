@@ -1,0 +1,387 @@
+:root {
+  --maincolor: #5041bc;
+}
+.container {
+  position: relative;
+}
+::-webkit-scrollbar {
+  width: 5px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: white;
+  border-radius: 1px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: white;
+}
+
+.category {
+  list-style: none;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 10px;
+  width: -moz-fit-content;
+  width: fit-content;
+  color: #fff;
+  border-radius: 5px;
+  background-image: linear-gradient(
+    to right,
+    rgb(124, 54, 245),
+    rgb(178, 65, 200),
+    rgb(234, 78, 154)
+  );
+  border: 2px solid rgb(42, 150, 218);
+  cursor: pointer;
+  transition: all 1s linear;
+}
+.category:hover {
+  background-image: linear-gradient(
+    to right,
+    rgb(234, 78, 154),
+    rgb(178, 65, 200),
+    rgb(124, 54, 245)
+  );
+}
+.product-group {
+  padding: 20px;
+  height: 250px;
+}
+.product-item {
+  width: 200px;
+  height: 200px;
+  margin: 30px 30px;
+  position: relative;
+  display: inline-block;
+  scroll-behavior: smooth;
+  border-radius: 15px;
+  transition: 0.5s linear;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  background: #2a2e54;
+  border: 2px solid #32407b;
+  padding: 10px;
+}
+.product-item::after {
+  content: "";
+  width: 200px;
+  height: 200px;
+  background: #2a2e54;
+  border-radius: 15px;
+  border: 2px solid #32407b;
+  position: absolute;
+  top: 102%;
+  opacity: 0.3;
+}
+.product-item:hover {
+  transform: translateY(-10%) scale(1.06) rotateY(-180deg);
+  box-shadow: #32407b 0px 20px 30px -10px;
+}
+.product-item:hover > p {
+  transform: rotateY(-180deg);
+}
+.product-item > img {
+  height: 100px;
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  right: -20%;
+}
+.product-item > p {
+  pointer-events: none;
+  color: white;
+  text-align: start;
+  transition: 0.5s ease;
+}
+.product-item > img + .product-item > img {
+  margin-right: 50px;
+}
+.header {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: auto;
+  margin: auto;
+  background-color: #ffffff;
+}
+.header-from-input {
+  padding: 12px;
+  width: 360px;
+  border-radius: 15px;
+  background-color: #252849;
+  border: 2px solid #32407b;
+  position: relative;
+  color: white;
+}
+.header-from-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 10px;
+  color: #fff;
+  transition: 0.25s ease;
+}
+.header-from-input:not(:placeholder-shown) + .header-from-button,
+.header-from-input:focus + .header-from-button {
+  transform: translateX(-150%) translateY(-50%);
+  height: 48px;
+  width: 48px;
+  background-color: white;
+  border-radius: 15px;
+  color: #252849;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.drop-down-menu {
+  padding: 10px;
+  border: none;
+  margin: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  width: 200px;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-around;
+  cursor: pointer;
+  position: relative;
+}
+.drop-down-menu-item {
+  padding: 10px;
+  border: none;
+  margin: 0px 10px;
+  background-color: #fff;
+  border-radius: 0px;
+  width: 200px;
+  font-size: 16px;
+  position: relative;
+  z-index: 1000;
+}
+.drop-down-menu-item:first-child {
+  border-radius: 5px 5px 0 0;
+}
+.drop-down-menu-item:last-child {
+  border-radius: 0 0 5px 5px;
+}
+.drop-down-menu-item:hover {
+  background-color: black;
+  color: white;
+}
+.drop-down-menu2 {
+  display: none;
+  transform-origin: top;
+  position: absolute;
+}
+.drop-down-menu::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 20px;
+  background-color: black;
+  top: 100%;
+  opacity: 0;
+}
+.open_drop_item {
+  display: block;
+}
+.listproduct {
+  width: 500px;
+  height: 500px;
+}
+.listproduct {
+  display: grid;
+  grid-template-columns:
+    calc(20% - 10px)
+    calc(20% - 10px)
+    calc(20% - 10px)
+    calc(20% - 10px)
+    calc(20% - 10px);
+  width: 100%;
+  grid-column-gap: 10px;
+}
+.product {
+  height: 300px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
+    rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.product img {
+  width: 150px;
+  align-self: center;
+}
+.container-loading {
+  width: 100%;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: absolute;
+  top: 0;
+}
+.box {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #36f2f1;
+  animation: move 2s linear infinite;
+  position: absolute;
+  box-shadow: 0px 0px 15px 2px #36f2f1;
+}
+.box2 {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #f21373;
+  animation: move2 2s linear 1s infinite;
+  position: absolute;
+  box-shadow: 0px 0px 15px 2px #f21373;
+}
+.box3 {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #36f2f1;
+  animation: move3 2s linear 0s infinite;
+  position: absolute;
+  box-shadow: 0px 0px 15px 2px #36f2f1;
+}
+.product-option {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+}
+.product-option div {
+  width: 50px;
+  height: 50px;
+  background-color: lightblue;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  transform: translateY(50px);
+  opacity: 0;
+  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.product:hover .product-option div:nth-child(1) {
+  animation: fadeInIcon 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+}
+.product:hover .product-option div:nth-child(2) {
+  animation: fadeInIcon 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) 0.1s forwards;
+}
+.product:hover .product-option div:nth-child(3) {
+  animation: fadeInIcon 0.5s cubic-bezier(0.075, 0.82, 0.165, 1) 0.2s forwards;
+}
+.product-option div:hover {
+  background-color: #252849;
+}
+.button-add-new {
+  display: flex;
+  width: -moz-fit-content;
+  width: fit-content;
+  align-items: center;
+  background-color: lightblue;
+  margin: 10px 0;
+  padding: 10px;
+  margin-right: 20px;
+  border-radius: 5px;
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.button-add-new:hover {
+  transform: scale(1.1);
+}
+.button-add-new p {
+  margin: 0px 5px;
+  pointer-events: none;
+}
+@keyframes fadeInIcon {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes dropDown {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+@keyframes move {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(50%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  75% {
+    transform: translateX(50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes move2 {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(50%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  75% {
+    transform: translateX(50%) scale(1.2);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes move3 {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  25% {
+    opacity: 0;
+    transform: translateX(50%);
+  }
+  50% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  51% {
+    opacity: 1;
+    transform: translateX(100%);
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(50%) scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
