@@ -1,4 +1,4 @@
-import styles from "./Login.module.css";
+import styles from "./Login.module.scss";
 import clsx from "clsx";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";

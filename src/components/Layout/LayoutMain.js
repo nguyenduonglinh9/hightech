@@ -14,11 +14,12 @@ import {
   BsCartFill,
   BsReceiptCutoff,
 } from "react-icons/bs";
-import { FcBusinessman } from "react-icons/fc";
-import { useRef, useState } from 'react';
+import { useRef, useState, createContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import { FaSearch } from "react-icons/fa";
+
+export const DataSearchContext = createContext();
 
 function LayoutMain({ children }) {
 
@@ -31,7 +32,15 @@ function LayoutMain({ children }) {
   let avatar = JSON.parse(localStorage.getItem("data")).avatar;
   let permission = JSON.parse(localStorage.getItem("data")).permission;
 
+  
   const [toggleUserOption, setToggleUserOption] = useState(false);
+  const [search, setSearch] = useState('');
+  const [hours, setHours] = useState('');
+
+  const hoursRef = useRef();
+  let test = hoursRef.current;
+
+  console.log(hours);
 
   const handleToggleOn = (e) => {
     setToggleUserOption(true);
@@ -41,7 +50,18 @@ function LayoutMain({ children }) {
   const handleToggleOff = () => {
     setToggleUserOption(false);
   };
-
+  
+  useEffect(()=>{
+    test = setInterval(() => {
+      const now = new Date();
+      const current = now.getHours() + "h : " + now.getMinutes() + "m : " + now.getSeconds() + "s";
+      setHours(current)
+    }, 1000)
+    
+    return () => {
+      clearInterval(test);
+    };
+  })
 
   const handleLogout = () => {
     localStorage.setItem("data", JSON.stringify({ isLoggin : false }));
@@ -50,192 +70,201 @@ function LayoutMain({ children }) {
 
   
   return (
-    <div className={clsx(cx("container"))}>
-      <div className={clsx(cx("asideNav"))}>
-        <div className={clsx(cx("headerLogo"))}>
-          <div className={clsx(cx("headerLogo_circle1"))}></div>
-          <div className={clsx(cx("headerLogo_circle2"))}></div>
-          <h2>HIGHTECH</h2>
-        </div>
-        <div className={clsx(cx("bodyNav"))}>
-          <ul>
-            <Link
-              style={{ textDecoration: "none", color: "white" }}
-              to="/product"
-            >
-              <li
-                className={clsx({
-                  [styles.active]:
-                    window.location.href === "http://localhost:3000/product"
-                      ? true
-                      : false,
-                })}
+    <DataSearchContext.Provider value={search}>
+      <div className={clsx(cx("container"))}>
+        <div className={clsx(cx("asideNav"))}>
+          <div className={clsx(cx("headerLogo"))}>
+            <div className={clsx(cx("headerLogo_circle1"))}></div>
+            <div className={clsx(cx("headerLogo_circle2"))}></div>
+            <h2>HIGHTECH</h2>
+          </div>
+          <div className={clsx(cx("bodyNav"))}>
+            <ul>
+              <Link
+                style={{ textDecoration: "none", color: "white" }}
+                to="/product"
               >
-                <div ref={useRefActive} className={clsx(cx("bodyNav_group"))}>
-                  <BsTvFill />
-                  <span style={{ pointerEvents: "none" }}>SẢN PHẨM</span>
-                  <span style={{ pointerEvents: "none" }}></span>
-                </div>
-              </li>
-            </Link>
-            <Link
-              style={{ textDecoration: "none", color: "white" }}
-              to="/category"
-            >
-              <li
-                className={clsx({
-                  [styles.active]:
-                    window.location.href === "http://localhost:3000/category"
-                      ? true
-                      : false,
-                })}
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/product"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div ref={useRefActive} className={clsx(cx("bodyNav_group"))}>
+                    <BsTvFill />
+                    <span style={{ pointerEvents: "none" }}>SẢN PHẨM</span>
+                    <span style={{ pointerEvents: "none" }}></span>
+                  </div>
+                </li>
+              </Link>
+              <Link
+                style={{ textDecoration: "none", color: "white" }}
+                to="/category"
               >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/category"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <BsFillMenuButtonWideFill />
+                    <span>DANH MỤC</span>
+                    <span></span>
+                  </div>
+                </li>
+              </Link>
+              <Link
+                style={{ textDecoration: "none", color: "white" }}
+                to="/warehouse"
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/warehouse"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <BsCartFill />
+                    <span>KHO HÀNG</span>
+                    <span></span>
+                  </div>
+                </li>
+              </Link>
+              <Link
+                style={{ textDecoration: "none", color: "white" }}
+                to="/promotion"
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/promotion"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <FaSalesforce />
+                    <span>KHUYẾN MÃI</span>
+                    <span></span>
+                  </div>
+                </li>
+              </Link>
+              <li>
                 <div
                   style={{ pointerEvents: "none" }}
                   className={clsx(cx("bodyNav_group"))}
                 >
-                  <BsFillMenuButtonWideFill />
-                  <span>DANH MỤC</span>
+                  <FaRocketchat />
+                  <span>CHAT</span>
                   <span></span>
                 </div>
               </li>
-            </Link>
-            <Link
-              style={{ textDecoration: "none", color: "white" }}
-              to="/warehouse"
-            >
-              <li
-                className={clsx({
-                  [styles.active]:
-                    window.location.href === "http://localhost:3000/warehouse"
-                      ? true
-                      : false,
-                })}
-              >
+              <li>
                 <div
                   style={{ pointerEvents: "none" }}
                   className={clsx(cx("bodyNav_group"))}
                 >
-                  <BsCartFill />
-                  <span>KHO HÀNG</span>
+                  <BsReceiptCutoff />
+                  <span>ĐƠN HÀNG</span>
                   <span></span>
                 </div>
               </li>
-            </Link>
-            <Link
-              style={{ textDecoration: "none", color: "white" }}
-              to="/promotion"
-            >
-              <li
-                className={clsx({
-                  [styles.active]:
-                    window.location.href === "http://localhost:3000/promotion"
-                      ? true
-                      : false,
-                })}
-              >
+              <li>
                 <div
                   style={{ pointerEvents: "none" }}
                   className={clsx(cx("bodyNav_group"))}
                 >
-                  <FaSalesforce />
-                  <span>KHUYẾN MÃI</span>
+                  <FaUsers />
+                  <span>USER</span>
                   <span></span>
                 </div>
               </li>
-            </Link>
-            <li>
-              <div
-                style={{ pointerEvents: "none" }}
-                className={clsx(cx("bodyNav_group"))}
-              >
-                <FaRocketchat />
-                <span>CHAT</span>
-                <span></span>
-              </div>
-            </li>
-            <li>
-              <div
-                style={{ pointerEvents: "none" }}
-                className={clsx(cx("bodyNav_group"))}
-              >
-                <BsReceiptCutoff />
-                <span>ĐƠN HÀNG</span>
-                <span></span>
-              </div>
-            </li>
-            <li>
-              <div
-                style={{ pointerEvents: "none" }}
-                className={clsx(cx("bodyNav_group"))}
-              >
-                <FaUsers />
-                <span>USER</span>
-                <span></span>
-              </div>
-            </li>
-            <li>
-              <div
-                style={{ pointerEvents: "none" }}
-                className={clsx(cx("bodyNav_group"))}
-              >
-                <FaChartLine />
-                <span>DOANH THU</span>
-                <span></span>
-              </div>
-            </li>
-          </ul>
+              <li>
+                <div
+                  style={{ pointerEvents: "none" }}
+                  className={clsx(cx("bodyNav_group"))}
+                >
+                  <FaChartLine />
+                  <span>DOANH THU</span>
+                  <span></span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div onClick={handleLogout} className={clsx(cx("logout"))}>
+            <p>THOÁT</p>
+          </div>
         </div>
-
-        <div onClick={handleLogout} className={clsx(cx("logout"))}>
-          <p>THOÁT</p>
-        </div>
-      </div>
-      <div className={clsx(cx("content"))}>
-        <div onClick={handleToggleOff} className={clsx(cx("header"))}>
-          <form className={clsx(cx("header-from-search"))}>
-            <div className={clsx(cx("header-from-search-group"))}>
-              <input
-                placeholder=" "
-                className={clsx(cx("header-from-input"))}
-              ></input>
-              <div className={clsx(cx("header-from-button"))}>
-                <FaSearch />
-              </div>
+        <div className={clsx(cx("content"))}>
+          <div onClick={handleToggleOff} className={clsx(cx("header"))}>
+            <div className={clsx(cx("header-clock"))}>
+              <p>{hours}</p>
             </div>
-          </form>
-          <div onClick={(e) => handleToggleOn(e)} className={clsx(cx("user"))}>
-            <img
-              src={avatar}
-              style={{
-                width: "40px",
-                height: "40px",
-                backgroundColor: "#5041bc",
-                borderRadius: "50%",
-              }}
-            ></img>
+            <form className={clsx(cx("header-from-search"))}>
+              <div className={clsx(cx("header-from-search-group"))}>
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search by name, price, description,..."
+                  className={clsx(cx("header-from-input"))}
+                ></input>
+                <div className={clsx(cx("header-from-button"))}>
+                  <FaSearch />
+                </div>
+              </div>
+            </form>
+            <div
+              onClick={(e) => handleToggleOn(e)}
+              className={clsx(cx("user"))}
+            >
+              <img
+                src={avatar}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  backgroundColor: "#5041bc",
+                  borderRadius: "50%",
+                }}
+              ></img>
+            </div>
+            <div
+              className={clsx(cx("user-option"), {
+                [styles.userOptionActive]: toggleUserOption,
+              })}
+            >
+              <img
+                style={{
+                  width: "60px",
+                  height: "60px",
+                  backgroundColor: "#5041bc",
+                  borderRadius: "50%",
+                }}
+                src={avatar}
+              ></img>
+              <h3>HELLO {username} !</h3>
+              <p>Permisson : {permission}</p>
+            </div>
           </div>
-          <div
-            className={clsx(cx("user-option"), {
-              [styles.userOptionActive]: toggleUserOption,
-            })}
-          >
-            <img
-              style={{
-                width: "60px",
-                height: "60px",
-                backgroundColor: "#5041bc",
-                borderRadius: "50%",
-              }}
-              src={avatar}
-            ></img>
-            <h3>HELLO {username} !</h3>
-            <p>Permisson : {permission}</p>
-          </div>
+          <div onClick={handleToggleOff}>{children}</div>
         </div>
-        <div onClick={handleToggleOff}>{children}</div>
       </div>
-    </div>
+    </DataSearchContext.Provider>
   );
 }
 
