@@ -3,6 +3,9 @@ import Product from "../pages/Product";
 import Category from "../pages/Category";
 import Warehouse from '../pages/Warehouse'
 import Promotion from "../pages/Promotion";
+import DetailProduct from "../pages/Detail_Product";
+import Users from "../pages/Users";
+import AddProduct from "../pages/Add_Product";
 
 const privateRoutes = [
   {
@@ -28,6 +31,21 @@ const privateRoutes = [
   {
     path: "/promotion",
     component: Promotion,
+    layout: "MainLayout",
+  },
+  {
+    path: "/detail-product",
+    component: DetailProduct,
+    layout: "MainLayout",
+  },
+  {
+    path: "/users",
+    component: Users,
+    layout: "MainLayout",
+  },
+  {
+    path: "/add-product",
+    component: AddProduct,
     layout: "MainLayout",
   },
 ];

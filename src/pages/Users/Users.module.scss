@@ -1,0 +1,39 @@
+.listcategory {
+  width: 95%;
+  margin: 0px auto;
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+
+  .table {
+    width: 90%;
+
+    thead {
+      outline: 2px solid rgba(224, 224, 224, 1);
+    }
+    tbody {
+      tr {
+        outline: 2px solid rgba(224, 224, 224, 1);
+        position: relative;
+        td {
+          text-align: center;
+          cursor: pointer;
+          padding: 10px;
+          background-color: #fff;
+          img {
+            width: 50px;
+          }
+        }
+      }
+      tr:hover {
+        outline: 2px solid rgb(219, 219, 219);
+        td {
+          outline: 2px solid rgb(219, 219, 219);
+          background-color: rgb(219, 219, 219);
+        }
+      }
+    }
+  }
+}

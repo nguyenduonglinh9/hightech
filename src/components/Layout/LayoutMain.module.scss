@@ -7,16 +7,23 @@
   display: flex;
   overflow: hidden;
 }
-.asideNav {
+.asideNav{
   flex: 1;
   height: 100%;
-  background-color: #343a3f;
+  background-color: rgb(255, 255, 255);
   align-self: center;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+  z-index: 2;
+  transition: 0.25s all cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-
+.asideNavActive {
+  position: absolute;
+  transform: translateX(-100%);
+}
+.asideNavActive2 {
+  flex: 1;
+}
 .headerLogo {
   display: flex;
   position: relative;
@@ -42,7 +49,7 @@
 .headerLogo > h2 {
   position: absolute;
   transform: translateX(50%);
-  color: white;
+  color: #343a3f;
   pointer-events: none;
 }
 .headerLogo > h2::after {
@@ -64,14 +71,14 @@
   padding: 15px 20px;
   margin: 10px 10px;
   text-align: center;
-  color: #fff;
+  color: rgb(55, 65, 81);
   cursor: pointer;
   text-decoration: none;
 }
 .bodyNav > ul li:hover {
-  background-color: white;
+  background-color: rgb(3, 201, 215);
   border-radius: 5px;
-  color: #343a3f;
+  color: #fff !important;
 }
 .bodyNav_group {
   display: flex;
@@ -79,33 +86,32 @@
 }
 .content {
   flex: 5;
-  background-color: #f5f7fb;
-  transform: translateX(100%);
+  background-color: rgb(250, 251, 251);
   animation: fadeIn 1s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  background-image: url(../../pages/Product/assets/fonts/img/bg/bg.png);
+  transition: all 0.25s cubic-bezier(0.075, 0.82, 0.165, 1);
+  overflow: scroll;
 }
 .user {
-  border-radius: 50%;
   display: flex;
   cursor: pointer;
   transition: 0.25s ease;
-  width: 50px;
   height: 50px;
   justify-content: center;
   align-items: center;
-  background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   img {
     width: 30px;
     height: 30px;
+    transition: 0.25s ease;
+    margin-left: 10px;
+  }
+  img:hover{
+    transform: scale(1.1);
   }
 }
-.user:hover {
-  transform: scale(1.1);
-  position: relative;
-}
+// .user:hover {
+//   transform: scale(1.1);
+//   position: relative;
+// }
 .logout {
   width: 200px;
   height: 50px;
@@ -121,9 +127,9 @@
   color: #fff;
 }
 .active {
-  background-color: white;
+  background-color: rgb(3, 201, 215);
   border-radius: 5px;
-  color: #343a3f !important;
+  color: #fff !important;
 }
 .header {
   display: flex;
@@ -133,8 +139,7 @@
   top: 0;
   width: auto;
   margin: auto;
-  background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  background-color: rgb(250, 251, 251);
   z-index: 30000;
 
   .header-clock {

@@ -8,23 +8,30 @@ import "aos/dist/aos.css";
 import { FaArrowDown } from "react-icons/fa";
 import { FcFullTrash } from "react-icons/fc";
 import { FcRules } from "react-icons/fc";
-import { FcSupport, FcPlus } from "react-icons/fc";
+import { FcSupport } from "react-icons/fc";
+import { BsPlusLg } from "react-icons/bs";
 import { DataSearchContext } from "../../components/Layout/LayoutMain";
+import Table from "react-bootstrap/Table";
+import jwt_decode from "jwt-decode";
 
 function Product() {
   AOS.init();
   const cx = classNames.bind(styles);
-  const localStorageLoggin = JSON.parse(localStorage.getItem("data"));
+  const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const DataSearch = useContext(DataSearchContext);
 
-  const [isLoggin, setIsLoggin] = useState(localStorageLoggin.isLoggin);
+
   const [category, setCategory] = useState([]);
   const [products, setProducts] = useState([]);
-  const [toggle, setToggle] = useState(false);
-  const [curentItemName, setCurrentItemName] = useState("Laptop");
-  const [idCate, setIdCate] = useState(2);
+  const [brands, setBrands] = useState([]);
+  const [toggleCategory, setToggleCategory] = useState(false);
+  const [toggleBrand, setToggleBrand] = useState(false);
+  const [curentItemName, setCurrentItemName] = useState("Màn hình");
+  const [idCate, setIdCate] = useState("634f9eea3f879eb6fc81bf01");
   const [loading, setLoading] = useState(false);
   const softSearch = useRef();
+
+  
 
   if (DataSearch != "") {
     if (typeof DataSearch == "string") {
@@ -36,9 +43,7 @@ function Product() {
         );
       });
     }
-  }
-  else
-  {
+  } else {
     softSearch.current = undefined;
   }
 
@@ -47,113 +52,89 @@ function Product() {
   const refItem = useRef();
 
   let navigate = useNavigate();
-  if (isLoggin == false) {
-    navigate("/");
-  }
 
   useEffect(() => {
-    fetch("http://127.0.0.1:3001/category")
-      .then((response) => {
-        return response.json();
-      })
-      .then((posts) => {
-        setCategory((prev) => [...prev, ...posts]);
-      });
-  }, []);
-
-  useEffect(() => {
-    fetch("http://localhost:3001/pruducts")
+    fetch("https://fpt-hightech-api.herokuapp.com/category/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+    })
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        setProducts((prev) => [...prev, ...data]);
+        setCategory((prev) => [...prev, ...data.data]);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("https://fpt-hightech-api.herokuapp.com/brand/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setBrands((prev) => [...prev, ...data.data]);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("https://fpt-hightech-api.herokuapp.com/product/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setProducts((prev) => [...prev, ...data.data]);
         setLoading(true);
       });
   }, []);
 
   // console.log(list)
-  const handleOpenItem = () => {
-    setToggle(true);
+  const handleOpenCategory = () => {
+    setToggleCategory(true);
+  };
+  const handleOpenBrand = () => {
+    setToggleBrand(true);
   };
   function handleCloseItem() {
-    setToggle(false);
+    setToggleCategory(false);
     setLoading(false);
+  }
+  const HandleDetail = (id) => {
+    navigate("/detail-product",{state:{id:id}});
+  }
+
+  const handleNavigateAddProduct = () => {
+    navigate("/add-product")
   }
 
   return (
     <div className={clsx(cx("container"))}>
       {softSearch.current == undefined ? undefined : (
         <div className={clsx(cx("list-search"))}>
-            {softSearch.current.map((item, index) => {
-              return (
-                <div className={clsx(cx("item-search"))}>
-                  <img style={{ width: "70px" }} src={item.image}></img>
-                  <div>
-                    <p>{item.name}</p>
-                    <p>{item.price}</p>
-                  </div>
-                  <div className={clsx(cx("item-search-option"))}>
-                    <div>
-                      <FcFullTrash />
-                    </div>
-                    <div>
-                      <FcRules />
-                    </div>
-                    <div>
-                      <FcSupport />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-        </div>
-      )}
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div>
-          <div onClick={handleOpenItem} className={clsx(cx("drop-down-menu"))}>
-            <span ref={refItem}>{curentItemName}</span>
-            <FaArrowDown />
-          </div>
-          <div
-            className={clsx(cx("drop-down-menu2"), {
-              [styles.open_drop_item]: toggle,
-            })}
-          >
-            {category.map((item, index) => {
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setIdCate(item.id);
-                    setCurrentItemName(item.name);
-                    setToggle(false);
-                  }}
-                  className={clsx(cx("drop-down-menu-item"))}
-                >
-                  <span>{item.name}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        <div className={clsx(cx("button-add-new"))}>
-          <p>Create</p>
-        </div>
-      </div>
-      <div className={clsx(cx("listproduct"))}>
-        {products
-          .filter((product, index) => {
-            return product.idCate == idCate;
-          })
-          .map((item, index) => {
+          {softSearch.current.map((item, index) => {
             return (
-              <div className={clsx(cx("product"))}>
-                <img src={item.image}></img>
-                <p>{item.name}</p>
-                <p>{item.description}</p>
-                <p className={clsx(cx("product-price"))}>{item.price}</p>
-                <div className={clsx(cx("product-option"))}>
+              <div className={clsx(cx("item-search"))}>
+                <img style={{ width: "70px" }} src={item.image}></img>
+                <div>
+                  <p>{item.name}</p>
+                  <p>{item.price}</p>
+                </div>
+                <div className={clsx(cx("item-search-option"))}>
                   <div>
                     <FcFullTrash />
                   </div>
@@ -167,6 +148,151 @@ function Product() {
               </div>
             );
           })}
+        </div>
+      )}
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div>
+          <div
+            onClick={handleOpenCategory}
+            className={clsx(cx("drop-down-menu"))}
+          >
+            <span ref={refItem}>{curentItemName}</span>
+            <FaArrowDown />
+          </div>
+          <div
+            className={clsx(cx("drop-down-menu2"), {
+              [styles.open_drop_item]: toggleCategory,
+            })}
+          >
+            {category.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setIdCate(item._id);
+                    setCurrentItemName(item.title);
+                    setToggleCategory(false);
+                  }}
+                  className={clsx(cx("drop-down-menu-item"))}
+                >
+                  <span>{item.title}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <div onClick={handleOpenBrand} className={clsx(cx("drop-down-menu"))}>
+            <span ref={refItem}>
+              {brands
+                .filter((item, index) => item.category == idCate)
+                .map((item2, index) => {
+                  return item2.title;
+                })}
+            </span>
+            <FaArrowDown />
+          </div>
+          <div
+            className={clsx(cx("drop-down-menu2"), {
+              [styles.open_drop_item]: toggleBrand,
+            })}
+          >
+            {brands
+              .filter((brand, index) => {
+                return brand.category == idCate;
+              })
+              .map((brand2, index2) => {
+                return (
+                  <div
+                    key={index2}
+                    onClick={() => {
+                      // setCurrentItemName(item.title);
+                      setToggleBrand(false);
+                    }}
+                    className={clsx(cx("drop-down-menu-item"))}
+                  >
+                    <span>{brand2.title}</span>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      </div>
+      <div className={clsx(cx("listproduct"))}>
+        <div style={{ display: "flex", width: "100%",justifyContent:"space-between"}}>
+          <div>
+            <h3 style={{margin:"0px"}}>PRODUCTS</h3>
+            <p style={{opacity:'0.7'}}>products/ {curentItemName}</p>
+          </div>
+          <div onClick={handleNavigateAddProduct} className={clsx(cx("button-add-new"))}>
+            <BsPlusLg />
+          </div>
+        </div>
+        <Table className={clsx(cx("table"))} striped bordered hover>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>
+                <p>Name</p>
+              </th>
+              <th>
+                <p>Price</p>
+              </th>
+              <th>
+                <p>Category</p>
+              </th>
+              <th>
+                <p>Brand</p>
+              </th>
+              <th>
+                <p>Quantity</p>
+              </th>
+              <th>
+                <p>Status</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {products
+              .filter((product, index) => {
+                return product.category == idCate;
+              })
+              .map((item, index) => {
+                return (
+                  <tr onClick={() => HandleDetail(item._id)} key={index}>
+                    <td>
+                      <img src={item.images[0]}></img>
+                    </td>
+                    <td className={clsx(cx("title_td"))}>{item.title}</td>
+                    <td>{item.costPrice}</td>
+                    <td>
+                      {category
+                        .filter((cate) => cate._id == item.category)
+                        .map((item3) => item3.title)}
+                    </td>
+                    <td>
+                      {brands
+                        .filter((brand) => brand._id == item.brand)
+                        .map((item2) => item2.title)}
+                    </td>
+                    <td>{item.quantity}</td>
+                    <td>
+                      {item.quantity > 0 ? (
+                        <div className={clsx(cx("status_conhang"))}>
+                          Stocking
+                        </div>
+                      ) : (
+                        <div className={clsx(cx("status_hethang"))}>
+                          Out Of Stock
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </Table>
       </div>
       {loading == false ? (
         <div className={clsx(cx("container-loading"))}>

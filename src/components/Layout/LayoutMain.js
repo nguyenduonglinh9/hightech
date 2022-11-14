@@ -13,66 +13,54 @@ import {
   BsFillMenuButtonWideFill,
   BsCartFill,
   BsReceiptCutoff,
+  BsList,
+  BsBell,
 } from "react-icons/bs";
 import { useRef, useState, createContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import { FaSearch } from "react-icons/fa";
+import jwt_decode from "jwt-decode";
 
 export const DataSearchContext = createContext();
 
 function LayoutMain({ children }) {
-
   const cx = classNames.bind(styles);
+  const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
+  const Decode_token = jwt_decode(DataLogin.token);
   const useRefActive = useRef();
   let navigate = useNavigate();
-  AOS.init()
+  AOS.init();
 
-  let username = JSON.parse(localStorage.getItem('data')).username
-  let avatar = JSON.parse(localStorage.getItem("data")).avatar;
-  let permission = JSON.parse(localStorage.getItem("data")).permission;
-
-  
   const [toggleUserOption, setToggleUserOption] = useState(false);
-  const [search, setSearch] = useState('');
-  const [hours, setHours] = useState('');
-
-  const hoursRef = useRef();
-  let test = hoursRef.current;
-
-  console.log(hours);
+  const [search, setSearch] = useState("");
+  const [menu, setMenu] = useState(false);
 
   const handleToggleOn = (e) => {
     setToggleUserOption(true);
     e.stopPropagation();
-    
-  }
+  };
   const handleToggleOff = () => {
     setToggleUserOption(false);
   };
-  
-  useEffect(()=>{
-    test = setInterval(() => {
-      const now = new Date();
-      const current = now.getHours() + "h : " + now.getMinutes() + "m : " + now.getSeconds() + "s";
-      setHours(current)
-    }, 1000)
-    
-    return () => {
-      clearInterval(test);
-    };
-  })
+
+  const handleMenuClick = () => {
+    setMenu(!menu);
+  };
 
   const handleLogout = () => {
-    localStorage.setItem("data", JSON.stringify({ isLoggin : false }));
-    navigate('/');
-  }
+    localStorage.setItem("data", JSON.stringify({ isLoggin: false }));
+    navigate("/");
+  };
 
-  
   return (
     <DataSearchContext.Provider value={search}>
       <div className={clsx(cx("container"))}>
-        <div className={clsx(cx("asideNav"))}>
+        <div
+          className={clsx(cx("asideNav"), {
+            [styles.asideNavActive]: menu,
+          })}
+        >
           <div className={clsx(cx("headerLogo"))}>
             <div className={clsx(cx("headerLogo_circle1"))}></div>
             <div className={clsx(cx("headerLogo_circle2"))}></div>
@@ -185,16 +173,28 @@ function LayoutMain({ children }) {
                   <span></span>
                 </div>
               </li>
-              <li>
-                <div
-                  style={{ pointerEvents: "none" }}
-                  className={clsx(cx("bodyNav_group"))}
+              <Link
+                to="/users"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/users"
+                        ? true
+                        : false,
+                  })}
                 >
-                  <FaUsers />
-                  <span>USER</span>
-                  <span></span>
-                </div>
-              </li>
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <FaUsers />
+                    <span>USER</span>
+                    <span></span>
+                  </div>
+                </li>
+              </Link>
               <li>
                 <div
                   style={{ pointerEvents: "none" }}
@@ -211,11 +211,16 @@ function LayoutMain({ children }) {
             <p>THOÁT</p>
           </div>
         </div>
-        <div className={clsx(cx("content"))}>
+        <div
+          className={clsx(cx("content"), {
+            [styles.asideNavActive2]: menu,
+          })}
+        >
           <div onClick={handleToggleOff} className={clsx(cx("header"))}>
-            <div className={clsx(cx("header-clock"))}>
-              <p>{hours}</p>
-            </div>
+            <BsList
+              style={{ width: "30px", height: "30px", color: "rgb(3,201,215)" }}
+              onClick={handleMenuClick}
+            />
             <form className={clsx(cx("header-from-search"))}>
               <div className={clsx(cx("header-from-search-group"))}>
                 <input
@@ -233,8 +238,9 @@ function LayoutMain({ children }) {
               onClick={(e) => handleToggleOn(e)}
               className={clsx(cx("user"))}
             >
+              <BsBell style={{ width: "20px", height: "20px" }} />
               <img
-                src={avatar}
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                 style={{
                   width: "40px",
                   height: "40px",
@@ -255,10 +261,9 @@ function LayoutMain({ children }) {
                   backgroundColor: "#5041bc",
                   borderRadius: "50%",
                 }}
-                src={avatar}
+                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
               ></img>
-              <h3>HELLO {username} !</h3>
-              <p>Permisson : {permission}</p>
+              <p>Hello {Decode_token.fullname}</p>
             </div>
           </div>
           <div onClick={handleToggleOff}>{children}</div>

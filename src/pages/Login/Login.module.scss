@@ -194,7 +194,6 @@
   bottom: 0;
   justify-content: center;
   align-items: center;
-  display: flex;
   align-items: center;
   justify-content: center;
   display: none;
@@ -245,11 +244,9 @@
   transform: scale(1.05) rotate(-1deg);
 }
 .openModal {
-  display: flex;
+  display: flex !important;
 }
-.closeModal {
-  display: none;
-}
+
 .modalMail {
   width: -moz-fit-content;
   width: fit-content;

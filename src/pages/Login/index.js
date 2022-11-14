@@ -15,106 +15,58 @@ function Login() {
   //   navigate("/product");
   // }
   
-  
-
   const refLogin = useRef();
-  const numberCode = useRef();
   const cx = classNames.bind(styles);
   let navigate = useNavigate();
 
-  const [user, setUser] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
-  const [code, setCode] = useState("");
+  const [message, setMessage] = useState("");
+  const [toggleModal, setToggleModal] = useState(false);
 
-  //Fetch data tài khoản admin cấp cao
-  useEffect(() => {
-    fetch("http://localhost:3001/userAdmin")
-      .then((res) => {
-        return res.json();
-      })
-      .then((users) => {
-        setUser((prev) => [...prev, ...users]);
-      });
-  }, []);
 
-  //validate from
-  const test = user.filter((item) => item.username === username);
   const handleLogin = () => {
-    //nếu bỏ trống ô nhập
-    if (username.length <= 0 || password.length <= 0) {
-      setErr("vui lòng không để trống ô nhập");
-      localStorage.setItem(
-        "data",
-        JSON.stringify({
-          isLoggin: false,
-        })
-      );
-    }
-    //nếu sai username
-    else if (test.length === 0) {
-      setErr("Nhập sai tài khoản hoặc mật khẩu ");
-      localStorage.setItem(
-        "data",
-        JSON.stringify({
-          isLoggin: false,
-        })
-      );
-    }
-    //nếu đúng username nhưng sai password
-    else if (test.length > 0 && test[0].password != password) {
-      setErr("Nhập sai tài khoản hoặc mật khẩu 2");
-      localStorage.setItem(
-        "data",
-        JSON.stringify({
-          isLoggin: false,
-        })
-      );
-    }
-    //nếu đúng username và password
-    else if (test.length > 0 && test[0].password == password) {
-      //tạo mã bảo mật random
-      numberCode.current =
-        Math.floor(Math.random() * (999999 - 100000)) + 100000;
-      //thực hiện gửi mã bảo mật vào mail
-      emailjs.send(
-        "service_prky1qy",
-        "template_zmoe0kh",
-        {
-          Username: username,
-          numberrandom: numberCode.current,
-          email: user[0].email,
-        },
-        "lya-8-DbFC46J0mXS"
-      );
-      setErr("Vui lòng nhập mã bảo mật");
-    }
-  };
-
-  const handleLoginCode = () => {
-    //nếu nhập đúng mã bảo mật
-    if (code == numberCode.current) {
-      setErr("Đăng Nhập Thành Công");
-      //sau 3 giây chuyển màn hình /product
-      setTimeout(() => {
-        localStorage.setItem(
-          "data",
-          JSON.stringify({
-            username,
-            avatar: test[0].avatar,
-            permission : test[0].permission,
-            isLoggin: true,
-
-          })
-        );
-        navigate("/product");
-      }, 3000);
-    }
-    //nếu sai mã bảo mật
-    else {
-      setErr("Mã bảo mật sai vui lòng thử lại");
-    }
+    fetch("https://fpt-hightech-api.herokuapp.com/access/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Origin": "*",
+      },
+      body: JSON.stringify({
+        email: username,
+        password: password,
+      }),
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.code == 200) {
+          console.log(data)
+          setToggleModal(true)
+          setMessage(data.message);
+          setTimeout(() => {
+            navigate('/product');
+          }, 2000)
+          localStorage.setItem(
+            "DataLogin",
+            JSON.stringify({
+              token: data.data.token,
+              isLogin: true
+            })
+          );
+        }
+        else {
+          setToggleModal(true);
+          setMessage(data.message);
+          localStorage.setItem(
+            "DataLogin",
+            JSON.stringify({
+              isLogin: false,
+            })
+          );
+        }
+      });
   };
 
   return (
@@ -186,39 +138,19 @@ function Login() {
           </div>
         </div>
         <div
-          onClick={() => setErr("")}
+          onClick={() => setToggleModal(false)}
           className={clsx(cx("containerModal"), {
-            [styles.openModal]: err.length > 0 ? true : false,
+            [styles.openModal]: toggleModal,
           })}
         >
           <div
             onClick={(e) => e.stopPropagation()}
             className={clsx(cx("modal"))}
           >
-            <div style={{ width: "fit-content", height: "fit-content" }}>
-              {err === "Vui lòng nhập mã bảo mật" ? (
-                <form className={clsx(cx("modalMail"))}>
-                  <input
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                  ></input>
-                  <button onClick={handleLoginCode}>PRESS</button>
-                </form>
-              ) : (
-                <Lottie
-                  loop={true}
-                  animationData={
-                    err === "Đăng Nhập Thành Công" ? Congratulation : Wrong
-                  }
-                ></Lottie>
-              )}
-            </div>
-            <p>{err}</p>
-            {err !== "Đúng rồi chúc mừng" &&
-            err !== "Vui lòng nhập mã bảo mật" &&
-            err !== "Đăng Nhập Thành Công" ? (
+            <p>{message}</p>
+            {message != "success" ? (
               <button
-                onClick={() => setErr("")}
+                onClick={() => setToggleModal(false)}
                 className={clsx(cx("modal_button"))}
               >
                 RETRY
