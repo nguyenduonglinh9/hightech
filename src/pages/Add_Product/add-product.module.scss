@@ -1,6 +1,8 @@
 .container {
   width: 100%;
   overflow: scroll;
+  position: relative;
+  height: 100vh;
 
   .from {
     width: 80%;
@@ -9,6 +11,7 @@
     box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
     padding: 10px;
     border-radius: 10px;
+    margin-bottom: 500px;
 
     .from-header {
       width: -moz-fit-content;
@@ -41,6 +44,27 @@
             rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
             rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
         }
+        img ~ div {
+          width: 100%;
+          height: 100%;
+          // background-color: rgba(255, 0, 0, 0.5);
+          position: absolute;
+          top: 0;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          display: none;
+
+          div {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top: 5px solid rgb(56, 56, 56);
+            animation: xoay 1s linear infinite;
+          }
+        }
         .icon-delete {
           position: absolute;
           right: 0;
@@ -60,16 +84,23 @@
           border: 2px dashed #3f3e3e;
           color: #3f3e3e;
         }
-        .from-body-group-spec{
+        .from-body-group-spec {
           width: 70%;
-          div{
+          div {
             margin: 10px 0px;
             display: flex;
-            input:first-child{
+            position: relative;
+            .from-body-group-uploadimage {
+              width: 100px;
+              height: 100px;
+              background-color: black;
+              position: absolute;
+            }
+            input:first-child {
               flex: 2;
               margin-right: 5px;
             }
-            input:last-child{
+            input:last-child {
               flex: 5;
             }
           }
@@ -157,4 +188,12 @@
 }
 .activedropdown {
   display: flex !important;
+}
+.activeuploadimage {
+  display: flex !important;
+}
+@keyframes xoay {
+  to {
+    transform: rotate(360deg);
+  }
 }

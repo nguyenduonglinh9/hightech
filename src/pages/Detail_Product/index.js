@@ -9,7 +9,10 @@ function DetailProduct() {
   const id = useLocation();
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const cx = classNames.bind(styles);
+
   const refDesc = useRef();
+  const refInputUpload = useRef();
+  const refSpec = useRef();
 
   const [product, setProduct] = useState({});
   const [category, setCategory] = useState([]);
@@ -19,11 +22,20 @@ function DetailProduct() {
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleDropDownBrand, setToggleDropDownBrand] = useState(false);
 
-  const currentCategory = useRef();
-  const currentCategoryId = useRef();
-  const currentBrands = useRef();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState([]);
+  const [images, setImages] = useState([]);
+  const [costPrice, setCostPrice] = useState(0);
+  const [salePercent, setSalePercent] = useState("");
+  const [quantity, setQuantity] = useState(0);
+  const [specifications, setSpecifications] = useState([]);
 
-  console.log(brands);
+  const [currentCategory, setCurrentCategory] = useState("");
+  const [currentCategoryID, setCurrentCategoryID] = useState("");
+
+  const [currentBrand, setCurrentBrand] = useState("");
+  const [currentBrandID, setCurrentBrandID] = useState("");
+
 
   useEffect(() => {
     fetch(`https://fpt-hightech-api.herokuapp.com/product/${id.state.id}`, {
@@ -38,29 +50,17 @@ function DetailProduct() {
       })
       .then((data) => {
         setProduct({ ...data.data });
+        setTitle(data.data.title);
+        setDescription([...data.data.description]);
+        setImages([...data.data.images]);
+        setCostPrice(data.data.costPrice);
+        setSalePercent(data.data.salePercent);
+        setQuantity(data.data.quantity);
+        setSpecifications([...data.data.specifications])
+        setCurrentCategoryID(data.data.category);
+        setCurrentBrandID(data.data.brand);
       });
   }, [id]);
-
-  useEffect(() => {
-    fetch(
-      `https://fpt-hightech-api.herokuapp.com/category/${product.category}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": DataLogin.token,
-        },
-      }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        currentCategory.current = data.data.title;
-        currentCategoryId.current = data.data._id;
-        setCategory(data.data);
-      });
-  }, [product]);
 
   useEffect(() => {
     fetch("https://fpt-hightech-api.herokuapp.com/category/", {
@@ -79,23 +79,6 @@ function DetailProduct() {
   }, []);
 
   useEffect(() => {
-    fetch(`https://fpt-hightech-api.herokuapp.com/brand/${product.brand}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        currentBrands.current = data.data.title;
-        setBrand(data.data);
-      });
-  }, [product]);
-
-  useEffect(() => {
     fetch("https://fpt-hightech-api.herokuapp.com/brand/", {
       method: "GET",
       headers: {
@@ -107,13 +90,40 @@ function DetailProduct() {
         return response.json();
       })
       .then((data) => {
-        const dataArr = [...data.data];
-        const dataFilter = dataArr.filter((dataNewArr, index) => {
-          return dataNewArr.category == currentCategoryId.current;
-        });
-        setBrands([...dataFilter]);
+        setBrands(
+          data.data.filter((item) => item.category == currentCategoryID)
+        );
       });
-  }, [product]);
+  }, [currentCategoryID]);
+
+  useEffect(() => {
+    if (categorys.length == 0) {
+      setCurrentCategory("");
+    } else {
+      const arr = categorys.filter((item, index) => {
+        return item._id == currentCategoryID;
+      });
+      setCurrentCategory(arr[0]['title']);
+    }
+  }, [currentCategoryID]);
+
+  useEffect(() => {
+    if (brands.length == 0) {
+      setCurrentBrand("");
+    } else {
+      const arr = brands.filter((item, index) => {
+        return item._id == currentBrandID;
+      });
+      if (arr.length == 0) {
+        setCurrentBrand(brands[0]['title']);
+        setCurrentBrandID(brands[0]['_id'])
+      }
+      else {
+        setCurrentBrand(arr[0]["title"]);
+      }
+      
+    }
+  }, [brands]);
 
   const handleAppendChild = () => {
     var input = document.createElement("input");
@@ -137,6 +147,67 @@ function DetailProduct() {
       });
   };
 
+   const openUploadImage = () => {
+     refInputUpload.current.click();
+   };
+   const handleOnImageChange = (e) => {
+     setImages((prev) => [...prev, ...Array.from(e.target.files)]);
+  };
+  
+  const handleDeleteImage = (image) => {
+    setImages(
+      Array.from(images).filter((item) => {
+        return item !== image;
+      })
+    );
+  };
+
+  const handleAppendChildSpec = () => {
+    const div = document.createElement("div");
+    const input = document.createElement("input");
+    const input2 = document.createElement("input");
+
+    div.appendChild(input);
+    div.appendChild(input2);
+
+    refSpec.current.appendChild(div);
+  };
+
+  const handleChangeCurrentCategory = (id,title) => {
+    setCurrentCategoryID(id);
+    setCurrentCategory(title);
+    setToggleDropDown(false);
+  }
+
+  const handleChangeCurrentBrand = (id, title) => {
+    setCurrentBrandID(id);
+    setCurrentBrand(title);
+    setToggleDropDownBrand(false);
+  };
+
+  const handleUpdateProduct = () => {
+    //description
+    const listInputDesc = [...refDesc.current.children];
+    const arrDataInputDesc = listInputDesc.map((item, index) => {
+      return item.value;
+    });
+    //xử lý specifications
+    const listDiv = [...refSpec.current.children];
+    var newArr = [];
+    for (let i = 0; i < listDiv.length; i++) {
+      var a = listDiv[i];
+      var b = a.children;
+      var ojb = {};
+      ojb["title"] = b[0].value;
+      ojb["content"] = b[1].value;
+      // setSpecifications()
+      newArr.push(ojb);
+    }
+    const arrImage = images.map((image) => {
+      return URL.createObjectURL(image);
+    });
+  }
+
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("from"))}>
@@ -146,19 +217,25 @@ function DetailProduct() {
         <div className={clsx(cx("from-body"))}>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>NAME</p>
-            <input value={product.title}></input>
+            <input
+              value={title}
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }}
+            ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>DESCRIPTION</p>
             <div ref={refDesc}>
-              {product.description == null
+              {description == null
                 ? undefined
-                : product.description.map((item, index) => {
+                : description.map((item, index) => {
+                    var a = item;
                     return (
                       <input
                         key={index}
                         style={{ margin: "5px 0" }}
-                        value={item}
+                        defaultValue={a}
                       ></input>
                     );
                   })}
@@ -168,56 +245,77 @@ function DetailProduct() {
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>IMAGE</p>
             <div style={{ display: "flex" }}>
-              {product.images == null
+              {images == null
                 ? undefined
-                : product.images.map((item, index) => {
+                : images.map((item, index) => {
                     return (
                       <div style={{ position: "relative" }}>
-                        <img src={item}></img>
-                        <BsXCircleFill className={clsx(cx("icon-delete"))} />
+                        <img
+                          src={
+                            typeof item != "object"
+                              ? item
+                              : URL.createObjectURL(item)
+                          }
+                        ></img>
+                        <BsXCircleFill
+                          onClick={() => handleDeleteImage(item)}
+                          className={clsx(cx("icon-delete"))}
+                        />
                       </div>
                     );
                   })}
               <div className={clsx(cx("from-body-group-addimage"))}>
-                <BsPlusCircle />
+                <BsPlusCircle onClick={openUploadImage} />
               </div>
             </div>
+            <input
+              style={{ display: "none" }}
+              ref={refInputUpload}
+              type="file"
+              multiple
+              onChange={(e) => handleOnImageChange(e)}
+            ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>PRICE</p>
-            <input type={Number} value={product.costPrice}></input>
+            <input
+              type={Number}
+              value={costPrice}
+              onChange={(e) => {
+                setCostPrice(e.target.value);
+              }}
+            ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>SALE</p>
-            <input value={product.salePercent + "%"}></input>
+            <input
+              value={salePercent}
+              onChange={(e) => setSalePercent(e.target.value)}
+            ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>QUANTITY</p>
-            <input type={Number} value={product.quantity}></input>
+            <input
+              type={Number}
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+            ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>SPECIFICATIONS</p>
-            <div style={{ width: "70%" }}>
-              {product.specifications == null
+            <div className={clsx(cx("from-body-group-spec"))} ref={refSpec}>
+              {specifications == null
                 ? undefined
-                : product.specifications.map((item2, index2) => {
+                : specifications.map((item2, index2) => {
                     return (
-                      <div
-                        key={index2}
-                        style={{ margin: "10px 0px", display: "flex" }}
-                      >
-                        <input
-                          style={{ flex: "2", marginRight: "5px" }}
-                          value={item2.title}
-                        ></input>
-                        <input
-                          style={{ flex: "5" }}
-                          value={item2.content}
-                        ></input>
+                      <div key={index2}>
+                        <input defaultValue={item2.title}></input>
+                        <input defaultValue={item2.content}></input>
                       </div>
                     );
                   })}
             </div>
+            <BsPlusCircle onClick={handleAppendChildSpec} />
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>CATEGORY</p>
@@ -233,7 +331,7 @@ function DetailProduct() {
                 position: "relative",
               }}
             >
-              <p style={{ margin: "0px" }}>{currentCategory.current}</p>
+              <p style={{ margin: "0px" }}>{currentCategory}</p>
               <BsCaretDownFill
                 onClick={() => {
                   setToggleDropDown(!toggleDropDown);
@@ -259,7 +357,12 @@ function DetailProduct() {
                   ? undefined
                   : categorys.map((item3, index3) => {
                       return (
-                        <div style={{ padding: "10px" }}>
+                        <div
+                          onClick={() =>
+                            handleChangeCurrentCategory(item3._id, item3.title)
+                          }
+                          style={{ padding: "10px" }}
+                        >
                           <p>{item3.title}</p>
                         </div>
                       );
@@ -281,7 +384,7 @@ function DetailProduct() {
                 position: "relative",
               }}
             >
-              <p style={{ margin: "0px" }}>{currentBrands.current}</p>
+              <p style={{ margin: "0px" }}>{currentBrand}</p>
               <BsCaretDownFill
                 onClick={() => {
                   setToggleDropDownBrand(!toggleDropDownBrand);
@@ -306,7 +409,12 @@ function DetailProduct() {
                   ? undefined
                   : brands.map((item3, index3) => {
                       return (
-                        <div style={{ padding: "10px" }}>
+                        <div
+                          onClick={() =>
+                            handleChangeCurrentBrand(item3._id, item3.title)
+                          }
+                          style={{ padding: "10px" }}
+                        >
                           <p>{item3.title}</p>
                         </div>
                       );
@@ -321,7 +429,7 @@ function DetailProduct() {
           </div>
           <div>
             <button>CANCEL</button>
-            <button>SAVE</button>
+            <button onClick={handleUpdateProduct}>SAVE</button>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import clsx from "clsx";
 import classNames from "classnames/bind";
 import { useLocation } from "react-router-dom";
 import { BsPlusCircle, BsXCircleFill, BsCaretDownFill } from "react-icons/bs";
+import { Button } from "bootstrap";
 
 function AddProduct() {
   const id = useLocation();
@@ -20,7 +21,10 @@ function AddProduct() {
   const [brands, setBrands] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState([]);
+
   const [images, setImages] = useState([]);
+  const [imagesUpload, setImagesUpload] = useState([]);
+
   const [costPrice, setCostPrice] = useState(0);
   const [salePercent, setSalePercent] = useState("");
   const [quantity, setQuantity] = useState(0);
@@ -35,8 +39,14 @@ function AddProduct() {
 
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleDropDownBrand, setToggleDropDownBrand] = useState(false);
+  const [toggleUploadImage, setToggleUpLoadImage] = useState(false);
 
-  
+    
+  useEffect(() => {
+    if (imagesUpload.length === images.length) {
+      setToggleUpLoadImage(false)
+    }
+  },[imagesUpload])
 
   useEffect(() => {
     fetch("https://fpt-hightech-api.herokuapp.com/category/", {
@@ -90,59 +100,52 @@ function AddProduct() {
   }, [brands]);
 
   const handleAddProduct = () => {
-    //xử lý state Description
-    const listInputDesc = [...refDesc.current.children];
-    const arrDataInputDesc = listInputDesc.map((item, index) => {
-      return item.value;
-    });
-    // setDescription([...arrDataInputDesc]);
-    //xử lý specifications
-    const listDiv = [...refSpec.current.children];
-    var newArr = [];
-    for (let i = 0; i < listDiv.length; i++){
-      var a = listDiv[i];
-      var b = a.children;
-      var ojb = {};
-      ojb['title'] = b[0].value;
-      ojb['content'] = b[1].value;
-      // setSpecifications()
-      newArr.push(ojb);
-    }
-    // setSpecifications(newArr);
 
-    const arrImage = images.map(image => {
-      return URL.createObjectURL(image)
-    })
-
-    const data = {
-      title: title,
-      description: arrDataInputDesc,
-      images: arrImage,
-      costPrice: costPrice,
-      salePrice: costPrice * (salePercent / 100),
-      salePercent: salePercent,
-      quantity: quantity,
-      specifications: newArr,
-      category: currentCategoryID,
-      brand: brandCurrentID,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      favorite: false,
-    };
-       fetch("https://fpt-hightech-api.herokuapp.com/product/", {
-         method: "POST",
-         headers: {
-           "Content-Type": "application/json",
-           "x-access-token": DataLogin.token,
-         },
-         body: JSON.stringify(data)
-       })
-         .then((response) => {
-           return response.json();
-         })
-         .then((res) => {
-          console.log(res)
-         });
+        //xử lý state Description
+        const listInputDesc = [...refDesc.current.children];
+        const arrDataInputDesc = listInputDesc.map((item, index) => {
+          return item.value;
+        });
+        //xử lý specifications
+        const listDiv = [...refSpec.current.children];
+        var newArr = [];
+        for (let i = 0; i < listDiv.length; i++) {
+          var a = listDiv[i];
+          var b = a.children;
+          var ojb = {};
+          ojb["title"] = b[0].value;
+          ojb["content"] = b[1].value;
+          newArr.push(ojb);
+        } 
+      const data = {
+        title: title,
+        description: arrDataInputDesc,
+        images: imagesUpload,
+        costPrice: costPrice,
+        salePrice: costPrice * (salePercent / 100),
+        salePercent: salePercent,
+        quantity: quantity,
+        specifications: newArr,
+        category: currentCategoryID,
+        brand: brandCurrentID,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        favorite: false,
+      };
+      fetch("https://fpt-hightech-api.herokuapp.com/product/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": DataLogin.token,
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((res) => {
+          console.log(res);
+        });     
   };
 
   const handleAppendChild = () => {
@@ -168,15 +171,21 @@ function AddProduct() {
     refInputUpload.current.click();
   };
   const handleOnImageChange = (e) => {
+    // const fromData = new FormData();
+    // fromData.append('my-image',e.target.files[0],e.target.files[0].name)
     setImages((prev) => [...prev, ...Array.from(e.target.files)]);
+    // setImages(fromData)
   };
 
-  const handleDeleteImage = (image) => {
+  const handleDeleteImage = (image,index) => {
     setImages(
       Array.from(images).filter((item) => {
         return item !== image;
       })
     );
+    setImagesUpload(imagesUpload.filter((item,index) => {
+      return index !== index
+    }))
   };
 
   const handleChangeCurrentCategory = (id,title) => {
@@ -189,6 +198,27 @@ function AddProduct() {
     setBrand(title)
     setBrandCurrentID(id)
     setToggleDropDownBrand(false)
+  }
+
+  const handleUpLoadImages = () => {
+    setToggleUpLoadImage(true)
+    //xử lý hình ảnh
+    images.map((item) => {
+      const dataImage = new FormData();
+      dataImage.append("source", item);
+      fetch(
+        "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
+        {
+          method: "POST",
+          body: dataImage,
+        }
+      )
+        .then((res) => res.json())
+        .then((res) => {
+          setImagesUpload((prev) => [...prev,res["image"]["url"]]);
+        })
+        .catch((err) => console.log(err));
+    });
   }
 
   return (
@@ -220,6 +250,7 @@ function AddProduct() {
             <BsPlusCircle onClick={handleAppendChild} />
           </div>
           <div className={clsx(cx("from-body-group"))}>
+    
             <p style={{ fontWeight: "bold" }}>IMAGE</p>
             <div style={{ display: "flex" }}>
               {Array.from(images).length == null
@@ -231,8 +262,13 @@ function AddProduct() {
                           styles={{ width: "80px" }}
                           src={URL.createObjectURL(image)}
                         ></img>
+                        <div className={clsx({
+                          [styles.activeuploadimage] : toggleUploadImage
+                        })}>
+                          <div></div>
+                        </div>
                         <BsXCircleFill
-                          onClick={() => handleDeleteImage(image)}
+                          onClick={() => handleDeleteImage(image,index)}
                           className={clsx(cx("icon-delete"))}
                         />
                       </div>
@@ -250,6 +286,7 @@ function AddProduct() {
               multiple
               onChange={(e) => handleOnImageChange(e)}
             ></input>
+            <button onClick={handleUpLoadImages}>UPLOAD</button>
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>PRICE</p>

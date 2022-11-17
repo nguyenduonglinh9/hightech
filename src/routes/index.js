@@ -6,6 +6,7 @@ import Promotion from "../pages/Promotion";
 import DetailProduct from "../pages/Detail_Product";
 import Users from "../pages/Users";
 import AddProduct from "../pages/Add_Product";
+import AddBrand from "../pages/Add_Brand";
 
 const privateRoutes = [
   {
@@ -46,6 +47,11 @@ const privateRoutes = [
   {
     path: "/add-product",
     component: AddProduct,
+    layout: "MainLayout",
+  },
+  {
+    path: "/add-brand",
+    component: AddBrand,
     layout: "MainLayout",
   },
 ];

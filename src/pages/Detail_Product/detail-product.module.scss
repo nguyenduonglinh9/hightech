@@ -60,6 +60,20 @@
           border: 2px dashed #3f3e3e;
           color: #3f3e3e;
         }
+        .from-body-group-spec{
+          width: 70%;
+          div{
+            margin: 10px 0px;
+            display: flex;
+            input:first-child{
+              flex: 2;
+              margin-right: 5px;
+            }
+            input:last-child{
+              flex: 5;
+            }
+          }
+        }
       }
     }
     .from-footer {
@@ -115,7 +129,7 @@
   .drop-down-menu {
     display: none;
     flex-direction: column;
-
+    z-index: 2;
     div {
       p {
         margin: 0px;

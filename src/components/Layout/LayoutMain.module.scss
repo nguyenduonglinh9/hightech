@@ -89,7 +89,8 @@
   background-color: rgb(250, 251, 251);
   animation: fadeIn 1s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
   transition: all 0.25s cubic-bezier(0.075, 0.82, 0.165, 1);
-  overflow: scroll;
+  // overflow: scroll;
+  position: relative;
 }
 .user {
   display: flex;
