@@ -3,12 +3,15 @@ import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import classNames from "classnames/bind";
 import Table from "react-bootstrap/Table";
+import { BsPlusLg } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 
 function Users() {
 
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
+  let navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
   
@@ -28,11 +31,36 @@ function Users() {
       });
   }, []);
 
+  const handleToggleModalAddUser = () => {
+    navigate('/add-user')
+  }
 
+  const handleDetailUser = (id) => {
+    navigate("/detail-user", { state: { id: id } });
+  }
 
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("listcategory"))}>
+
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <h3 style={{ margin: "0px" }}>USERS</h3>
+          </div>
+          <div
+            onClick={handleToggleModalAddUser}
+            className={clsx(cx("button-add-new"))}
+          >
+            <BsPlusLg />
+          </div>
+        </div>
+
         <Table className={clsx(cx("table"))} striped bordered hover>
           <thead>
             <tr>
@@ -53,9 +81,9 @@ function Users() {
           <tbody>
             {users.map((user, index) => {
               return (
-                <tr key={index}>
+                <tr onClick={() => handleDetailUser(user._id)} key={index}>
                   <td>
-                    <img src="https://www.pavilionweb.com/wp-content/uploads/2017/03/man-300x300.png"></img>
+                    <img src={user.avatar}></img>
                   </td>
                   <td>{user.email}</td>
                   <td>{user.fullname}</td>

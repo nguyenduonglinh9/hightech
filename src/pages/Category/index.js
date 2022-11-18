@@ -159,6 +159,7 @@ function Category() {
   };
 
   const handleAddNewCategory = () => {
+    
     var promise = new Promise(function (resolve, reject) {
       //xử lý hình ảnh
       const dataImage = new FormData();
@@ -276,6 +277,7 @@ function Category() {
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("listcategory"))}>
+        
         <div
           style={{
             display: "flex",

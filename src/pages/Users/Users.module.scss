@@ -6,6 +6,8 @@
   padding: 20px;
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
 
   .table {
     width: 90%;
@@ -36,4 +38,23 @@
       }
     }
   }
+}
+.button-add-new {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  background-color: lightblue;
+  margin: 10px 0;
+  padding: 10px;
+  margin-right: 20px;
+  border-radius: 50%;
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.button-add-new:hover {
+  transform: scale(1.1);
+}
+.button-add-new p {
+  margin: 0px 5px;
+  pointer-events: none;
 }

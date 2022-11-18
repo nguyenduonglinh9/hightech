@@ -6,7 +6,8 @@ import Promotion from "../pages/Promotion";
 import DetailProduct from "../pages/Detail_Product";
 import Users from "../pages/Users";
 import AddProduct from "../pages/Add_Product";
-import AddBrand from "../pages/Add_Brand";
+import AddUser from "../pages/Add_User";
+import DetailUser from "../pages/Detail_User";
 
 const privateRoutes = [
   {
@@ -50,8 +51,13 @@ const privateRoutes = [
     layout: "MainLayout",
   },
   {
-    path: "/add-brand",
-    component: AddBrand,
+    path: "/add-user",
+    component: AddUser,
+    layout: "MainLayout",
+  },
+  {
+    path: "/detail-user",
+    component: DetailUser,
     layout: "MainLayout",
   },
 ];
