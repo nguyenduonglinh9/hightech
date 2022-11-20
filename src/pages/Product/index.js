@@ -19,6 +19,7 @@ function Product() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const DataSearch = useContext(DataSearchContext);
+  let dollarUSLocale = Intl.NumberFormat("en-US");
 
 
   const [category, setCategory] = useState([]);
@@ -220,13 +221,13 @@ function Product() {
         </div>
       </div>
       <div className={clsx(cx("listproduct"))}>
-        <div style={{ display: "flex", width: "100%",justifyContent:"space-between"}}>
+        <div style={{ display: "flex",justifyContent:"space-between",margin:'20px'}}>
           <div>
             <h3 style={{margin:"0px"}}>PRODUCTS</h3>
             <p style={{opacity:'0.7'}}>products/ {curentItemName}</p>
           </div>
           <div onClick={handleNavigateAddProduct} className={clsx(cx("button-add-new"))}>
-            <BsPlusLg />
+            <p>Add</p>
           </div>
         </div>
         <Table className={clsx(cx("table"))} striped bordered hover>
@@ -265,7 +266,7 @@ function Product() {
                       <img src={item.images[0]}></img>
                     </td>
                     <td className={clsx(cx("title_td"))}>{item.title}</td>
-                    <td>{item.costPrice}</td>
+                    <td>{dollarUSLocale.format(item.costPrice)}</td>
                     <td>
                       {category
                         .filter((cate) => cate._id == item.category)
@@ -280,11 +281,11 @@ function Product() {
                     <td>
                       {item.quantity > 0 ? (
                         <div className={clsx(cx("status_conhang"))}>
-                          Stocking
+                          <p>On-Sale</p>
                         </div>
                       ) : (
                         <div className={clsx(cx("status_hethang"))}>
-                          Out Of Stock
+                          <p>Out Of Stock</p>
                         </div>
                       )}
                     </td>

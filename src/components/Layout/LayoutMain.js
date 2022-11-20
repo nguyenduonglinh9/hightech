@@ -20,7 +20,16 @@ import { useRef, useState, createContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import { FaSearch } from "react-icons/fa";
+import { CgBell } from "react-icons/cg";
+import { FiChevronDown, FiEdit } from "react-icons/fi";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 import jwt_decode from "jwt-decode";
+import {
+  FiShoppingBag,
+  FiLayers,
+  FiShoppingCart,
+  FiUsers,
+} from "react-icons/fi";
 
 export const DataSearchContext = createContext();
 
@@ -68,6 +77,7 @@ function LayoutMain({ children }) {
           </div>
           <div className={clsx(cx("bodyNav"))}>
             <ul>
+              <p className={clsx(cx("title"))}>Manager</p>
               <Link
                 style={{ textDecoration: "none", color: "white" }}
                 to="/product"
@@ -81,9 +91,8 @@ function LayoutMain({ children }) {
                   })}
                 >
                   <div ref={useRefActive} className={clsx(cx("bodyNav_group"))}>
-                    <BsTvFill />
-                    <span style={{ pointerEvents: "none" }}>SẢN PHẨM</span>
-                    <span style={{ pointerEvents: "none" }}></span>
+                    <FiShoppingBag />
+                    <span style={{ pointerEvents: "none" }}>Products</span>
                   </div>
                 </li>
               </Link>
@@ -103,76 +112,11 @@ function LayoutMain({ children }) {
                     style={{ pointerEvents: "none" }}
                     className={clsx(cx("bodyNav_group"))}
                   >
-                    <BsFillMenuButtonWideFill />
-                    <span>DANH MỤC</span>
-                    <span></span>
+                    <FiLayers />
+                    <span>Categorys</span>
                   </div>
                 </li>
               </Link>
-              <Link
-                style={{ textDecoration: "none", color: "white" }}
-                to="/warehouse"
-              >
-                <li
-                  className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/warehouse"
-                        ? true
-                        : false,
-                  })}
-                >
-                  <div
-                    style={{ pointerEvents: "none" }}
-                    className={clsx(cx("bodyNav_group"))}
-                  >
-                    <BsCartFill />
-                    <span>KHO HÀNG</span>
-                    <span></span>
-                  </div>
-                </li>
-              </Link>
-              <Link
-                style={{ textDecoration: "none", color: "white" }}
-                to="/promotion"
-              >
-                <li
-                  className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/promotion"
-                        ? true
-                        : false,
-                  })}
-                >
-                  <div
-                    style={{ pointerEvents: "none" }}
-                    className={clsx(cx("bodyNav_group"))}
-                  >
-                    <FaSalesforce />
-                    <span>KHUYẾN MÃI</span>
-                    <span></span>
-                  </div>
-                </li>
-              </Link>
-              <li>
-                <div
-                  style={{ pointerEvents: "none" }}
-                  className={clsx(cx("bodyNav_group"))}
-                >
-                  <FaRocketchat />
-                  <span>CHAT</span>
-                  <span></span>
-                </div>
-              </li>
-              <li>
-                <div
-                  style={{ pointerEvents: "none" }}
-                  className={clsx(cx("bodyNav_group"))}
-                >
-                  <BsReceiptCutoff />
-                  <span>ĐƠN HÀNG</span>
-                  <span></span>
-                </div>
-              </li>
               <Link
                 to="/users"
                 style={{ textDecoration: "none", color: "white" }}
@@ -189,9 +133,8 @@ function LayoutMain({ children }) {
                     style={{ pointerEvents: "none" }}
                     className={clsx(cx("bodyNav_group"))}
                   >
-                    <FaUsers />
-                    <span>USER</span>
-                    <span></span>
+                    <FiUsers />
+                    <span>Users</span>
                   </div>
                 </li>
               </Link>
@@ -200,16 +143,40 @@ function LayoutMain({ children }) {
                   style={{ pointerEvents: "none" }}
                   className={clsx(cx("bodyNav_group"))}
                 >
-                  <FaChartLine />
-                  <span>DOANH THU</span>
-                  <span></span>
+                  <FaRocketchat />
+                  <span>Chat</span>
                 </div>
               </li>
+              <Link style={{ textDecoration: "none", color: "white" }}>
+                <p className={clsx(cx("title"))}>Orders</p>
+                <li>
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <FiShoppingCart />
+                    <span>Orders</span>
+                  </div>
+                </li>
+              </Link>
+
+              <Link style={{ textDecoration: "none", color: "white" }}>
+                <p className={clsx(cx("title"))}>Chart</p>
+                <li>
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <FaChartLine />
+                    <span>Turnover</span>
+                  </div>
+                </li>
+              </Link>
             </ul>
           </div>
-          <div onClick={handleLogout} className={clsx(cx("logout"))}>
+          {/* <div onClick={handleLogout} className={clsx(cx("logout"))}>
             <p>THOÁT</p>
-          </div>
+          </div> */}
         </div>
         <div
           className={clsx(cx("content"), {
@@ -218,7 +185,12 @@ function LayoutMain({ children }) {
         >
           <div onClick={handleToggleOff} className={clsx(cx("header"))}>
             <BsList
-              style={{ width: "30px", height: "30px", color: "rgb(3,201,215)" }}
+              style={{
+                width: "23px",
+                height: "23px",
+                color: "rgb(3,201,215)",
+                alignSelf: "center",
+              }}
               onClick={handleMenuClick}
             />
             <form className={clsx(cx("header-from-search"))}>
@@ -238,32 +210,89 @@ function LayoutMain({ children }) {
               onClick={(e) => handleToggleOn(e)}
               className={clsx(cx("user"))}
             >
-              <BsBell style={{ width: "20px", height: "20px" }} />
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+              <CgBell
                 style={{
-                  width: "40px",
-                  height: "40px",
-                  backgroundColor: "#5041bc",
-                  borderRadius: "50%",
+                  width: "23px",
+                  height: "23px",
+                  color: "rgb(3,201,215)",
+                  margin: "0px 12px",
                 }}
-              ></img>
+              />
+
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src="https://www.shareicon.net/data/512x512/2016/08/05/806962_user_512x512.png"
+                  style={{
+                    width: "30px",
+                    height: "30px",
+                    // backgroundColor: "#5041bc",
+                    borderRadius: "50%",
+                    margin: "0px",
+                  }}
+                ></img>
+                <p
+                  style={{
+                    margin: "0px 12px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  Hi,<p>{Decode_token.fullname}</p>
+                </p>
+                <FiChevronDown
+                  style={{ width: "14px", height: "14px", color: "#9ca3af" }}
+                />
+              </div>
             </div>
             <div
+              onClick={(e) => e.stopPropagation()}
               className={clsx(cx("user-option"), {
                 [styles.userOptionActive]: toggleUserOption,
               })}
             >
-              <img
-                style={{
-                  width: "60px",
-                  height: "60px",
-                  backgroundColor: "#5041bc",
-                  borderRadius: "50%",
-                }}
-                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-              ></img>
-              <p>Hello {Decode_token.fullname}</p>
+              <div className={clsx(cx("user-option-header"))}>
+                <p>User Profile</p>
+                <div
+                  onClick={() => setToggleUserOption(false)}
+                  className={clsx(cx("user-option-header-button-close"))}
+                >
+                  <IoIosCloseCircleOutline
+                    style={{ width: "24px", height: "24px" }}
+                  />
+                </div>
+              </div>
+              <div className={clsx(cx("user-option-body"))}>
+                <img
+                  style={{
+                    backgroundColor: "#5041bc",
+                    borderRadius: "50%",
+                  }}
+                  src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                ></img>
+                <div style={{ marginRight: "48px" }}>
+                  <p>{Decode_token.fullname}</p>
+                  <p>{Decode_token.role}</p>
+                  <p>{Decode_token.email}</p>
+                </div>
+              </div>
+              <div className={clsx(cx("user-option-body2"))}>
+                <div className={clsx(cx("user-option-header-button-profile"))}>
+                  <FiEdit
+                    style={{
+                      width: "20px",
+                      height: "20px",
+                      color: "rgb(3,201,215)",
+                    }}
+                  />
+                </div>
+                <div className={clsx(cx("user-option-header-button-profile2"))}>
+                  <p>My Profile</p>
+                  <p>Account Settings</p>
+                </div>
+              </div>
+              <div className={clsx(cx("user-option-footer"))}>
+                <button onClick={handleLogout}>Logout</button>
+              </div>
             </div>
           </div>
           <div onClick={handleToggleOff}>{children}</div>

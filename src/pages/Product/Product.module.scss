@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
 :root {
   --maincolor: #5041bc;
 }
@@ -5,6 +7,8 @@
   position: relative;
   margin: 0;
   width: 100%;
+  height: 100vh;
+  overflow: scroll;
 
   .list-search {
     background-color: red;
@@ -71,79 +75,6 @@
     background-color: white;
     border-radius: 20px;
   }
-}
-.category {
-  list-style: none;
-  font-weight: bold;
-  font-size: 20px;
-  padding: 10px;
-  width: -moz-fit-content;
-  width: fit-content;
-  color: #fff;
-  border-radius: 5px;
-  background-image: linear-gradient(
-    to right,
-    rgb(124, 54, 245),
-    rgb(178, 65, 200),
-    rgb(234, 78, 154)
-  );
-  border: 2px solid rgb(42, 150, 218);
-  cursor: pointer;
-  transition: all 1s linear;
-}
-.category:hover {
-  background-image: linear-gradient(
-    to right,
-    rgb(234, 78, 154),
-    rgb(178, 65, 200),
-    rgb(124, 54, 245)
-  );
-}
-.product-group {
-  padding: 20px;
-  height: 250px;
-}
-.product-item {
-  width: 200px;
-  height: 200px;
-  margin: 30px 30px;
-  position: relative;
-  display: inline-block;
-  scroll-behavior: smooth;
-  border-radius: 15px;
-  transition: 0.5s linear;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(20px);
-  background: #2a2e54;
-  border: 2px solid #32407b;
-  padding: 10px;
-}
-.product-item::after {
-  content: "";
-  width: 200px;
-  height: 200px;
-  background: #2a2e54;
-  border-radius: 15px;
-  border: 2px solid #32407b;
-  position: absolute;
-  top: 102%;
-  opacity: 0.3;
-}
-.product-item > img {
-  height: 100px;
-  position: absolute;
-  pointer-events: none;
-  top: 0;
-  right: -20%;
-}
-.product-item > p {
-  pointer-events: none;
-  color: white;
-  text-align: start;
-  transition: 0.5s ease;
-}
-.product-item > img + .product-item > img {
-  margin-right: 50px;
 }
 .header {
   padding: 10px;
@@ -235,19 +166,31 @@
   display: block;
 }
 .listproduct {
-  width: 95%;
+  width: 90%;
   margin: 0px auto;
   background-color: rgb(255, 255, 255);
   border-radius: 20px;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  overflow: scroll;
   .table {
     align-self: center;
-    width: 90%;
+    width: 95%;
+    margin: 0px 10px;
     // border-bottom: 2px solid rgba(224, 224, 224, 1);
     thead {
       outline: 2px solid rgba(224, 224, 224, 1);
+      tr {
+        th {
+          font-weight: 500;
+          font-family: Roboto, "Segoe UI", GeezaPro, "DejaVu Serif",
+            "sans-serif", -apple-system, BlinkMacSystemFont;
+          font-size: 12px;
+          font-style: normal;
+          color: rgba(0, 0, 0, 0.54);
+        }
+      }
     }
     tbody {
       tr {
@@ -255,25 +198,44 @@
         td {
           text-align: center;
           position: relative;
+          font-size: 13px;
           cursor: pointer;
+          font-weight: 400;
+          font-style: normal;
+          font-family: Roboto, "Segoe UI", GeezaPro, "DejaVu Serif",
+            "sans-serif", -apple-system, BlinkMacSystemFont;
+          color: rgba(0, 0, 0, 0.87);
+          line-height: 20px;
+          margin: 5px;
+          max-width: 250px;
           img {
             width: 80px;
           }
-          .status_conhang{
-            width: fit-content;
-            width: -moz-fit-content;
+          .status_conhang {
+            min-width: 50px;
             height: 25px;
             background-color: lightgreen;
-            margin: auto;
-            padding: 5px;
             border-radius: 15px;
             text-align: center;
             color: #fff;
             position: absolute;
+            padding: 4px 8px;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-50%) translateX(-50%);
+            left: 50%;
+            font-weight: 400;
+            font-style: normal;
+            font-family: Roboto, "Segoe UI", GeezaPro, "DejaVu Serif",
+              "sans-serif", -apple-system, BlinkMacSystemFont;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            p {
+              margin: 0;
+            }
           }
-          .status_hethang{
+          .status_hethang {
             width: fit-content;
             width: -moz-fit-content;
             height: 25px;
@@ -286,6 +248,18 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 13px;
+            font-weight: 400;
+            font-style: normal;
+            font-family: Roboto, "Segoe UI", GeezaPro, "DejaVu Serif",
+              "sans-serif", -apple-system, BlinkMacSystemFont;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            p {
+              margin: 0;
+              margin: 0px 8px;
+            }
           }
         }
         .title_td {
@@ -293,11 +267,11 @@
           overflow-wrap: break-word;
         }
       }
-      tr:hover{
-        background-color: rgb(219,219,219);
-        outline: 2px solid rgb(219,219,219);
-        td{
-          outline: 2px solid rgb(219,219,219);
+      tr:hover {
+        background-color: rgb(233, 233, 233);
+        outline: 2px solid rgb(233, 233, 233);
+        td {
+          outline: 2px solid rgb(233, 233, 233);
         }
       }
     }
@@ -398,18 +372,27 @@
 }
 .button-add-new {
   display: flex;
-  width: 20px;
+  // width: 20px;
   height: 20px;
   align-items: center;
-  background-color: lightblue;
+  background-color: rgb(3, 201, 215);
   margin: 10px 0;
-  padding: 10px;
-  margin-right: 20px;
-  border-radius: 50%;
+  padding: 15px 10px;
+  // margin-right: 20px;
+  border-radius: 10px;
   transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  color: #fff;
+  p {
+    margin: 0;
+    padding: 0;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+  }
 }
 .button-add-new:hover {
   transform: scale(1.1);
+  box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
 }
 .button-add-new p {
   margin: 0px 5px;
