@@ -206,10 +206,7 @@ function LayoutMain({ children }) {
                 </div>
               </div>
             </form>
-            <div
-              onClick={(e) => handleToggleOn(e)}
-              className={clsx(cx("user"))}
-            >
+            <div className={clsx(cx("user"))}>
               <CgBell
                 style={{
                   width: "23px",
@@ -219,7 +216,10 @@ function LayoutMain({ children }) {
                 }}
               />
 
-              <div style={{ display: "flex", alignItems: "center" }}>
+              <div
+                onClick={(e) => handleToggleOn(e)}
+                style={{ display: "flex", alignItems: "center" }}
+              >
                 <img
                   src="https://www.shareicon.net/data/512x512/2016/08/05/806962_user_512x512.png"
                   style={{
@@ -295,7 +295,9 @@ function LayoutMain({ children }) {
               </div>
             </div>
           </div>
-          <div onClick={handleToggleOff}>{children}</div>
+          <div style={{ height: "100%" }} onClick={handleToggleOff}>
+            {children}
+          </div>
         </div>
       </div>
     </DataSearchContext.Provider>

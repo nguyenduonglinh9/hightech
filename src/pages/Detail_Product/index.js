@@ -4,15 +4,18 @@ import clsx from "clsx";
 import classNames from "classnames/bind";
 import { useLocation } from "react-router-dom";
 import { BsPlusCircle, BsXCircleFill, BsCaretDownFill } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 function DetailProduct() {
   const id = useLocation();
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const cx = classNames.bind(styles);
+  let navigate = useNavigate();
 
   const refDesc = useRef();
   const refInputUpload = useRef();
   const refSpec = useRef();
+  const refModal = useRef();
 
   const [product, setProduct] = useState({});
   const [category, setCategory] = useState([]);
@@ -21,8 +24,9 @@ function DetailProduct() {
   const [categorys, setCategorys] = useState([]);
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleDropDownBrand, setToggleDropDownBrand] = useState(false);
+  const [toggleModal, setToggleModal] = useState(false);
 
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState([]);
   const [images, setImages] = useState([]);
   const [costPrice, setCostPrice] = useState(0);
@@ -35,7 +39,6 @@ function DetailProduct() {
 
   const [currentBrand, setCurrentBrand] = useState("");
   const [currentBrandID, setCurrentBrandID] = useState("");
-
 
   useEffect(() => {
     fetch(`https://fpt-hightech-api.herokuapp.com/product/${id.state.id}`, {
@@ -56,7 +59,7 @@ function DetailProduct() {
         setCostPrice(data.data.costPrice);
         setSalePercent(data.data.salePercent);
         setQuantity(data.data.quantity);
-        setSpecifications([...data.data.specifications])
+        setSpecifications([...data.data.specifications]);
         setCurrentCategoryID(data.data.category);
         setCurrentBrandID(data.data.brand);
       });
@@ -103,7 +106,7 @@ function DetailProduct() {
       const arr = categorys.filter((item, index) => {
         return item._id == currentCategoryID;
       });
-      setCurrentCategory(arr[0]['title']);
+      setCurrentCategory(arr[0]["title"]);
     }
   }, [currentCategoryID]);
 
@@ -115,13 +118,11 @@ function DetailProduct() {
         return item._id == currentBrandID;
       });
       if (arr.length == 0) {
-        setCurrentBrand(brands[0]['title']);
-        setCurrentBrandID(brands[0]['_id'])
-      }
-      else {
+        setCurrentBrand(brands[0]["title"]);
+        setCurrentBrandID(brands[0]["_id"]);
+      } else {
         setCurrentBrand(arr[0]["title"]);
       }
-      
     }
   }, [brands]);
 
@@ -130,30 +131,86 @@ function DetailProduct() {
     input.style.margin = "5px 0";
     refDesc.current.appendChild(input);
   };
-
+  const handleClose = () => {
+    setToggleModal(false);
+  };
   const handleDeleteProduct = () => {
-    fetch(`https://fpt-hightech-api.herokuapp.com/product/${id.state.id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-    })
-      .then((res) => {
-        return res.json();
-      })
+    refModal.current.innerHTML = `
+    <div style="animation:none;">
+        <h2>Do you want to delete this product?</h2>
+        <div style="animation:none;">
+            <button>Yes</button>
+             <button>No</button>
+        </div>
+    </div>`;
+
+    refModal.current.children[0].children[1].children[1].addEventListener(
+      "click",
+      () => {
+        setToggleModal(false);
+      }
+    );
+
+    refModal.current.children[0].children[1].children[0].addEventListener(
+      "click",
+      () => {
+        refModal.current.innerHTML = `
+            <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
+                
+            </div>`;
+        fetch(`https://fpt-hightech-api.herokuapp.com/product/${id.state.id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": DataLogin.token,
+          },
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((res) => {
+            console.log(res);
+            refModal.current.innerHTML = `
+            <div style="animation:none;">
+                <h2>Successfully</h2>
+            </div>`;
+            setTimeout(() => {
+              navigate("/product");
+              window.location.reload(false);
+            }, 1500);
+          });
+      }
+    );
+
+    setToggleModal(true);
+  };
+
+  const openUploadImage = () => {
+    refInputUpload.current.click();
+  };
+  const handleOnImageChange = (e) => {
+    const arrimageUrl = [];
+    const dataImage = new FormData();
+    dataImage.append("source", e.target.files[0]);
+    fetch(
+      "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
+      {
+        method: "POST",
+        body: dataImage,
+      }
+    )
+      .then((res) => res.json())
       .then((res) => {
         console.log(res);
-      });
+        //  setImagesUpload((prev) => [...prev, res["image"]["url"]]);
+        setImages((prev) => [...prev, res["image"]["url"]]);
+        arrimageUrl.push(res["image"]["url"]);
+      })
+      .catch((err) => console.log(err));
+
+    // setImages((prev) => [...prev, ...Array.from(e.target.files)]);
   };
 
-   const openUploadImage = () => {
-     refInputUpload.current.click();
-   };
-   const handleOnImageChange = (e) => {
-     setImages((prev) => [...prev, ...Array.from(e.target.files)]);
-  };
-  
   const handleDeleteImage = (image) => {
     setImages(
       Array.from(images).filter((item) => {
@@ -173,11 +230,11 @@ function DetailProduct() {
     refSpec.current.appendChild(div);
   };
 
-  const handleChangeCurrentCategory = (id,title) => {
+  const handleChangeCurrentCategory = (id, title) => {
     setCurrentCategoryID(id);
     setCurrentCategory(title);
     setToggleDropDown(false);
-  }
+  };
 
   const handleChangeCurrentBrand = (id, title) => {
     setCurrentBrandID(id);
@@ -203,20 +260,40 @@ function DetailProduct() {
       // setSpecifications()
       newArr.push(ojb);
     }
-    const arrImage = images.map((image) => {
-      return URL.createObjectURL(image);
-    });
-  }
+    fetch(`https://fpt-hightech-api.herokuapp.com/product/${id.state.id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+      body: JSON.stringify({
+        title: title,
+        description: arrDataInputDesc,
+        images: images,
+        costPrice: costPrice,
+        salePrice: costPrice * (salePercent / 100),
+        salePercent: salePercent,
+        quantity: quantity,
+        specifications: newArr,
+        category: currentCategoryID,
+        brand: currentBrandID,
+        favorite: false,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => console.log(res));
+  };
 
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("from"))}>
         <div className={clsx(cx("from-header"))}>
           <h2>HIGHTECH</h2>
+          <p>UPDATE & DELETE PRODUCT FORM</p>
         </div>
         <div className={clsx(cx("from-body"))}>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>NAME</p>
+            <p style={{ fontWeight: "bold" }}>Name</p>
             <input
               value={title}
               onChange={(e) => {
@@ -225,8 +302,11 @@ function DetailProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>DESCRIPTION</p>
-            <div ref={refDesc}>
+            <p style={{ fontWeight: "bold" }}>Descriptions</p>
+            <div
+              style={{ display: "flex", flexDirection: "column" }}
+              ref={refDesc}
+            >
               {description == null
                 ? undefined
                 : description.map((item, index) => {
@@ -243,7 +323,7 @@ function DetailProduct() {
             <BsPlusCircle onClick={handleAppendChild} />
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>IMAGE</p>
+            <p style={{ fontWeight: "bold" }}>Images</p>
             <div style={{ display: "flex" }}>
               {images == null
                 ? undefined
@@ -277,9 +357,9 @@ function DetailProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>PRICE</p>
+            <p style={{ fontWeight: "bold" }}>Price</p>
             <input
-              type={Number}
+              type="number"
               value={costPrice}
               onChange={(e) => {
                 setCostPrice(e.target.value);
@@ -287,22 +367,23 @@ function DetailProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>SALE</p>
+            <p style={{ fontWeight: "bold" }}>Sale</p>
             <input
+              type="number"
               value={salePercent}
               onChange={(e) => setSalePercent(e.target.value)}
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>QUANTITY</p>
+            <p style={{ fontWeight: "bold" }}>Quantity</p>
             <input
-              type={Number}
+              type="number"
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>SPECIFICATIONS</p>
+            <p style={{ fontWeight: "bold" }}>Specifications</p>
             <div className={clsx(cx("from-body-group-spec"))} ref={refSpec}>
               {specifications == null
                 ? undefined
@@ -318,7 +399,7 @@ function DetailProduct() {
             <BsPlusCircle onClick={handleAppendChildSpec} />
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>CATEGORY</p>
+            <p style={{ fontWeight: "bold" }}>Category</p>
             <div
               className={clsx(cx("drop-down"))}
               style={{
@@ -371,7 +452,7 @@ function DetailProduct() {
             </div>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>BRAND</p>
+            <p style={{ fontWeight: "bold" }}>Brand</p>
             <div
               className={clsx(cx("drop-down"))}
               style={{
@@ -429,8 +510,22 @@ function DetailProduct() {
           </div>
           <div>
             <button>CANCEL</button>
-            <button onClick={handleUpdateProduct}>SAVE</button>
+            <button
+              style={{ backgroundColor: "rgb(3, 201, 215)" }}
+              onClick={handleUpdateProduct}
+            >
+              SAVE
+            </button>
           </div>
+        </div>
+      </div>
+      <div
+        className={clsx(cx("modal-confrim"), {
+          [styles.turnonModal]: toggleModal,
+        })}
+      >
+        <div ref={refModal} className={clsx(cx("modal"))}>
+          <div className={clsx(cx("loading"))}></div>
         </div>
       </div>
     </div>

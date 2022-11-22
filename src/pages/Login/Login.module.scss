@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
+
 .container {
   background-color: #d0bfff;
   width: 100vw;
@@ -213,6 +215,25 @@
   font-weight: bold;
   font-size: 18px;
   text-align: center;
+  div {
+    animation: circle 1s linear infinite;
+
+    button {
+      box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+        rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
+        rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+      font-family: "Open Sans", sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      color: #000;
+    }
+    h2{
+      font-family: "Open Sans", sans-serif;
+      font-weight: 600;
+      font-size: 24px;
+      color: #000;
+    }
+  }
 }
 .modal_button {
   background-color: #c2fbd7;
@@ -256,9 +277,11 @@
   align-items: center;
 }
 .modalMail input {
-  padding:10px;
-  margin:10px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  padding: 10px;
+  margin: 10px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   border: none;
   border-radius: 10px;
   font-size: 16px;
@@ -266,18 +289,18 @@
 .modalMail button {
   width: 50%;
   appearance: button;
-  background-color: #1899D6;
+  background-color: #1899d6;
   border: solid transparent;
   border-radius: 16px;
   border-width: 0 0 4px;
   box-sizing: border-box;
-  color: #FFFFFF;
+  color: #ffffff;
   cursor: pointer;
   display: inline-block;
-  font-family: din-round,sans-serif;
+  font-family: din-round, sans-serif;
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: .8px;
+  letter-spacing: 0.8px;
   line-height: 20px;
   margin-top: 10px;
   outline: none;
@@ -287,7 +310,7 @@
   text-transform: uppercase;
   touch-action: manipulation;
   transform: translateZ(0);
-  transition: filter .2s;
+  transition: filter 0.2s;
   user-select: none;
   -webkit-user-select: none;
   vertical-align: middle;

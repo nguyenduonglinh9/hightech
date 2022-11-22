@@ -6,7 +6,7 @@ import LayoutMain from "./components/Layout/LayoutMain";
 
 function App() {
   return (
-    <div>
+    <div style={{height:'100%'}}>
       <Router>
         <Routes>
           {privateRoutes.map((route, index) => {

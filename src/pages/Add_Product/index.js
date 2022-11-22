@@ -14,8 +14,7 @@ function AddProduct() {
   const refDesc = useRef();
   const refInputUpload = useRef();
   const refSpec = useRef();
-  
-
+  const refErrName = useRef();
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -26,7 +25,7 @@ function AddProduct() {
   const [imagesUpload, setImagesUpload] = useState([]);
 
   const [costPrice, setCostPrice] = useState(0);
-  const [salePercent, setSalePercent] = useState("");
+  const [salePercent, setSalePercent] = useState();
   const [quantity, setQuantity] = useState(0);
   const [specifications, setSpecifications] = useState([]);
 
@@ -35,18 +34,17 @@ function AddProduct() {
     "634f9eea3f879eb6fc81bf01"
   );
   const [brand, setBrand] = useState("");
-  const [brandCurrentID, setBrandCurrentID] = useState('');
+  const [brandCurrentID, setBrandCurrentID] = useState("");
 
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleDropDownBrand, setToggleDropDownBrand] = useState(false);
   const [toggleUploadImage, setToggleUpLoadImage] = useState(false);
 
-    
   useEffect(() => {
     if (imagesUpload.length === images.length) {
-      setToggleUpLoadImage(false)
+      setToggleUpLoadImage(false);
     }
-  },[imagesUpload])
+  }, [imagesUpload]);
 
   useEffect(() => {
     fetch("https://fpt-hightech-api.herokuapp.com/category/", {
@@ -84,13 +82,12 @@ function AddProduct() {
 
   useEffect(() => {
     if (brands.length == 0) {
-      setBrandCurrentID('')
+      setBrandCurrentID("");
+    } else {
+      setBrandCurrentID(brands[0]["_id"]);
     }
-    else {
-      setBrandCurrentID(brands[0]['_id'])
-    }
-  }, [brands])
-  
+  }, [brands]);
+
   useEffect(() => {
     if (brands.length == 0) {
       setBrand("");
@@ -100,52 +97,53 @@ function AddProduct() {
   }, [brands]);
 
   const handleAddProduct = () => {
+    //xử lý state Description
+    const listInputDesc = [...refDesc.current.children];
+    const arrDataInputDesc = listInputDesc.map((item, index) => {
+      return item.value;
+    });
+    //xử lý specifications
+    const listDiv = [...refSpec.current.children];
 
-        //xử lý state Description
-        const listInputDesc = [...refDesc.current.children];
-        const arrDataInputDesc = listInputDesc.map((item, index) => {
-          return item.value;
-        });
-        //xử lý specifications
-        const listDiv = [...refSpec.current.children];
-        var newArr = [];
-        for (let i = 0; i < listDiv.length; i++) {
-          var a = listDiv[i];
-          var b = a.children;
-          var ojb = {};
-          ojb["title"] = b[0].value;
-          ojb["content"] = b[1].value;
-          newArr.push(ojb);
-        } 
-      const data = {
-        title: title,
-        description: arrDataInputDesc,
-        images: imagesUpload,
-        costPrice: costPrice,
-        salePrice: costPrice * (salePercent / 100),
-        salePercent: salePercent,
-        quantity: quantity,
-        specifications: newArr,
-        category: currentCategoryID,
-        brand: brandCurrentID,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        favorite: false,
-      };
-      fetch("https://fpt-hightech-api.herokuapp.com/product/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": DataLogin.token,
-        },
-        body: JSON.stringify(data),
+    var newArr = [];
+    for (let i = 0; i < listDiv.length; i++) {
+      var a = listDiv[i];
+      var b = a.children;
+      var ojb = {};
+      ojb["title"] = b[0].value;
+      ojb["content"] = b[1].value;
+      newArr.push(ojb);
+    }
+    const data = {
+      title: title,
+      description: arrDataInputDesc,
+      images: images,
+      costPrice: costPrice,
+      salePrice: costPrice * (salePercent / 100),
+      salePercent: salePercent,
+      quantity: quantity,
+      specifications: newArr,
+      category: currentCategoryID,
+      brand: brandCurrentID,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      favorite: false,
+    };
+    fetch("https://fpt-hightech-api.herokuapp.com/product/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        return response.json();
       })
-        .then((response) => {
-          return response.json();
-        })
-        .then((res) => {
-          console.log(res);
-        });     
+      .then((res) => {
+        console.log(res);
+      });
+    // }))
   };
 
   const handleAppendChild = () => {
@@ -155,55 +153,22 @@ function AddProduct() {
   };
 
   const handleAppendChildSpec = () => {
-    
-    const div = document.createElement('div');
-    const input = document.createElement('input');
+    const div = document.createElement("div");
+    const input = document.createElement("input");
     const input2 = document.createElement("input");
 
     div.appendChild(input);
     div.appendChild(input2);
 
-    refSpec.current.appendChild(div)
-
-  }
+    refSpec.current.appendChild(div);
+  };
 
   const openUploadImage = () => {
     refInputUpload.current.click();
   };
   const handleOnImageChange = (e) => {
-    // const fromData = new FormData();
-    // fromData.append('my-image',e.target.files[0],e.target.files[0].name)
-    setImages((prev) => [...prev, ...Array.from(e.target.files)]);
-    // setImages(fromData)
-  };
-
-  const handleDeleteImage = (image,index) => {
-    setImages(
-      Array.from(images).filter((item) => {
-        return item !== image;
-      })
-    );
-    setImagesUpload(imagesUpload.filter((item,index) => {
-      return index !== index
-    }))
-  };
-
-  const handleChangeCurrentCategory = (id,title) => {
-    setCategory(title)
-    setCurrentCategoryID(id);
-    setToggleDropDown(false)
-  }
-
-  const handleChangeCurrentBrand = (id, title) => {
-    setBrand(title)
-    setBrandCurrentID(id)
-    setToggleDropDownBrand(false)
-  }
-
-  const handleUpLoadImages = () => {
-    setToggleUpLoadImage(true)
-    //xử lý hình ảnh
-    images.map((item) => {
+    const arr = Array.from(e.target.files);
+    arr.map((item) => {
       const dataImage = new FormData();
       dataImage.append("source", item);
       fetch(
@@ -215,33 +180,82 @@ function AddProduct() {
       )
         .then((res) => res.json())
         .then((res) => {
-          setImagesUpload((prev) => [...prev,res["image"]["url"]]);
+          console.log(res);
+          //  setImagesUpload((prev) => [...prev, res["image"]["url"]]);
+          setImages((prev) => [...prev, res["image"]["url"]]);
         })
         .catch((err) => console.log(err));
     });
-  }
+    // setImages((prev) => [...prev, ...Array.from(e.target.files)]);
+  };
+
+  const handleDeleteImage = (image, index) => {
+    setImages(
+      Array.from(images).filter((item) => {
+        return item !== image;
+      })
+    );
+    setImagesUpload(
+      imagesUpload.filter((item, index) => {
+        return index !== index;
+      })
+    );
+  };
+
+  const handleChangeCurrentCategory = (id, title) => {
+    setCategory(title);
+    setCurrentCategoryID(id);
+    setToggleDropDown(false);
+  };
+
+  const handleChangeCurrentBrand = (id, title) => {
+    setBrand(title);
+    setBrandCurrentID(id);
+    setToggleDropDownBrand(false);
+  };
+
+  const handleOnChangeName = (e) => {
+    setTitle(e.target.value);
+    if (e.target.value !== "") {
+      refErrName.current.children[2].innerText = null;
+    }
+  };
+
+  const handleValidateName = (e) => {
+    if (e.target.value == "") {
+      refErrName.current.children[2].style.color = "red";
+      refErrName.current.children[2].innerText = "Không được bỏ trống";
+    } else {
+      refErrName.current.children[2].innerText = null;
+    }
+  };
 
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("from"))}>
         <div className={clsx(cx("from-header"))}>
           <h2>HIGHTECH</h2>
+          <p>ADD NEW PRODUCT FORM</p>
         </div>
         <div className={clsx(cx("from-body"))}>
-          <div className={clsx(cx("from-body-group"))}>
+          <div ref={refErrName} className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>NAME</p>
             <input
+              onBlur={(e) => handleValidateName(e)}
               value={title}
               onChange={(e) => {
-                setTitle(e.target.value);
+                handleOnChangeName(e);
               }}
               placeholder="ex: CPU AMD Ryzen 5 5600X (6C/12T, 3.70 GHz - 4.60 GHz, 32MB) - AM4"
             ></input>
-            <p style={{ margin: "2px" }}>Lỗi</p>
+            <p style={{ margin: "2px" }}></p>
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>DESCRIPTION</p>
-            <div ref={refDesc}>
+            <div
+              style={{ display: "flex", flexDirection: "column" }}
+              ref={refDesc}
+            >
               <input
                 placeholder="ex: Cam kết hàng chính hãng 100%"
                 style={{ margin: "5px 0" }}
@@ -250,7 +264,6 @@ function AddProduct() {
             <BsPlusCircle onClick={handleAppendChild} />
           </div>
           <div className={clsx(cx("from-body-group"))}>
-    
             <p style={{ fontWeight: "bold" }}>IMAGE</p>
             <div style={{ display: "flex" }}>
               {Array.from(images).length == null
@@ -258,17 +271,16 @@ function AddProduct() {
                 : Array.from(images).map((image, index) => {
                     return (
                       <div key={index} style={{ position: "relative" }}>
-                        <img
-                          styles={{ width: "80px" }}
-                          src={URL.createObjectURL(image)}
-                        ></img>
-                        <div className={clsx({
-                          [styles.activeuploadimage] : toggleUploadImage
-                        })}>
+                        <img styles={{ width: "80px" }} src={image}></img>
+                        <div
+                          className={clsx({
+                            [styles.activeuploadimage]: toggleUploadImage,
+                          })}
+                        >
                           <div></div>
                         </div>
                         <BsXCircleFill
-                          onClick={() => handleDeleteImage(image,index)}
+                          onClick={() => handleDeleteImage(image, index)}
                           className={clsx(cx("icon-delete"))}
                         />
                       </div>
@@ -286,7 +298,6 @@ function AddProduct() {
               multiple
               onChange={(e) => handleOnImageChange(e)}
             ></input>
-            <button onClick={handleUpLoadImages}>UPLOAD</button>
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>PRICE</p>
@@ -443,7 +454,12 @@ function AddProduct() {
             <button>CANCEL</button>
           </div>
           <div>
-            <button onClick={handleAddProduct}>SAVE</button>
+            <button
+              disabled={title == "" ? true : false}
+              onClick={handleAddProduct}
+            >
+              SAVE
+            </button>
           </div>
         </div>
       </div>

@@ -2,11 +2,15 @@ import styles from "./Login.module.scss";
 import clsx from "clsx";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Lottie from "lottie-react";
-import Wrong from "./assets/fonts/icon3d/Wrong.json";
-import Congratulation from "./assets/fonts/icon3d/congratulation.json";
 import classNames from "classnames/bind";
 import emailjs from "@emailjs/browser";
+import { FcCheckmark } from "react-icons/fc";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css";
+const imgCheck = require('../Login/assets/fonts/img/check.png');
+const imgCancel = require("../Login/assets/fonts/img/cancel.png");
+
+
 
 function Login() {
 
@@ -15,17 +19,32 @@ function Login() {
   //   navigate("/product");
   // }
   
-  const refLogin = useRef();
+  
   const cx = classNames.bind(styles);
   let navigate = useNavigate();
+
+  const refModal = useRef();
+  const refLogin = useRef();
+  const refUsername = useRef();
+  const refPassword = useRef()
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [toggleModal, setToggleModal] = useState(false);
 
+  // tippy(refUsername.current, {
+  //   content: "Không được bỏ trống",
+  // });
+
 
   const handleLogin = () => {
+    refModal.current.innerHTML = `
+    <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
+
+    </div>
+    `;
+    setToggleModal(true);
     fetch("https://fpt-hightech-api.herokuapp.com/access/login", {
       method: "POST",
       headers: {
@@ -42,9 +61,12 @@ function Login() {
       })
       .then(function (data) {
         if (data.code == 200) {
-          console.log(data)
-          setToggleModal(true)
-          setMessage(data.message);
+          refModal.current.innerHTML = `
+          <div style="animation:none">
+            <img style="width:50px;height:50px" src="${imgCheck}"></img>
+            <h2>Successful login</h2>
+          </div>
+          `;
           setTimeout(() => {
             navigate('/product');
           }, 2000)
@@ -57,8 +79,17 @@ function Login() {
           );
         }
         else {
-          setToggleModal(true);
-          setMessage(data.message);
+          refModal.current.innerHTML = `
+          <div style="animation:none">
+            <img style="width:50px;height:50px" src="${imgCancel}"></img>
+            <h2>${data.message}</h2>
+            <button style="padding:10px 20px;border:none;border-radius:10px";>Retry</button>
+          </div>
+          `;
+          refModal.current.children[0].children[2].addEventListener('click', () => {
+            setToggleModal(false)
+          })
+
           localStorage.setItem(
             "DataLogin",
             JSON.stringify({
@@ -100,12 +131,15 @@ function Login() {
                         styles.body_content_right_body_form_input
                       )}
                     >
-                      <input
-                        type="text"
-                        placeholder=" "
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                      ></input>
+                      <Tippy content="Must not be vacant">
+                        <input
+                          ref={refUsername}
+                          type="text"
+                          placeholder=" "
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                        ></input>
+                      </Tippy>
                       <label>username</label>
                     </div>
                     <div
@@ -113,12 +147,15 @@ function Login() {
                         styles.body_content_right_body_form_input
                       )}
                     >
-                      <input
-                        type="password"
-                        placeholder=" "
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      ></input>
+                      <Tippy content="At least 6 characters">
+                        <input
+                          ref={refPassword}
+                          type="password"
+                          placeholder=" "
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        ></input>
+                      </Tippy>
                       <label>password</label>
                     </div>
                     <div
@@ -144,10 +181,11 @@ function Login() {
           })}
         >
           <div
+            ref={refModal}
             onClick={(e) => e.stopPropagation()}
             className={clsx(cx("modal"))}
           >
-            <p>{message}</p>
+            {/* <p>{message}</p>
             {message != "success" ? (
               <button
                 onClick={() => setToggleModal(false)}
@@ -157,7 +195,7 @@ function Login() {
               </button>
             ) : (
               <div></div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
