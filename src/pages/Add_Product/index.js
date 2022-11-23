@@ -5,6 +5,7 @@ import classNames from "classnames/bind";
 import { useLocation } from "react-router-dom";
 import { BsPlusCircle, BsXCircleFill, BsCaretDownFill } from "react-icons/bs";
 import { Button } from "bootstrap";
+const warning = require('../Category/assets/imgs/warning.png')
 
 function AddProduct() {
   const id = useLocation();

@@ -77,6 +77,12 @@ function Login() {
               isLogin: true
             })
           );
+          localStorage.setItem(
+            "isLogin",
+            JSON.stringify({
+              isLogin: true,
+            })
+          );
         }
         else {
           refModal.current.innerHTML = `
@@ -91,7 +97,7 @@ function Login() {
           })
 
           localStorage.setItem(
-            "DataLogin",
+            "isLogin",
             JSON.stringify({
               isLogin: false,
             })

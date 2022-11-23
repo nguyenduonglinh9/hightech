@@ -16,11 +16,17 @@ import jwt_decode from "jwt-decode";
 
 function Product() {
   AOS.init();
+  let navigate = useNavigate();
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
+  const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
   const DataSearch = useContext(DataSearchContext);
   let dollarUSLocale = Intl.NumberFormat("en-US");
 
+  if (isLogin2['isLoggin'] === false) {
+    navigate('/')
+  }
+  console.log(isLogin2["isLoggin"]);
 
   const [category, setCategory] = useState([]);
   const [products, setProducts] = useState([]);
@@ -31,8 +37,6 @@ function Product() {
   const [idCate, setIdCate] = useState("634f9eea3f879eb6fc81bf01");
   const [loading, setLoading] = useState(false);
   const softSearch = useRef();
-
-  
 
   if (DataSearch != "") {
     if (typeof DataSearch == "string") {
@@ -48,11 +52,8 @@ function Product() {
     softSearch.current = undefined;
   }
 
-  console.log(softSearch.current);
 
   const refItem = useRef();
-
-  let navigate = useNavigate();
 
   useEffect(() => {
     fetch("https://fpt-hightech-api.herokuapp.com/category/", {
@@ -116,12 +117,12 @@ function Product() {
     setLoading(false);
   }
   const HandleDetail = (id) => {
-    navigate("/detail-product",{state:{id:id}});
-  }
+    navigate("/detail-product", { state: { id: id } });
+  };
 
   const handleNavigateAddProduct = () => {
-    navigate("/add-product")
-  }
+    navigate("/add-product");
+  };
 
   return (
     <div className={clsx(cx("container"))}>
@@ -221,12 +222,21 @@ function Product() {
         </div>
       </div>
       <div className={clsx(cx("listproduct"))}>
-        <div style={{ display: "flex",justifyContent:"space-between",margin:'20px'}}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            margin: "20px",
+          }}
+        >
           <div>
-            <h3 style={{margin:"0px"}}>PRODUCTS</h3>
-            <p style={{opacity:'0.7'}}>products/ {curentItemName}</p>
+            <h3 style={{ margin: "0px" }}>PRODUCTS</h3>
+            <p style={{ opacity: "0.7" }}>products/ {curentItemName}</p>
           </div>
-          <div onClick={handleNavigateAddProduct} className={clsx(cx("button-add-new"))}>
+          <div
+            onClick={handleNavigateAddProduct}
+            className={clsx(cx("button-add-new"))}
+          >
             <p>Add</p>
           </div>
         </div>

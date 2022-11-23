@@ -24,6 +24,7 @@ import { CgBell } from "react-icons/cg";
 import { FiChevronDown, FiEdit } from "react-icons/fi";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import jwt_decode from "jwt-decode";
+import { BiLibrary } from "react-icons/bi";
 import {
   FiShoppingBag,
   FiLayers,
@@ -58,7 +59,7 @@ function LayoutMain({ children }) {
   };
 
   const handleLogout = () => {
-    localStorage.setItem("data", JSON.stringify({ isLoggin: false }));
+    localStorage.setItem("isLogin", JSON.stringify({ isLoggin: false}));
     navigate("/");
   };
 
@@ -118,6 +119,27 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                style={{ textDecoration: "none", color: "white" }}
+                to="/category"
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/brand"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <BiLibrary />
+                    <span>Brands</span>
+                  </div>
+                </li>
+              </Link>
+              <Link
                 to="/users"
                 style={{ textDecoration: "none", color: "white" }}
               >
@@ -138,15 +160,6 @@ function LayoutMain({ children }) {
                   </div>
                 </li>
               </Link>
-              <li>
-                <div
-                  style={{ pointerEvents: "none" }}
-                  className={clsx(cx("bodyNav_group"))}
-                >
-                  <FaRocketchat />
-                  <span>Chat</span>
-                </div>
-              </li>
               <Link style={{ textDecoration: "none", color: "white" }}>
                 <p className={clsx(cx("title"))}>Orders</p>
                 <li>
