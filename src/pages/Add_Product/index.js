@@ -48,7 +48,7 @@ function AddProduct() {
   }, [imagesUpload]);
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/category/", {
+    fetch("http://quyt.ddns.net:3000/category/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ function AddProduct() {
   }, []);
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/brand/", {
+    fetch("http://quyt.ddns.net:3000/brand/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -130,7 +130,7 @@ function AddProduct() {
       updatedAt: new Date(),
       favorite: false,
     };
-    fetch("https://fpt-hightech-api.herokuapp.com/product/", {
+    fetch("http://quyt.ddns.net:3000/product/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

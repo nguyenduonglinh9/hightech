@@ -8,6 +8,11 @@ import Users from "../pages/Users";
 import AddProduct from "../pages/Add_Product";
 import AddUser from "../pages/Add_User";
 import DetailUser from "../pages/Detail_User";
+import Brand from "../pages/Brand";
+import Orders from "../pages/Orders";
+import ProductsSold from "../pages/Products_Sold";
+import Revuene from "../pages/Revuene";
+import DetailOrder from "../pages/Detail_Order";
 
 const privateRoutes = [
   {
@@ -23,6 +28,11 @@ const privateRoutes = [
   {
     path: "/category",
     component: Category,
+    layout: "MainLayout",
+  },
+  {
+    path: "/brand",
+    component: Brand,
     layout: "MainLayout",
   },
   {
@@ -58,6 +68,26 @@ const privateRoutes = [
   {
     path: "/detail-user",
     component: DetailUser,
+    layout: "MainLayout",
+  },
+  {
+    path: "/orders",
+    component: Orders,
+    layout: "MainLayout",
+  },
+  {
+    path: "/products-sold",
+    component: ProductsSold,
+    layout: "MainLayout",
+  },
+  {
+    path: "/revuene",
+    component: Revuene,
+    layout: "MainLayout",
+  },
+  {
+    path: "/detail-order",
+    component: DetailOrder,
     layout: "MainLayout",
   },
 ];

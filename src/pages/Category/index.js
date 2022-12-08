@@ -40,7 +40,7 @@ function Category() {
 
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/category/", {
+    fetch("http://quyt.ddns.net:3000/category/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +57,7 @@ function Category() {
   }, []);
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/brand/", {
+    fetch("http://quyt.ddns.net:3000/brand/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -92,7 +92,7 @@ function Category() {
   };
 
   const handleAddNewBrand = () => {
-    fetch("https://fpt-hightech-api.herokuapp.com/brand/", {
+    fetch("http://quyt.ddns.net:3000/brand/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -112,20 +112,17 @@ function Category() {
   };
 
   const handleUpdateBrand = () => {
-    fetch(
-      `https://fpt-hightech-api.herokuapp.com/brand/${refBrandID.current}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": DataLogin.token,
-        },
-        body: JSON.stringify({
-          title: title,
-          category: refIDCate.current,
-        }),
-      }
-    )
+    fetch(`http://quyt.ddns.net:3000/brand/${refBrandID.current}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+      body: JSON.stringify({
+        title: title,
+        category: refIDCate.current,
+      }),
+    })
       .then((res) => {
         res.json();
         setToggleModalAdd2(false);
@@ -135,16 +132,13 @@ function Category() {
   };
 
   const handleDeleteBrand = () => {
-    fetch(
-      `https://fpt-hightech-api.herokuapp.com/brand/${refBrandID.current}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": DataLogin.token,
-        },
-      }
-    )
+    fetch(`http://quyt.ddns.net:3000/brand/${refBrandID.current}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+    })
       .then((res) => {
         res.json();
         setToggleModalAdd2(false);
@@ -188,7 +182,7 @@ function Category() {
         .catch((err) => console.log(err));
     });
     promise.then((URLIcon) => {
-      fetch("https://fpt-hightech-api.herokuapp.com/category/", {
+      fetch("http://quyt.ddns.net:3000/category/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -247,20 +241,17 @@ function Category() {
         .catch((err) => console.log(err));
     });
     promise.then((URLIcon) => {
-      fetch(
-        `https://fpt-hightech-api.herokuapp.com/category/${refIDCate.current}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": DataLogin.token,
-          },
-          body: JSON.stringify({
-            title: titleCategory,
-            icon: URLIcon,
-          }),
-        }
-      )
+      fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": DataLogin.token,
+        },
+        body: JSON.stringify({
+          title: titleCategory,
+          icon: URLIcon,
+        }),
+      })
         .then((res) => res.json())
         .then((res) => {
           refModal2.current.innerHTML = `<h2>Successful</h2>`;
@@ -270,8 +261,8 @@ function Category() {
           }, 1500);
         })
         .catch((err) => {
-        refModal2.current.innerHTML = `<h2>${err}</h2>`;
-      })
+          refModal2.current.innerHTML = `<h2>${err}</h2>`;
+        });
     });
   };
 
@@ -285,16 +276,13 @@ function Category() {
 
    </div>
     `;
-    fetch(
-      `https://fpt-hightech-api.herokuapp.com/category/${refIDCate.current}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": DataLogin.token,
-        },
-      }
-    )
+    fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+    })
       .then((res) => {
         res.json();
       })
@@ -305,7 +293,7 @@ function Category() {
           window.location.reload(false);
         }, 1500);
       })
-    .catch(err => refModal3.current.innerHTML = `<h2>${err}</h2>`)
+      .catch((err) => (refModal3.current.innerHTML = `<h2>${err}</h2>`));
   }
   
   const handleCancel = () => {

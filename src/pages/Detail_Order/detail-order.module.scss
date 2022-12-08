@@ -21,7 +21,7 @@
     bottom: 0;
 
     .from-header {
-     width: 100%;
+      width: 100%;
       margin: auto;
       height: 100px;
       background-color: rgb(3, 201, 215);
@@ -44,7 +44,7 @@
       }
     }
     .from-body {
-       width: 90%;
+      width: 90%;
       margin: 10px;
       display: flex;
       flex-direction: column;
@@ -56,7 +56,7 @@
         flex-direction: column;
 
         input {
-         max-width: 100%;
+          max-width: 100%;
           padding: 15px;
           font-size: 16px;
           border-radius: 5px;
@@ -203,7 +203,7 @@
     align-items: center;
     justify-content: center;
     display: none;
-    
+
     div {
       width: 100px;
       height: 100px;
@@ -213,7 +213,7 @@
       animation: xoay 1s linear infinite;
     }
   }
-  .abc{
+  .abc {
     display: flex !important;
   }
 }
@@ -252,6 +252,14 @@
 }
 .activeuploadimage {
   display: flex !important;
+}
+.from-body-group3 {
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
+    rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+  margin: 10px 10px;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
 }
 
 @keyframes xoay {

@@ -45,7 +45,7 @@ function Login() {
     </div>
     `;
     setToggleModal(true);
-    fetch("https://fpt-hightech-api.herokuapp.com/access/login", {
+    fetch("http://quyt.ddns.net:3000/access/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

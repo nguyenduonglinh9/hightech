@@ -41,7 +41,7 @@ function DetailProduct() {
   const [currentBrandID, setCurrentBrandID] = useState("");
 
   useEffect(() => {
-    fetch(`https://fpt-hightech-api.herokuapp.com/product/${id.state.id}`, {
+    fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +66,7 @@ function DetailProduct() {
   }, [id]);
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/category/", {
+    fetch("http://quyt.ddns.net:3000/category/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +82,7 @@ function DetailProduct() {
   }, []);
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/brand/", {
+    fetch("http://quyt.ddns.net:3000/brand/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -158,7 +158,7 @@ function DetailProduct() {
             <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
                 
             </div>`;
-        fetch(`https://fpt-hightech-api.herokuapp.com/product/${id.state.id}`, {
+        fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -260,7 +260,7 @@ function DetailProduct() {
       // setSpecifications()
       newArr.push(ojb);
     }
-    fetch(`https://fpt-hightech-api.herokuapp.com/product/${id.state.id}`, {
+    fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

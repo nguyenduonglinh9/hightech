@@ -13,6 +13,13 @@ import { BsPlusLg } from "react-icons/bs";
 import { DataSearchContext } from "../../components/Layout/LayoutMain";
 import Table from "react-bootstrap/Table";
 import jwt_decode from "jwt-decode";
+import { Buffer } from "buffer";
+
+// @ts-ignore
+window.Buffer = Buffer;
+// import everything inside the mqtt module and give it the namespace "mqtt"
+// import { connect } from "mqtt"; // import connect from mqtt
+// let client = connect("mqtt://smarttech-mqtt-stage.techgel.cloud:1883");
 
 function Product() {
   AOS.init();
@@ -23,8 +30,41 @@ function Product() {
   const DataSearch = useContext(DataSearchContext);
   let dollarUSLocale = Intl.NumberFormat("en-US");
 
-  if (isLogin2['isLoggin'] === false) {
-    navigate('/')
+  // console.log(client);
+
+ const mqtt = require("mqtt");
+  const url = "ws://test.mosquitto.org:8080";
+  const options = {
+    debug:true,
+    // Clean session
+    clean: true,
+    connectTimeout: 4000,
+    // Auth
+    clientId: "Hightech cms",
+    username: "test",
+    password: "123456",
+  };
+  const client = mqtt.connect(
+    url,
+    options
+  );
+
+  client.on("connect", function () {
+    client.subscribe("highttech-topic", function (err) {
+      // if (!err) {
+      //   console.log("thanh cong");
+      // }
+    });
+  });
+
+  client.on("message", function (topic, message) {
+    // message is Buffer
+    console.log(message.toString());
+    client.end();
+  });
+
+  if (isLogin2["isLoggin"] === false) {
+    navigate("/");
   }
   console.log(isLogin2["isLoggin"]);
 
@@ -52,11 +92,10 @@ function Product() {
     softSearch.current = undefined;
   }
 
-
   const refItem = useRef();
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/category/", {
+    fetch("http://quyt.ddns.net:3000/category/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -72,7 +111,7 @@ function Product() {
   }, []);
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/brand/", {
+    fetch("http://quyt.ddns.net:3000/brand/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -88,7 +127,7 @@ function Product() {
   }, []);
 
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/product/", {
+    fetch("http://quyt.ddns.net:3000/product/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -120,7 +120,7 @@ function LayoutMain({ children }) {
               </Link>
               <Link
                 style={{ textDecoration: "none", color: "white" }}
-                to="/category"
+                to="/brand"
               >
                 <li
                   className={clsx({
@@ -160,9 +160,19 @@ function LayoutMain({ children }) {
                   </div>
                 </li>
               </Link>
-              <Link style={{ textDecoration: "none", color: "white" }}>
+              <Link
+                to="/orders"
+                style={{ textDecoration: "none", color: "white" }}
+              >
                 <p className={clsx(cx("title"))}>Orders</p>
-                <li>
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/orders"
+                        ? true
+                        : false,
+                  })}
+                >
                   <div
                     style={{ pointerEvents: "none" }}
                     className={clsx(cx("bodyNav_group"))}
@@ -172,16 +182,58 @@ function LayoutMain({ children }) {
                   </div>
                 </li>
               </Link>
-
+              <p className={clsx(cx("title"))}>Chart</p>
+              <Link
+                to="/products-sold"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href ===
+                      "http://localhost:3000/products-sold"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <FaChartLine />
+                    <span>Products Sold</span>
+                  </div>
+                </li>
+              </Link>
+              <Link
+                to="/revuene"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/revuene"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <FaChartLine />
+                    <span>Revenue</span>
+                  </div>
+                </li>
+              </Link>
               <Link style={{ textDecoration: "none", color: "white" }}>
-                <p className={clsx(cx("title"))}>Chart</p>
                 <li>
                   <div
                     style={{ pointerEvents: "none" }}
                     className={clsx(cx("bodyNav_group"))}
                   >
                     <FaChartLine />
-                    <span>Turnover</span>
+                    <span>Registered Users</span>
                   </div>
                 </li>
               </Link>

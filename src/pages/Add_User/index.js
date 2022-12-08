@@ -55,7 +55,7 @@ function AddUser() {
         .catch((err) => console.log(err));
     });
     promise.then((URLIcon) => {
-      fetch("https://fpt-hightech-api.herokuapp.com/admin/", {
+      fetch("http://quyt.ddns.net:3000/admin/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,14 +66,14 @@ function AddUser() {
           fullname: fullName,
           phone: phone,
           password: passWord,
-          role: 'admin',
-          avatar:URLIcon
+          role: "admin",
+          avatar: URLIcon,
         }),
       })
         .then((res) => res.json())
         .then((res) => {
           console.log(res);
-           setToggleLoading(false);
+          setToggleLoading(false);
         });
     });
   };

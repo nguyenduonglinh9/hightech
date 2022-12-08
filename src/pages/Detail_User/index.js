@@ -2,19 +2,21 @@ import styles from "./detail-user.module.scss";
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import classNames from "classnames/bind";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { BsPlusCircle, BsXCircleFill } from "react-icons/bs";
 
 function DetailUser() {
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const cx = classNames.bind(styles);
   const id = useLocation();
+  let navigate = useNavigate();
 
   const refInputUpload = useRef();
   const refErrEmail = useRef();
   const refErrFullName = useRef();
   const refErrPass = useRef();
   const refErrRePass = useRef();
+  const refLoading = useRef()
 
   const [avatar, setAvatar] = useState();
   const [email, setEmail] = useState();
@@ -31,7 +33,7 @@ function DetailUser() {
   const [toggleLoading, setToggleLoading] = useState(false);
 
   useEffect(() => {
-    fetch(`https://fpt-hightech-api.herokuapp.com/admin/${id.state.id}`, {
+    fetch(`http://quyt.ddns.net:3000/admin/${id.state.id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -39,14 +41,14 @@ function DetailUser() {
       },
     })
       .then((res) => {
-      return res.json();
+        return res.json();
       })
       .then((data) => {
         setEmail(data.data.email);
         setFullName(data.data.fullname);
         setAvatar(data.data.avatar);
         setPhone(data.data.phone);
-    })
+      });
   },[id]);
 
   const handleAddUser = () => {
@@ -92,21 +94,20 @@ function DetailUser() {
         }
       };
       console.log(data());
-      fetch(
-        `https://fpt-hightech-api.herokuapp.com/admin/${id.state.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": DataLogin.token,
-          },
-          body: JSON.stringify(data()),
-        }
-      )
+      fetch(`http://quyt.ddns.net:3000/admin/${id.state.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": DataLogin.token,
+        },
+        body: JSON.stringify(data()),
+      })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
-          setToggleLoading(false);
+          refLoading.current.innerHTML = `<h2>Successfully</h2>`;
+          setTimeout(() => {
+            navigate("/users");
+          }, 1500);
         });
     });
   };
@@ -182,6 +183,10 @@ function DetailUser() {
       setReErrPass(true);
     }
   };
+
+  const handleDeleteUser = () => {
+    setToggleLoading(true);
+  }
 
   return (
     <div className={clsx(cx("container"))}>
@@ -286,7 +291,7 @@ function DetailUser() {
             <button>CANCEL</button>
           </div>
           <div>
-            <button>DELETE</button>
+            <button onClick={handleDeleteUser}>DELETE</button>
           </div>
           <div>
             <button
@@ -307,6 +312,7 @@ function DetailUser() {
         </div>
       </div>
       <div
+        ref={refLoading}
         className={clsx(cx("loading"), {
           [styles.abc]: toggleLoading,
         })}

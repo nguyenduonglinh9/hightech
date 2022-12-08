@@ -16,7 +16,7 @@ function Users() {
   const [users, setUsers] = useState([]);
   
   useEffect(() => {
-    fetch("https://fpt-hightech-api.herokuapp.com/admin/", {
+    fetch("http://quyt.ddns.net:3000/admin/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +57,7 @@ function Users() {
             onClick={handleToggleModalAddUser}
             className={clsx(cx("button-add-new"))}
           >
-            <BsPlusLg />
+            <p>Add</p>
           </div>
         </div>
 
