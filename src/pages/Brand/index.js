@@ -331,13 +331,13 @@ function Brand() {
           }}
         >
           <div>
-            <h3 style={{ margin: "0px" }}>CATEGORYS</h3>
+            <h3 style={{ margin: "0px" }}>Danh Sách Thương Hiệu</h3>
           </div>
           <div
             onClick={handleToggleModalAddCategory}
             className={clsx(cx("button-add-new"))}
           >
-            <p>Add</p>
+            <p>Thêm</p>
           </div>
         </div>
 
@@ -345,13 +345,13 @@ function Brand() {
           <thead>
             <tr>
               <th>
-                <p>Name</p>
+                <p>Mã Thương Hiệu</p>
               </th>
               <th>
-                <p>Id</p>
+                <p>Tên</p>
               </th>
               <th>
-                <p>Date</p>
+                <p>Ngày Thêm</p>
               </th>
             </tr>
           </thead>
@@ -368,8 +368,8 @@ function Brand() {
                   {/* <td>
                     <img src={category.icon}></img>
                   </td> */}
-                  <td>{brand.title}</td>
                   <td>{brand._id}</td>
+                  <td>{brand.title}</td>
                   <td>{brand.createdAt}</td>
                 </tr>
               );
@@ -464,14 +464,13 @@ function Brand() {
             className={clsx(cx("modal-header"))}
           >
             <h3>HIGH TECH</h3>
-            <p>Add New Brand Form</p>
           </div>
           <div style={{ animation: "none" }} className={clsx(cx("modal-body"))}>
             <div
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>name</p>
+              <p>Tên</p>
               <input
                 value={titleCategory}
                 onChange={(e) => setTitleCategory(e.target.value)}
@@ -481,7 +480,7 @@ function Brand() {
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>Category</p>
+              <p>Danh Mục</p>
               <div
                 onClick={() => {
                   setToggleDropDown(true);
@@ -516,14 +515,14 @@ function Brand() {
             style={{ animation: "none" }}
             className={clsx(cx("modal-footer"))}
           >
-            <button onClick={handleCancel}>Cancel</button>
+            <button onClick={handleCancel}>Hủy</button>
             <button
               className={clsx({
                 [styles.hidebutton]: toggleButton,
               })}
               onClick={handleDeleteBrand}
             >
-              Delete
+              Xóa
             </button>
             <button
               className={clsx({
@@ -539,7 +538,7 @@ function Brand() {
               })}
               onClick={handleUpdateBrand}
             >
-              Change
+              Lưu
             </button>
           </div>
         </div>
@@ -562,14 +561,14 @@ function Brand() {
             className={clsx(cx("modal-header"))}
           >
             <h3>HIGH TECH</h3>
-            <p>Update and Delete Category form</p>
+            <p>Cập Nhật Thương Hiệu</p>
           </div>
           <div style={{ animation: "none" }} className={clsx(cx("modal-body"))}>
             <div
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>name</p>
+              <p>Tên</p>
               <input
                 value={titleCategory}
                 onChange={(e) => setTitleCategory(e.target.value)}
@@ -579,7 +578,7 @@ function Brand() {
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>Icon</p>
+              <p>Hình Ảnh</p>
               <input type="file" onChange={(e) => handleUpdateFile2(e)}></input>
               <img
                 style={{ width: "100px" }}
@@ -595,9 +594,9 @@ function Brand() {
             style={{ animation: "none" }}
             className={clsx(cx("modal-footer"))}
           >
-            <button onClick={handleCancel}>Cancel</button>
-            <button onClick={handleDeleteCategory}>Delete</button>
-            <button onClick={handleUpdateCate}>Save</button>
+            <button onClick={handleCancel}>Hủy</button>
+            <button onClick={handleDeleteCategory}>Xóa</button>
+            <button onClick={handleUpdateCate}>Lưu</button>
           </div>
         </div>
       </div>
@@ -622,14 +621,14 @@ function Brand() {
               style={{ width: "100px", height: "100px" }}
               src={warning}
             ></img>
-            <h3>Do you want to delete this item?</h3>
+            <h3>Bạn muốn xóa thương hiệu này ?</h3>
           </div>
           <div
             style={{ animation: "none" }}
             className={clsx(cx("modal-footer"))}
           >
-            <button onClick={handleDeleteBrand2}>Yes</button>
-            <button onClick={() => setToggleModalAdd5(false)}>No</button>
+            <button onClick={handleDeleteBrand2}>Xóa</button>
+            <button onClick={() => setToggleModalAdd5(false)}>Hủy</button>
           </div>
         </div>
       </div>

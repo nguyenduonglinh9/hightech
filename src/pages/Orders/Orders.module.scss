@@ -53,7 +53,7 @@
           line-height: 20px;
           margin: 5px;
           max-width: 250px;
-          p{
+          p {
             background-color: lightcoral;
             padding: 10px;
             width: fit-content;
@@ -322,6 +322,70 @@
 .button-add-new p {
   margin: 0px 5px;
   pointer-events: none;
+}
+.soft {
+  width: fit-content;
+  width: -moz-fit-content;
+  border: 1px solid rgb(224, 224, 224);
+  border-radius: 5px;
+  padding: 0px 10px;
+  margin-bottom: 20px;
+  position: relative;
+
+  div {
+    display: flex;
+    align-items: center;
+    p {
+      margin: 10px 0px;
+    }
+  }
+  .soft2 {
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px,
+      rgba(17, 17, 26, 0.1) 0px 8px 24px, rgba(17, 17, 26, 0.1) 0px 16px 56px;
+    padding: 10px;
+    margin-top: 15px;
+    z-index: 2;
+    border-radius: 5px;
+    display: none;
+
+    p {
+      border: 1px solid rgb(224, 224, 224);
+      border-radius: 5px;
+      padding: 5px;
+      margin: 5px;
+      // pointer-events: none;
+    }
+    p:hover {
+      border: 1px solid #03c9d7;
+      color: #03c9d7;
+      cursor: pointer;
+    }
+  }
+  .activesoft {
+    display: flex;
+  }
+  .soft2::before {
+    content: "";
+    // border-radius: 20px;
+    // background-color: red;
+    position: absolute;
+    border: 10px solid #fff;
+    border-bottom: 10px solid transparent;
+    border-right: 10px solid transparent;
+    transform: rotate(45deg);
+    top: -10%;
+    right: 10%;
+  }
+}
+.soft:hover {
+  border: 1px solid #03c9d7;
+  color: #03c9d7;
+  .soft2{
+    color: black;
+  }
 }
 @keyframes xoay {
   to {

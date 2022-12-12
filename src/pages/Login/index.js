@@ -146,7 +146,7 @@ function Login() {
                           onChange={(e) => setUsername(e.target.value)}
                         ></input>
                       </Tippy>
-                      <label>username</label>
+                      <label>Username</label>
                     </div>
                     <div
                       className={clsx(
@@ -162,7 +162,7 @@ function Login() {
                           onChange={(e) => setPassword(e.target.value)}
                         ></input>
                       </Tippy>
-                      <label>password</label>
+                      <label>Password</label>
                     </div>
                     <div
                       className={clsx(

@@ -5,12 +5,42 @@ import classNames from "classnames/bind";
 import Table from "react-bootstrap/Table";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { BiCaretDown } from "react-icons/bi";
 const warning = require("../Category/assets/imgs/warning.png");
+
 
 function Orders() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
+
+  const mqtt = require("mqtt");
+  const url = "ws://test.mosquitto.org:8080";
+  const options = {
+    debug: true,
+    // Clean session
+    clean: true,
+    connectTimeout: 4000,
+    // Auth
+    clientId: "Hightech cms",
+    username: "test",
+    password: "123456",
+  };
+  const client = mqtt.connect(url, options);
+
+  client.on("connect", function () {
+    client.subscribe("highttech-topic", function (err) {
+      if (!err) {
+        console.log("thanh cong");
+      }
+    });
+  });
+
+  client.on("message", function (topic, message) {
+    // message is Buffer
+    console.log(message.toString());
+    client.end();
+  });
 
   const refCate = useRef();
   const refIDCate = useRef();
@@ -23,7 +53,9 @@ function Orders() {
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [orders, setOrders] = useState([])
+  const [orders, setOrders] = useState([]);
+  const [currentSoft, setCurrentSoft] = useState('all');
+
 
   const [title, setTitle] = useState("");
   const [titleCategory, setTitleCategory] = useState("");
@@ -38,6 +70,8 @@ function Orders() {
   const [toggleModalAdd3, setToggleModalAdd3] = useState(false);
   const [toggleModalAdd4, setToggleModalAdd4] = useState(false);
   const [toggleModalAdd5, setToggleModalAdd5] = useState(false);
+  const [toggleSoft, setToggleSoft] = useState(false);
+
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/order/", {
@@ -315,9 +349,8 @@ function Orders() {
   const handleCancel = () => {
     setTitleCategory('');
     setToggleModalAdd4(false);
-
   }
-
+  console.log(orders)
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("listcategory"))}>
@@ -330,6 +363,45 @@ function Orders() {
         >
           <div>
             <h3 style={{ margin: "0px" }}>Orders</h3>
+          </div>
+          <div className={clsx(cx("soft"))}>
+            <div style={{cursor:'pointer'}} onClick={() => setToggleSoft(!toggleSoft)}>
+              <p>Trạng thái đơn hàng</p>
+              <BiCaretDown />
+            </div>
+            <div
+              className={clsx(cx("soft2"), {
+                [styles.activesoft]: toggleSoft,
+              })}
+            >
+              <p onClick={() => {
+                setCurrentSoft("Not Processed")
+                setToggleSoft(false);
+              }}>
+                Not Processed
+              </p>
+              <p onClick={() => {
+                setCurrentSoft("Processing")
+                setToggleSoft(false)
+              }}>Processing</p>
+              <p onClick={() => {
+                setCurrentSoft("Shipping")
+                setToggleSoft(false);
+              }}>Shipping</p>
+              <p onClick={() => {
+                setCurrentSoft("Completed")
+                setToggleSoft(false);
+              }}>Completed</p>
+              <p onClick={() => {
+                setCurrentSoft("Cancelled")
+                setToggleSoft(false);
+
+              }}>Cancelled</p>
+              <p onClick={() => {
+                setCurrentSoft("all")
+                setToggleSoft(false);
+              }}>All</p>
+            </div>
           </div>
         </div>
 
@@ -348,98 +420,70 @@ function Orders() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((category, index) => {
-              return (
-                <tr
-                  ref={test}
-                  onClick={() =>
-                    handleUpdateCategory(
-                      category._id
-                    )
-                  }
-                  key={index}
-                >
-                  <td>{category._id}</td>
-                  <td>
-                    <p>{category.status}</p>
-                  </td>
-                  <td>{category.createdAt}</td>
-                </tr>
-              );
-            })}
+            {currentSoft == "all"
+              ? orders.map((category, index) => {
+                  return (
+                    <tr
+                      ref={test}
+                      onClick={() => handleUpdateCategory(category._id)}
+                      key={index}
+                    >
+                      <td>{category._id}</td>
+                      <td>
+                        <p
+                          style={
+                            category.status == "Processing"
+                              ? { backgroundColor: "lightgreen" }
+                              : category.status == "Shipping"
+                              ? { backgroundColor: "yellow",color:'black' }
+                              : category.status == "Completed"
+                              ? { backgroundColor: "lightblue" }
+                              : category.status == "Cancelled" ? {backgroundColor:'gray'} : undefined
+                          }
+                        >
+                          {category.status}
+                        </p>
+                      </td>
+                      <td>{category.createdAt}</td>
+                    </tr>
+                  );
+                })
+              : orders
+                  .filter((item, index) => {
+                    return item.status == currentSoft;
+                  })
+                  .map((item2, index2) => {
+                    return (
+                      <tr
+                        ref={test}
+                        onClick={() => handleUpdateCategory(item2._id)}
+                        key={index2}
+                      >
+                        <td>{item2._id}</td>
+                        <td>
+                          <p
+                            style={
+                              item2.status == "Processing"
+                                ? { backgroundColor: "lightgreen" }
+                                : item2.status == "Shipping"
+                                ? { backgroundColor: "yellow",color:'black' }
+                                : item2.status == "Completed"
+                                ? { backgroundColor: "lightblue" }
+                                : item2.status == "Cancelled"
+                                ? { backgroundColor: "gray" }
+                                : undefined
+                            }
+                          >
+                            {item2.status}
+                          </p>
+                        </td>
+                        <td>{item2.createdAt}</td>
+                      </tr>
+                    );
+                  })}
           </tbody>
         </Table>
       </div>
-
-      {/* <div
-        onClick={() => {
-          setToggleModalAdd(false);
-        }}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd,
-        })}
-      >
-        <div onClick={(e) => e.stopPropagation()} className={clsx(cx("modal"))}>
-          <div className={clsx(cx("modal-header"))}>
-            <h3>HIGH TECH</h3>
-          </div>
-          <div className={clsx(cx("modal-body"))}>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>name</p>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              ></input>
-            </div>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>Category</p>
-              <input disabled value={refCate.current}></input>
-            </div>
-          </div>
-          <div className={clsx(cx("modal-footer"))}>
-            <button
-              onClick={() => {
-                setTitle("");
-                setToggleModalAdd(false);
-              }}
-            >
-              Cancel
-            </button>
-            <button onClick={handleAddNewBrand}>Save</button>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div
-        onClick={() => setToggleModalAdd2(false)}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd2,
-        })}
-      >
-        <div onClick={(e) => e.stopPropagation()} className={clsx(cx("modal"))}>
-          <div className={clsx(cx("modal-header"))}>
-            <h3>HIGH TECH</h3>
-          </div>
-          <div className={clsx(cx("modal-body"))}>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>name</p>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              ></input>
-            </div>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>Category</p>
-              <input disabled value={refCate.current}></input>
-            </div>
-          </div>
-          <div className={clsx(cx("modal-footer"))}>
-            <button onClick={() => setToggleModalAdd2(false)}>Cancel</button>
-            <button onClick={handleDeleteBrand}>Delete</button>
-            <button onClick={handleUpdateBrand}>Update</button>
-          </div>
-        </div>
-      </div> */}
 
       <div
         onClick={handleCancel}

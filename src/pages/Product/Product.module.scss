@@ -126,17 +126,16 @@
   justify-content: space-around;
   cursor: pointer;
   position: relative;
+  border: 1px solid rgb(224, 224, 224);
 }
 .drop-down-menu-item {
   padding: 10px;
-  border: none;
-  margin: 0px 10px;
   background-color: #fff;
-  border-radius: 0px;
+  border-radius: 5px;
   width: 200px;
   font-size: 16px;
   position: relative;
-  z-index: 1000;
+  z-index: 2;
 }
 .drop-down-menu-item:first-child {
   border-radius: 5px 5px 0 0;
@@ -152,6 +151,16 @@
   display: none;
   transform-origin: top;
   position: absolute;
+  box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px,
+    rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+  margin-left: 10px;
+  background-color: white;
+  border-radius: 5px;
+  div {
+    span {
+      cursor: pointer;
+    }
+  }
 }
 .drop-down-menu::after {
   content: "";
@@ -183,7 +192,6 @@
       outline: 2px solid rgb(3, 201, 215);
       background-color: rgb(3, 201, 215);
       tr {
-        
         border: none;
         th {
           outline: 2px solid rgb(3, 201, 215);

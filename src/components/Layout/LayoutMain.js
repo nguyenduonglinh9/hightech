@@ -78,7 +78,7 @@ function LayoutMain({ children }) {
           </div>
           <div className={clsx(cx("bodyNav"))}>
             <ul>
-              <p className={clsx(cx("title"))}>Manager</p>
+              <p className={clsx(cx("title"))}>Quản Lý</p>
               <Link
                 style={{ textDecoration: "none", color: "white" }}
                 to="/product"
@@ -93,7 +93,7 @@ function LayoutMain({ children }) {
                 >
                   <div ref={useRefActive} className={clsx(cx("bodyNav_group"))}>
                     <FiShoppingBag />
-                    <span style={{ pointerEvents: "none" }}>Products</span>
+                    <span style={{ pointerEvents: "none" }}>Sản Phẩm</span>
                   </div>
                 </li>
               </Link>
@@ -114,7 +114,7 @@ function LayoutMain({ children }) {
                     className={clsx(cx("bodyNav_group"))}
                   >
                     <FiLayers />
-                    <span>Categorys</span>
+                    <span>Danh Mục</span>
                   </div>
                 </li>
               </Link>
@@ -135,7 +135,7 @@ function LayoutMain({ children }) {
                     className={clsx(cx("bodyNav_group"))}
                   >
                     <BiLibrary />
-                    <span>Brands</span>
+                    <span>Thương Hiệu</span>
                   </div>
                 </li>
               </Link>
@@ -156,7 +156,7 @@ function LayoutMain({ children }) {
                     className={clsx(cx("bodyNav_group"))}
                   >
                     <FiUsers />
-                    <span>Users</span>
+                    <span>Quản Trị Viên</span>
                   </div>
                 </li>
               </Link>
@@ -164,7 +164,7 @@ function LayoutMain({ children }) {
                 to="/orders"
                 style={{ textDecoration: "none", color: "white" }}
               >
-                <p className={clsx(cx("title"))}>Orders</p>
+                <p className={clsx(cx("title"))}>Đơn Hàng</p>
                 <li
                   className={clsx({
                     [styles.active]:
@@ -178,11 +178,11 @@ function LayoutMain({ children }) {
                     className={clsx(cx("bodyNav_group"))}
                   >
                     <FiShoppingCart />
-                    <span>Orders</span>
+                    <span>Đơn Hàng</span>
                   </div>
                 </li>
               </Link>
-              <p className={clsx(cx("title"))}>Chart</p>
+              <p className={clsx(cx("title"))}>Tổng Kết</p>
               <Link
                 to="/products-sold"
                 style={{ textDecoration: "none", color: "white" }}
@@ -201,7 +201,7 @@ function LayoutMain({ children }) {
                     className={clsx(cx("bodyNav_group"))}
                   >
                     <FaChartLine />
-                    <span>Products Sold</span>
+                    <span>Sản Phẩm Đã Bán</span>
                   </div>
                 </li>
               </Link>
@@ -222,7 +222,7 @@ function LayoutMain({ children }) {
                     className={clsx(cx("bodyNav_group"))}
                   >
                     <FaChartLine />
-                    <span>Revenue</span>
+                    <span>Doanh Thu</span>
                   </div>
                 </li>
               </Link>
@@ -233,7 +233,7 @@ function LayoutMain({ children }) {
                     className={clsx(cx("bodyNav_group"))}
                   >
                     <FaChartLine />
-                    <span>Registered Users</span>
+                    <span>Người Dùng</span>
                   </div>
                 </li>
               </Link>
@@ -302,7 +302,7 @@ function LayoutMain({ children }) {
                     alignItems: "center",
                   }}
                 >
-                  Hi,<p>{Decode_token.fullname}</p>
+                  Xin chào,<p>{Decode_token.fullname}</p>
                 </p>
                 <FiChevronDown
                   style={{ width: "14px", height: "14px", color: "#9ca3af" }}
@@ -316,7 +316,7 @@ function LayoutMain({ children }) {
               })}
             >
               <div className={clsx(cx("user-option-header"))}>
-                <p>User Profile</p>
+                <p>Hồ Sơ Người Dùng</p>
                 <div
                   onClick={() => setToggleUserOption(false)}
                   className={clsx(cx("user-option-header-button-close"))}
@@ -350,9 +350,12 @@ function LayoutMain({ children }) {
                     }}
                   />
                 </div>
-                <div className={clsx(cx("user-option-header-button-profile2"))}>
-                  <p>My Profile</p>
-                  <p>Account Settings</p>
+                <div onClick={() => {
+                  navigate('/account')
+                  setToggleUserOption(false)
+                }} className={clsx(cx("user-option-header-button-profile2"))}>
+                  <p>Hồ Sơ Của Tôi</p>
+                  <p>Cài Đặt</p>
                 </div>
               </div>
               <div className={clsx(cx("user-option-footer"))}>

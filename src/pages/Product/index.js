@@ -16,7 +16,6 @@ import jwt_decode from "jwt-decode";
 import { Buffer } from "buffer";
 
 // @ts-ignore
-window.Buffer = Buffer;
 // import everything inside the mqtt module and give it the namespace "mqtt"
 // import { connect } from "mqtt"; // import connect from mqtt
 // let client = connect("mqtt://smarttech-mqtt-stage.techgel.cloud:1883");
@@ -29,54 +28,21 @@ function Product() {
   const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
   const DataSearch = useContext(DataSearchContext);
   let dollarUSLocale = Intl.NumberFormat("en-US");
-
-  // console.log(client);
-
- const mqtt = require("mqtt");
-  const url = "ws://test.mosquitto.org:8080";
-  const options = {
-    debug:true,
-    // Clean session
-    clean: true,
-    connectTimeout: 4000,
-    // Auth
-    clientId: "Hightech cms",
-    username: "test",
-    password: "123456",
-  };
-  const client = mqtt.connect(
-    url,
-    options
-  );
-
-  client.on("connect", function () {
-    client.subscribe("highttech-topic", function (err) {
-      // if (!err) {
-      //   console.log("thanh cong");
-      // }
-    });
-  });
-
-  client.on("message", function (topic, message) {
-    // message is Buffer
-    console.log(message.toString());
-    client.end();
-  });
-
+ 
   if (isLogin2["isLoggin"] === false) {
     navigate("/");
   }
-  console.log(isLogin2["isLoggin"]);
 
   const [category, setCategory] = useState([]);
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [toggleCategory, setToggleCategory] = useState(false);
   const [toggleBrand, setToggleBrand] = useState(false);
-  const [curentItemName, setCurrentItemName] = useState("Màn hình");
+  const [curentItemName, setCurrentItemName] = useState("Tất Cả");
   const [idCate, setIdCate] = useState("634f9eea3f879eb6fc81bf01");
   const [loading, setLoading] = useState(false);
   const softSearch = useRef();
+
 
   if (DataSearch != "") {
     if (typeof DataSearch == "string") {
@@ -109,6 +75,10 @@ function Product() {
         setCategory((prev) => [...prev, ...data.data]);
       });
   }, []);
+
+  useEffect(() => {
+    category.push({title : 'Tất Cả'})
+  },[])
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/brand/", {
@@ -146,7 +116,7 @@ function Product() {
 
   // console.log(list)
   const handleOpenCategory = () => {
-    setToggleCategory(true);
+    setToggleCategory(!toggleCategory);
   };
   const handleOpenBrand = () => {
     setToggleBrand(true);
@@ -207,23 +177,25 @@ function Product() {
           >
             {category.map((item, index) => {
               return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    setIdCate(item._id);
-                    setCurrentItemName(item.title);
-                    setToggleCategory(false);
-                  }}
-                  className={clsx(cx("drop-down-menu-item"))}
-                >
-                  <span>{item.title}</span>
+                <div>
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setIdCate(item._id);
+                      setCurrentItemName(item.title);
+                      setToggleCategory(false);
+                    }}
+                    className={clsx(cx("drop-down-menu-item"))}
+                  >
+                    <span>{item.title}</span>
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div>
+        {/* <div>
           <div onClick={handleOpenBrand} className={clsx(cx("drop-down-menu"))}>
             <span ref={refItem}>
               {brands
@@ -258,7 +230,7 @@ function Product() {
                 );
               })}
           </div>
-        </div>
+        </div> */}
       </div>
       <div className={clsx(cx("listproduct"))}>
         <div
@@ -269,42 +241,42 @@ function Product() {
           }}
         >
           <div>
-            <h3 style={{ margin: "0px" }}>PRODUCTS</h3>
-            <p style={{ opacity: "0.7" }}>products/ {curentItemName}</p>
+            <h3 style={{ margin: "0px" }}>Danh Sách Sản Phẩm</h3>
+            <p style={{ opacity: "0.7" }}>Sản Phẩm/ {curentItemName}</p>
           </div>
           <div
             onClick={handleNavigateAddProduct}
             className={clsx(cx("button-add-new"))}
           >
-            <p>Add</p>
+            <p>Thêm</p>
           </div>
         </div>
         <Table className={clsx(cx("table"))} striped bordered hover>
           <thead>
             <tr>
-              <th>Image</th>
+              <th>Hình Ảnh</th>
               <th>
-                <p>Name</p>
+                <p>Tên</p>
               </th>
               <th>
-                <p>Price</p>
+                <p>Giá</p>
               </th>
               <th>
-                <p>Category</p>
+                <p>Danh Mục</p>
               </th>
               <th>
-                <p>Brand</p>
+                <p>Thương Hiệu</p>
               </th>
               <th>
-                <p>Quantity</p>
+                <p>Số Lượng</p>
               </th>
               <th>
-                <p>Status</p>
+                <p>Trạng Thái</p>
               </th>
             </tr>
           </thead>
           <tbody>
-            {products
+            {curentItemName !== 'Tất Cả' ?  products
               .filter((product, index) => {
                 return product.category == idCate;
               })
@@ -329,6 +301,38 @@ function Product() {
                     <td>{item.quantity}</td>
                     <td>
                       {item.quantity > 0 ? (
+                        <div className={clsx(cx("status_conhang"))}>
+                          <p>On-Sale</p>
+                        </div>
+                      ) : (
+                        <div className={clsx(cx("status_hethang"))}>
+                          <p>Out Of Stock</p>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              }) : products.map((product, index) => {
+                return (
+                  <tr onClick={() => HandleDetail(product._id)} key={index}>
+                    <td>
+                      <img src={product.images[0]}></img>
+                    </td>
+                    <td className={clsx(cx("title_td"))}>{product.title}</td>
+                    <td>{dollarUSLocale.format(product.costPrice)}</td>
+                    <td>
+                      {category
+                        .filter((cate) => cate._id == product.category)
+                        .map((item3) => item3.title)}
+                    </td>
+                    <td>
+                      {brands
+                        .filter((brand) => brand._id == product.brand)
+                        .map((item2) => item2.title)}
+                    </td>
+                    <td>{product.quantity}</td>
+                    <td>
+                      {product.quantity > 0 ? (
                         <div className={clsx(cx("status_conhang"))}>
                           <p>On-Sale</p>
                         </div>

@@ -31,6 +31,8 @@ function Category() {
   const [imageIconUpdate, setImageIconUpdate] = useState();
 
   const [nextType, setNextType] = useState();
+  const [arrType, setArrType] = useState();
+
 
   const [toggleModalAdd, setToggleModalAdd] = useState(false);
   const [toggleModalAdd2, setToggleModalAdd2] = useState(false);
@@ -51,8 +53,13 @@ function Category() {
         return response.json();
       })
       .then((data) => {
-        setNextType(data.data[data.data.length - 1].type);
+         setArrType(
+           data.data.map((item) => {
+             return Number(item.type);
+           })
+         );
         setCategorys((prev) => [...prev, ...data.data]);
+       
       });
   }, []);
 
@@ -79,73 +86,10 @@ function Category() {
     setToggleModalAdd(true);
   };
 
-  const handleToggleModal2 = (title, brandID, id, titleCate) => {
-    refIDCate.current = id;
-    refCate.current = titleCate;
-    refBrandID.current = brandID;
-    setTitle(title);
-    setToggleModalAdd2(true);
-  };
-
   const handleToggleModalAddCategory = () => {
     setToggleModalAdd3(true);
   };
 
-  const handleAddNewBrand = () => {
-    fetch("http://quyt.ddns.net:3000/brand/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-      body: JSON.stringify({
-        title: title,
-        category: refIDCate.current,
-      }),
-    })
-      .then((res) => {
-        res.json();
-        setToggleModalAdd(false);
-        window.location.reload(false);
-      })
-      .then((res) => console.log(res));
-  };
-
-  const handleUpdateBrand = () => {
-    fetch(`http://quyt.ddns.net:3000/brand/${refBrandID.current}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-      body: JSON.stringify({
-        title: title,
-        category: refIDCate.current,
-      }),
-    })
-      .then((res) => {
-        res.json();
-        setToggleModalAdd2(false);
-        window.location.reload(false);
-      })
-      .then((res) => console.log(res));
-  };
-
-  const handleDeleteBrand = () => {
-    fetch(`http://quyt.ddns.net:3000/brand/${refBrandID.current}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-    })
-      .then((res) => {
-        res.json();
-        setToggleModalAdd2(false);
-        window.location.reload(false);
-      })
-      .then((res) => console.log(res));
-  };
 
   const handleUpdateFile = (e) => {
     setImageIcon(e.target.files[0]);
@@ -164,6 +108,7 @@ function Category() {
     var promise = new Promise(function (resolve, reject) {
       //xử lý hình ảnh
       const dataImage = new FormData();
+      
       let URLIcon;
 
       dataImage.append("source", imageIcon);
@@ -182,6 +127,7 @@ function Category() {
         .catch((err) => console.log(err));
     });
     promise.then((URLIcon) => {
+      const type = Math.max(...arrType) + 1;
       fetch("http://quyt.ddns.net:3000/category/", {
         method: "POST",
         headers: {
@@ -191,16 +137,18 @@ function Category() {
         body: JSON.stringify({
           title: titleCategory,
           icon: URLIcon,
-          type: nextType + 1,
+          type: 22,
+          active:true
         }),
       })
         .then((res) => res.json())
         .then((res) => {
-          refModal.current.innerHTML = `<h2>Successful</h2>`;
+          refModal.current.innerHTML = `<h2>${res.message}</h2>`;
+          console.log(res);
 
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
+          // setTimeout(() => {
+          //   window.location.reload(false);
+          // }, 1500);
         })
         .catch((err) => {
           refModal.current.innerHTML = `<h2>${err}</h2>`;
@@ -254,7 +202,7 @@ function Category() {
       })
         .then((res) => res.json())
         .then((res) => {
-          refModal2.current.innerHTML = `<h2>Successful</h2>`;
+          refModal2.current.innerHTML = `<h2>Thành Công</h2>`;
 
           setTimeout(() => {
             window.location.reload(false);
@@ -313,13 +261,13 @@ function Category() {
           }}
         >
           <div>
-            <h3 style={{ margin: "0px" }}>CATEGORYS</h3>
+            <h3 style={{ margin: "0px" }}>Danh Sách Danh Mục</h3>
           </div>
           <div
             onClick={handleToggleModalAddCategory}
             className={clsx(cx("button-add-new"))}
           >
-            <p>Add</p>
+            <p>Thêm</p>
           </div>
         </div>
 
@@ -327,10 +275,10 @@ function Category() {
           <thead>
             <tr>
               <th>
-                <p>Icon</p>
+                <p>Hình Ảnh</p>
               </th>
               <th>
-                <p>Name</p>
+                <p>Tên</p>
               </th>
             </tr>
           </thead>
@@ -445,14 +393,14 @@ function Category() {
             className={clsx(cx("modal-header"))}
           >
             <h3>HIGH TECH</h3>
-            <p>Add New Category Form</p>
+            <p>Thêm Mới Danh Mục</p>
           </div>
           <div style={{ animation: "none" }} className={clsx(cx("modal-body"))}>
             <div
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>name</p>
+              <p>Tên</p>
               <input
                 value={titleCategory}
                 onChange={(e) => setTitleCategory(e.target.value)}
@@ -462,7 +410,7 @@ function Category() {
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>Icon</p>
+              <p>Hình Ảnh</p>
               <input type="file" onChange={(e) => handleUpdateFile(e)}></input>
               <img
                 style={{ width: "100px" }}
@@ -476,8 +424,8 @@ function Category() {
             style={{ animation: "none" }}
             className={clsx(cx("modal-footer"))}
           >
-            <button onClick={() => setToggleModalAdd3(false)}>Cancel</button>
-            <button onClick={handleAddNewCategory}>Save</button>
+            <button onClick={() => setToggleModalAdd3(false)}>Hủy</button>
+            <button onClick={handleAddNewCategory}>Lưu</button>
           </div>
         </div>
       </div>
@@ -499,14 +447,14 @@ function Category() {
             className={clsx(cx("modal-header"))}
           >
             <h3>HIGH TECH</h3>
-            <p>Update and Delete Category form</p>
+            <p>Cập Nhật Danh Mục</p>
           </div>
           <div style={{ animation: "none" }} className={clsx(cx("modal-body"))}>
             <div
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>name</p>
+              <p>Tên</p>
               <input
                 value={titleCategory}
                 onChange={(e) => setTitleCategory(e.target.value)}
@@ -516,7 +464,7 @@ function Category() {
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>Icon</p>
+              <p>Hình Ảnh</p>
               <input type="file" onChange={(e) => handleUpdateFile2(e)}></input>
               <img
                 style={{ width: "100px" }}
@@ -532,9 +480,9 @@ function Category() {
             style={{ animation: "none" }}
             className={clsx(cx("modal-footer"))}
           >
-            <button onClick={handleCancel}>Cancel</button>
-            <button onClick={handleDeleteCategory}>Delete</button>
-            <button onClick={handleUpdateCate}>Save</button>
+            <button onClick={handleCancel}>Hủy</button>
+            <button onClick={handleDeleteCategory}>Xóa</button>
+            <button onClick={handleUpdateCate}>Lưu</button>
           </div>
         </div>
       </div>
@@ -559,14 +507,14 @@ function Category() {
               style={{ width: "100px", height: "100px" }}
               src={warning}
             ></img>
-            <h3>Do you want to delete this item?</h3>
+            <h3>Bạn muốn xóa danh mục này ?</h3>
           </div>
           <div
             style={{ animation: "none" }}
             className={clsx(cx("modal-footer"))}
           >
-            <button onClick={handleDeleteCategory2}>Yes</button>
-            <button onClick={() => setToggleModalAdd5(false)}>No</button>
+            <button onClick={handleDeleteCategory2}>Xóa</button>
+            <button onClick={() => setToggleModalAdd5(false)}>Hủy</button>
           </div>
         </div>
       </div>

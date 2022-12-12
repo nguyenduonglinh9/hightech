@@ -13,6 +13,7 @@ import Orders from "../pages/Orders";
 import ProductsSold from "../pages/Products_Sold";
 import Revuene from "../pages/Revuene";
 import DetailOrder from "../pages/Detail_Order";
+import Account from "../pages/Account";
 
 const privateRoutes = [
   {
@@ -88,6 +89,11 @@ const privateRoutes = [
   {
     path: "/detail-order",
     component: DetailOrder,
+    layout: "MainLayout",
+  },
+  {
+    path: "/account",
+    component: Account,
     layout: "MainLayout",
   },
 ];

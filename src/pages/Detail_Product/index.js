@@ -3,8 +3,14 @@ import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import classNames from "classnames/bind";
 import { useLocation } from "react-router-dom";
-import { BsPlusCircle, BsXCircleFill, BsCaretDownFill } from "react-icons/bs";
+import {
+  BsPlusCircle,
+  BsXCircleFill,
+  BsCaretDownFill,
+  BsXCircle,
+} from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+const xmark = require('../../pages/Detail_Product/assets/fonts/img/x-mark.png')
 
 function DetailProduct() {
   const id = useLocation();
@@ -128,8 +134,22 @@ function DetailProduct() {
 
   const handleAppendChild = () => {
     var input = document.createElement("input");
+    var div = document.createElement('div');
+    var img = document.createElement('img');
+    img.setAttribute('src', xmark)
+    img.style.width = '20px';
+    img.style.height = '20px'
     input.style.margin = "5px 0";
-    refDesc.current.appendChild(input);
+    input.style.minWidth = "90%"
+    div.style.display = 'flex';
+    div.style.alignItems = 'center';
+    img.addEventListener('click', () => {
+      refDesc.current.removeChild(div)
+    })
+    div.appendChild(input);
+    div.appendChild(img)
+   
+    refDesc.current.appendChild(div);
   };
   const handleClose = () => {
     setToggleModal(false);
@@ -246,9 +266,10 @@ function DetailProduct() {
     //description
     const listInputDesc = [...refDesc.current.children];
     const arrDataInputDesc = listInputDesc.map((item, index) => {
-      return item.value;
+      return item.firstChild.value;
     });
-    //xử lý specifications
+  
+    // //xử lý specifications
     const listDiv = [...refSpec.current.children];
     var newArr = [];
     for (let i = 0; i < listDiv.length; i++) {
@@ -261,7 +282,7 @@ function DetailProduct() {
       newArr.push(ojb);
     }
     fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
-      method: "GET",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "x-access-token": DataLogin.token,
@@ -284,16 +305,20 @@ function DetailProduct() {
       .then((res) => console.log(res));
   };
 
+  const handleDeleteSpec = (index) => {
+    refDesc.current.removeChild(refDesc.current.children[index])
+  }
+
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("from"))}>
         <div className={clsx(cx("from-header"))}>
           <h2>HIGHTECH</h2>
-          <p>UPDATE & DELETE PRODUCT FORM</p>
+          <p>Cập Nhật Thông Tin Sản Phẩm</p>
         </div>
         <div className={clsx(cx("from-body"))}>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Name</p>
+            <p style={{ fontWeight: "bold" }}>Tên</p>
             <input
               value={title}
               onChange={(e) => {
@@ -302,7 +327,7 @@ function DetailProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Descriptions</p>
+            <p style={{ fontWeight: "bold" }}>Mô Tả</p>
             <div
               style={{ display: "flex", flexDirection: "column" }}
               ref={refDesc}
@@ -312,18 +337,26 @@ function DetailProduct() {
                 : description.map((item, index) => {
                     var a = item;
                     return (
-                      <input
-                        key={index}
-                        style={{ margin: "5px 0" }}
-                        defaultValue={a}
-                      ></input>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <input
+                          key={index}
+                          style={{ margin: "5px 0", minWidth: "90%" }}
+                          defaultValue={a}
+                        ></input>
+                        {/* <BsXCircle onClick={(e)=>handleDeleteSpec(e)} style={{marginLeft:'10px'}}/> */}
+                        <img
+                          onClick={() => handleDeleteSpec(index)}
+                          style={{ width: "20px", height: "20px" }}
+                          src={xmark}
+                        ></img>
+                      </div>
                     );
                   })}
             </div>
             <BsPlusCircle onClick={handleAppendChild} />
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Images</p>
+            <p style={{ fontWeight: "bold" }}>Hình Ảnh</p>
             <div style={{ display: "flex" }}>
               {images == null
                 ? undefined
@@ -357,7 +390,7 @@ function DetailProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Price</p>
+            <p style={{ fontWeight: "bold" }}>Giá</p>
             <input
               type="number"
               value={costPrice}
@@ -367,7 +400,7 @@ function DetailProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Sale</p>
+            <p style={{ fontWeight: "bold" }}>Giảm Giá</p>
             <input
               type="number"
               value={salePercent}
@@ -375,7 +408,7 @@ function DetailProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Quantity</p>
+            <p style={{ fontWeight: "bold" }}>Số Lượng</p>
             <input
               type="number"
               value={quantity}
@@ -383,7 +416,7 @@ function DetailProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Specifications</p>
+            <p style={{ fontWeight: "bold" }}>Thông Số Kỹ Thuật</p>
             <div className={clsx(cx("from-body-group-spec"))} ref={refSpec}>
               {specifications == null
                 ? undefined
@@ -399,7 +432,7 @@ function DetailProduct() {
             <BsPlusCircle onClick={handleAppendChildSpec} />
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Category</p>
+            <p style={{ fontWeight: "bold" }}>Danh Mục</p>
             <div
               className={clsx(cx("drop-down"))}
               style={{
@@ -452,7 +485,7 @@ function DetailProduct() {
             </div>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Brand</p>
+            <p style={{ fontWeight: "bold" }}>Thương Hiệu</p>
             <div
               className={clsx(cx("drop-down"))}
               style={{
@@ -509,12 +542,12 @@ function DetailProduct() {
             <button onClick={handleDeleteProduct}>DELETE</button>
           </div>
           <div>
-            <button>CANCEL</button>
+            <button onClick={() => navigate("/product")}>Trở Lại</button>
             <button
               style={{ backgroundColor: "rgb(3, 201, 215)" }}
               onClick={handleUpdateProduct}
             >
-              SAVE
+              Lưu
             </button>
           </div>
         </div>

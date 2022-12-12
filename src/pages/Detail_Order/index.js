@@ -39,10 +39,14 @@ function DetailOrder() {
       })
       .then((data) => {
         setOrder(data.data);
-        setDefaulStatus(data.data.status);
+        // setDefaulStatus(data.data.status);
+        data.data.status == "Not Processed"
+          ? setDefaulStatus("Processing")
+          : data.data.status == "Processing"
+          ? setDefaulStatus("Shipping")
+          : (data.data.status == "Shipping") ? setDefaulStatus('Completed') : data.data.status == "Completed" ? setDefaulStatus('Completed') : data.data.status == "Cancelled" ? setDefaulStatus('Cancelled') : setDefaulStatus('');
       });
   }, [id]);
-
 
   const handleDeleteUser = () => {
     setToggleLoading(true);
@@ -65,11 +69,12 @@ function DetailOrder() {
       .then((res) => res.json())
       .then((res) => {
         console.log(res)
-        setToggleLoading(false);
+        
         setTimeout(() => {
           navigate("/orders");
           window.location.reload(false);
         }, 1500);
+        setToggleLoading(false);
       });
   };
   return (
@@ -150,61 +155,13 @@ function DetailOrder() {
             <p style={{ fontWeight: "bold" }}>Tổng giá trị đơn hàng</p>
             <p>{dollarUSLocale.format(order.totalPrice)}</p>
           </div>
-          <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>Trạng thái đơn hàng</p>
-            <div style={{ margin: "10px" }}>
-              <input
-                checked={defaulStatus == "Not Processed" ? true : false}
-                onChange={(e) => setDefaulStatus(e.target.value)}
-                type="checkbox"
-                value="Not Processed"
-              ></input>
-              <label>Not Processed</label>
-            </div>
-            <div style={{ margin: "10px" }}>
-              <input
-                checked={defaulStatus == "Processing" ? true : false}
-                onChange={(e) => setDefaulStatus(e.target.value)}
-                type="checkbox"
-                value="Processing"
-              ></input>
-              <label>Processing</label>
-            </div>
-            <div style={{ margin: "10px" }}>
-              <input
-                checked={defaulStatus == "Shipping" ? true : false}
-                onChange={(e) => setDefaulStatus(e.target.value)}
-                type="checkbox"
-                value="Shipping"
-              ></input>
-              <label>Shipping</label>
-            </div>
-            <div style={{ margin: "10px" }}>
-              <input
-                checked={defaulStatus == "Completed" ? true : false}
-                onChange={(e) => setDefaulStatus(e.target.value)}
-                type="checkbox"
-                value="Completed"
-              ></input>
-              <label>Completed</label>
-            </div>
-            <div style={{ margin: "10px" }}>
-              <input
-                checked={defaulStatus == "Cancelled" ? true : false}
-                onChange={(e) => setDefaulStatus(e.target.value)}
-                type="checkbox"
-                value="Cancelled"
-              ></input>
-              <label>Cancelled</label>
-            </div>
-          </div>
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button>CANCEL</button>
+            <button onClick={()=>navigate('/orders')}>Trở lại</button>
           </div>
           <div>
-            <button onClick={handleDeleteUser}>DELETE</button>
+            <button onClick={handleDeleteUser}>Xóa</button>
           </div>
           <div>
             <button
@@ -212,8 +169,15 @@ function DetailOrder() {
                 [styles.activebutton]: true,
               })}
               onClick={handleUpdateOrder}
+              disabled={order.status == "Completed" || order.status == "Cancelled" ? true : false}
             >
-              CONFRIM
+              {order.status == "Not Processed"
+                ? "Processing"
+                : order.status == "Processing"
+                ? "Shipping"
+                : order.status == "Shipping"
+                ? "Completed"
+                : order.status == "Completed" ? "Completed" : order.status == "Cancelled" ? "Cancelled" : null}
             </button>
           </div>
         </div>
@@ -221,7 +185,7 @@ function DetailOrder() {
       <div
         ref={refLoading}
         className={clsx(cx("loading"), {
-          [styles.abc]: true,
+          [styles.abc]: toggleLoading,
         })}
       >
         <div></div>
