@@ -5,22 +5,26 @@ import classNames from "classnames/bind";
 import { useLocation } from "react-router-dom";
 import { BsPlusCircle, BsXCircleFill, BsCaretDownFill } from "react-icons/bs";
 import { Button } from "bootstrap";
-const warning = require('../Category/assets/imgs/warning.png')
+import { useNavigate } from "react-router-dom";
+const warning = require("../Category/assets/imgs/warning.png");
 
 function AddProduct() {
   const id = useLocation();
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const cx = classNames.bind(styles);
+  let navigate = useNavigate();
 
   const refDesc = useRef();
   const refInputUpload = useRef();
   const refSpec = useRef();
   const refErrName = useRef();
+  const refModalContainer = useRef();
+  const refMessage = useRef();
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState([]);
+  const [description, setDescription] = useState();
 
   const [images, setImages] = useState([]);
   const [imagesUpload, setImagesUpload] = useState([]);
@@ -40,6 +44,9 @@ function AddProduct() {
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleDropDownBrand, setToggleDropDownBrand] = useState(false);
   const [toggleUploadImage, setToggleUpLoadImage] = useState(false);
+  const [toggleModal, setToggleModal] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
+  const [toggleMessage, setToggleMessage] = useState(false);
 
   useEffect(() => {
     if (imagesUpload.length === images.length) {
@@ -98,6 +105,7 @@ function AddProduct() {
   }, [brands]);
 
   const handleAddProduct = () => {
+    setToggleLoading(true);
     //xử lý state Description
     const listInputDesc = [...refDesc.current.children];
     const arrDataInputDesc = listInputDesc.map((item, index) => {
@@ -123,7 +131,7 @@ function AddProduct() {
       salePrice: costPrice * (salePercent / 100),
       salePercent: salePercent,
       quantity: quantity,
-      specifications: newArr,
+      specifications: specifications,
       category: currentCategoryID,
       brand: brandCurrentID,
       createdAt: new Date(),
@@ -142,7 +150,34 @@ function AddProduct() {
         return response.json();
       })
       .then((res) => {
+        if (res.code == 200) {
+          const h2 = document.createElement("h2");
+          h2.innerText = "Tác vụ thành công !";
+          refMessage.current.appendChild(h2);
+          setToggleMessage(true);
+
+          // setTimeout(() => {
+          //   navigate("/product");
+          // }, 1500);
+        } else {
+          const h2 = document.createElement("h2");
+          const button = document.createElement("button");
+          h2.innerText = res.message;
+          button.innerText = "Thử lại";
+          refMessage.current.appendChild(h2);
+          refMessage.current.appendChild(button);
+          button.addEventListener("click", () => {
+            setToggleLoading(false);
+            setToggleMessage(false);
+            refMessage.current.removeChild(h2);
+            refMessage.current.removeChild(button);
+          });
+          setToggleMessage(true);
+        }
+
         console.log(res);
+
+        // navigate("/product");
       });
     // }))
   };
@@ -171,24 +206,22 @@ function AddProduct() {
     const arr = Array.from(e.target.files);
     arr.map((item) => {
       const dataImage = new FormData();
-      dataImage.append("source", item);
-      fetch(
-        "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
-        {
-          method: "POST",
-          body: dataImage,
-        }
-      )
+      dataImage.append("files", item);
+      fetch("http://quyt.ddns.net:2607", {
+        method: "POST",
+        body: dataImage,
+      })
         .then((res) => res.json())
         .then((res) => {
           console.log(res);
           //  setImagesUpload((prev) => [...prev, res["image"]["url"]]);
-          setImages((prev) => [...prev, res["image"]["url"]]);
+          setImages((prev) => [...prev, res.data[0]]);
         })
         .catch((err) => console.log(err));
     });
     // setImages((prev) => [...prev, ...Array.from(e.target.files)]);
   };
+  console.log(images);
 
   const handleDeleteImage = (image, index) => {
     setImages(
@@ -229,6 +262,85 @@ function AddProduct() {
     } else {
       refErrName.current.children[2].innerText = null;
     }
+  };
+  const handleModalJson = () => {
+    const div = document.createElement("div");
+    div.style.width = "500px";
+    div.style.height = "500px";
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+    // div.style.justifyContent = 'center'
+    div.style.alignItems = "center";
+    const textaera = document.createElement("textarea");
+    textaera.style.width = "90%";
+    textaera.style.height = "70%";
+    textaera.style.margin = "10px 0px";
+    textaera.style.borderRadius = "10px";
+    textaera.style.padding = "10px";
+    const div2 = document.createElement("div");
+    div2.style.boxShadow = "none";
+    const button = document.createElement("button");
+    const button2 = document.createElement("button");
+    button.innerText = "Hủy";
+    button2.innerText = "Lưu";
+    button.style.margin = "5px";
+    button2.style.margin = "5px";
+    div2.appendChild(button);
+    div2.appendChild(button2);
+    div.appendChild(textaera);
+    div.appendChild(div2);
+    refModalContainer.current.appendChild(div);
+    setToggleModal(true);
+    button.addEventListener("click", () => {
+      refModalContainer.current.removeChild(div);
+      setToggleModal(false);
+    });
+    button2.addEventListener("click", () => {
+      setSpecifications(JSON.parse(textaera.value));
+      refModalContainer.current.removeChild(div);
+      setToggleModal(false);
+    });
+  };
+  console.log(specifications);
+
+  const handleUpdateJson = () => {
+    const div = document.createElement("div");
+    div.style.width = "500px";
+    div.style.height = "500px";
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+    // div.style.justifyContent = 'center'
+    div.style.alignItems = "center";
+    const textaera = document.createElement("textarea");
+    textaera.innerText = JSON.stringify(specifications);
+    textaera.style.width = "90%";
+    textaera.style.height = "70%";
+    textaera.style.margin = "10px 0px";
+    textaera.style.borderRadius = "10px";
+    textaera.style.padding = "10px";
+    const div2 = document.createElement("div");
+    div2.style.boxShadow = "none";
+    const button = document.createElement("button");
+    const button2 = document.createElement("button");
+    button.innerText = "Hủy";
+    button2.innerText = "Lưu";
+    button.style.margin = "5px";
+    button2.style.margin = "5px";
+    div2.appendChild(button);
+    div2.appendChild(button2);
+    div.appendChild(textaera);
+    div.appendChild(div2);
+    refModalContainer.current.appendChild(div);
+    setToggleModal(true);
+    button.addEventListener("click", () => {
+      refModalContainer.current.removeChild(div);
+      setToggleModal(false);
+    });
+    button2.addEventListener("click", () => {
+      setSpecifications(JSON.parse(textaera.value));
+      refModalContainer.current.removeChild(div);
+      setToggleModal(false);
+    });
   };
 
   return (
@@ -336,11 +448,41 @@ function AddProduct() {
             <p style={{ fontWeight: "bold" }}>SPECIFICATIONS</p>
             <div className={clsx(cx("from-body-group-spec"))} ref={refSpec}>
               <div className={clsx(cx("from-body-group-spec-1"))}>
-                <input placeholder="ex: Nhu cầu"></input>
-                <input placeholder="ex: Gaming, Văn phòng, Đồ họa - Kỹ thuật, Doanh nghiệp, Học sinh - Sinh viên"></input>
+                {/* <input placeholder="ex: Nhu cầu"></input>
+                <input placeholder="ex: Gaming, Văn phòng, Đồ họa - Kỹ thuật, Doanh nghiệp, Học sinh - Sinh viên"></input> */}
+                {specifications.length == 0
+                  ? undefined
+                  : specifications.map((item, index) => {
+                      return (
+                        <div key={index}>
+                          <input disabled value={item.title}></input>
+                          <input disabled value={item.content}></input>
+                        </div>
+                      );
+                    })}
+                <button
+                  style={
+                    specifications.length == 0
+                      ? { display: "inline-block" }
+                      : { display: "none" }
+                  }
+                  onClick={handleModalJson}
+                >
+                  Thêm mã json
+                </button>
+                <button
+                  onClick={handleUpdateJson}
+                  style={
+                    specifications.length !== 0
+                      ? { display: "inline-block" }
+                      : { display: "none" }
+                  }
+                >
+                  Chỉnh sửa
+                </button>
               </div>
             </div>
-            <BsPlusCircle onClick={handleAppendChildSpec} />
+            {/* <BsPlusCircle onClick={handleAppendChildSpec} /> */}
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>CATEGORY</p>
@@ -452,17 +594,37 @@ function AddProduct() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button>CANCEL</button>
+            <button onClick={()=>navigate('/product')}>Hủy</button>
           </div>
           <div>
             <button
               disabled={title == "" ? true : false}
               onClick={handleAddProduct}
             >
-              SAVE
+              Lưu
             </button>
           </div>
         </div>
+      </div>
+      <div
+        ref={refModalContainer}
+        className={clsx(cx("Modal-container"), {
+          [styles.openModal]: toggleModal,
+        })}
+      ></div>
+      <div
+        // ref={refModalContainer}
+        className={clsx(cx("loading"), {
+          [styles.openModal]: toggleLoading,
+        })}
+      >
+        <div></div>
+        <div
+          ref={refMessage}
+          className={clsx(cx("Message"), {
+            [styles.openloading]: toggleMessage,
+          })}
+        ></div>
       </div>
     </div>
   );

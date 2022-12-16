@@ -6,6 +6,8 @@ import Table from "react-bootstrap/Table";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 const warning = require("../Category/assets/imgs/warning.png");
+const imageicon = require("../Category/assets/imgs/image.png");
+
 
 function Category() {
   const cx = classNames.bind(styles);
@@ -275,6 +277,9 @@ function Category() {
           <thead>
             <tr>
               <th>
+                <p>Số thứ tự</p>
+              </th>
+              <th>
                 <p>Hình Ảnh</p>
               </th>
               <th>
@@ -296,6 +301,7 @@ function Category() {
                   }
                   key={index}
                 >
+                  <td>{index+1}</td>
                   <td>
                     <img src={category.icon}></img>
                   </td>

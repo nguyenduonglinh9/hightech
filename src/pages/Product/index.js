@@ -254,6 +254,7 @@ function Product() {
         <Table className={clsx(cx("table"))} striped bordered hover>
           <thead>
             <tr>
+              <th><p>Số thứ tự</p></th>
               <th>Hình Ảnh</th>
               <th>
                 <p>Tên</p>
@@ -276,75 +277,79 @@ function Product() {
             </tr>
           </thead>
           <tbody>
-            {curentItemName !== 'Tất Cả' ?  products
-              .filter((product, index) => {
-                return product.category == idCate;
-              })
-              .map((item, index) => {
-                return (
-                  <tr onClick={() => HandleDetail(item._id)} key={index}>
-                    <td>
-                      <img src={item.images[0]}></img>
-                    </td>
-                    <td className={clsx(cx("title_td"))}>{item.title}</td>
-                    <td>{dollarUSLocale.format(item.costPrice)}</td>
-                    <td>
-                      {category
-                        .filter((cate) => cate._id == item.category)
-                        .map((item3) => item3.title)}
-                    </td>
-                    <td>
-                      {brands
-                        .filter((brand) => brand._id == item.brand)
-                        .map((item2) => item2.title)}
-                    </td>
-                    <td>{item.quantity}</td>
-                    <td>
-                      {item.quantity > 0 ? (
-                        <div className={clsx(cx("status_conhang"))}>
-                          <p>On-Sale</p>
-                        </div>
-                      ) : (
-                        <div className={clsx(cx("status_hethang"))}>
-                          <p>Out Of Stock</p>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                );
-              }) : products.map((product, index) => {
-                return (
-                  <tr onClick={() => HandleDetail(product._id)} key={index}>
-                    <td>
-                      <img src={product.images[0]}></img>
-                    </td>
-                    <td className={clsx(cx("title_td"))}>{product.title}</td>
-                    <td>{dollarUSLocale.format(product.costPrice)}</td>
-                    <td>
-                      {category
-                        .filter((cate) => cate._id == product.category)
-                        .map((item3) => item3.title)}
-                    </td>
-                    <td>
-                      {brands
-                        .filter((brand) => brand._id == product.brand)
-                        .map((item2) => item2.title)}
-                    </td>
-                    <td>{product.quantity}</td>
-                    <td>
-                      {product.quantity > 0 ? (
-                        <div className={clsx(cx("status_conhang"))}>
-                          <p>On-Sale</p>
-                        </div>
-                      ) : (
-                        <div className={clsx(cx("status_hethang"))}>
-                          <p>Out Of Stock</p>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+            {curentItemName !== "Tất Cả"
+              ? products
+                  .filter((product, index) => {
+                    return product.category == idCate;
+                  })
+                  .map((item, index) => {
+                    return (
+                      <tr onClick={() => HandleDetail(item._id)} key={index}>
+                        <td>{index+1}</td>
+                        <td>
+                          <img src={item.images[0]}></img>
+                        </td>
+                        <td className={clsx(cx("title_td"))}>{item.title}</td>
+                        <td>{dollarUSLocale.format(item.costPrice)}</td>
+                        <td>
+                          {category
+                            .filter((cate) => cate._id == item.category)
+                            .map((item3) => item3.title)}
+                        </td>
+                        <td>
+                          {brands
+                            .filter((brand) => brand._id == item.brand)
+                            .map((item2) => item2.title)}
+                        </td>
+                        <td>{item.quantity}</td>
+                        <td>
+                          {item.quantity > 0 ? (
+                            <div className={clsx(cx("status_conhang"))}>
+                              <p>On-Sale</p>
+                            </div>
+                          ) : (
+                            <div className={clsx(cx("status_hethang"))}>
+                              <p>Out Of Stock</p>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+              : products.map((product, index) => {
+                  return (
+                    <tr onClick={() => HandleDetail(product._id)} key={index}>
+                      <td>{index+1}</td>
+                      <td>
+                        <img src={product.images[0]}></img>
+                      </td>
+                      <td className={clsx(cx("title_td"))}>{product.title}</td>
+                      <td>{dollarUSLocale.format(product.costPrice)}</td>
+                      <td>
+                        {category
+                          .filter((cate) => cate._id == product.category)
+                          .map((item3) => item3.title)}
+                      </td>
+                      <td>
+                        {brands
+                          .filter((brand) => brand._id == product.brand)
+                          .map((item2) => item2.title)}
+                      </td>
+                      <td>{product.quantity}</td>
+                      <td>
+                        {product.quantity > 0 ? (
+                          <div className={clsx(cx("status_conhang"))}>
+                            <p>On-Sale</p>
+                          </div>
+                        ) : (
+                          <div className={clsx(cx("status_hethang"))}>
+                            <p>Out Of Stock</p>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
           </tbody>
         </Table>
       </div>

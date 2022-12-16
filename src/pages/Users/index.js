@@ -42,7 +42,6 @@ function Users() {
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("listcategory"))}>
-
         <div
           style={{
             display: "flex",
@@ -51,13 +50,13 @@ function Users() {
           }}
         >
           <div>
-            <h3 style={{ margin: "0px" }}>USERS</h3>
+            <h3 style={{ margin: "0px" }}>Danh sách quản trị viên</h3>
           </div>
           <div
             onClick={handleToggleModalAddUser}
             className={clsx(cx("button-add-new"))}
           >
-            <p>Add</p>
+            <p>Thêm</p>
           </div>
         </div>
 
@@ -65,16 +64,19 @@ function Users() {
           <thead>
             <tr>
               <th>
-                <p>Avatar</p>
+                <p>Số thứ tự</p>
+              </th>
+              <th>
+                <p>Ảnh đại diện</p>
               </th>
               <th>
                 <p>Email</p>
               </th>
               <th>
-                <p>Full Name</p>
+                <p>Họ và tên</p>
               </th>
               <th>
-                <p>Phone</p>
+                <p>Số điện thoại</p>
               </th>
             </tr>
           </thead>
@@ -82,6 +84,7 @@ function Users() {
             {users.map((user, index) => {
               return (
                 <tr onClick={() => handleDetailUser(user._id)} key={index}>
+                  <td>{index+1}</td>
                   <td>
                     <img src={user.avatar}></img>
                   </td>

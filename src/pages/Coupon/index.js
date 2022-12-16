@@ -1,4 +1,4 @@
-import styles from "./Brand.module.scss";
+import styles from "./Coupon.module.scss";
 import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import classNames from "classnames/bind";
@@ -7,10 +7,12 @@ import { BsPlusLg, BsCaretDownFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 const warning = require("../Category/assets/imgs/warning.png");
 
-function Brand() {
+function Coupon() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
+  let currentDate = new Date();
+  let dollarUSLocale = Intl.NumberFormat("en-US");
 
   const refCate = useRef();
   const refIDCate = useRef();
@@ -18,6 +20,7 @@ function Brand() {
   const refModal = useRef();
   const refModal2 = useRef();
   const refModal3 = useRef();
+  const refStatus = useRef();
 
   const currentIdCate = useRef();
   const currentTitleCate = useRef();
@@ -29,23 +32,28 @@ function Brand() {
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [coupons, setCoupons] = useState([]);
 
   const [title, setTitle] = useState("");
+  const [code, setCode] = useState("");
+  const [giagiam, setGiagiam] = useState(0);
+  const [expiredAt, setExpiredAt] = useState("");
+  const [quantity, setQuantity] = useState(0);
+
   const [titleCategory, setTitleCategory] = useState("");
-  const [imageIcon, setImageIcon] = useState();
 
   const [imageIconUpdate, setImageIconUpdate] = useState();
 
   const [nextType, setNextType] = useState();
 
-  const [toggleModalAdd, setToggleModalAdd] = useState(false);
-  const [toggleModalAdd2, setToggleModalAdd2] = useState(false);
   const [toggleModalAdd3, setToggleModalAdd3] = useState(false);
   const [toggleModalAdd4, setToggleModalAdd4] = useState(false);
   const [toggleModalAdd5, setToggleModalAdd5] = useState(false);
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleButton, setToggleButton] = useState(true);
+  const [toggleOnOff, setToggleOnOff] = useState(false);
 
+  console.log(expiredAt);
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/category/", {
       method: "GET",
@@ -81,43 +89,24 @@ function Brand() {
       });
   }, []);
 
-  const handleToggleModal = (title, id) => {
-    refCate.current = title;
-    refIDCate.current = id;
-    setTitle("");
-    setToggleModalAdd(true);
-  };
-
-  const handleToggleModal2 = (title, brandID, id, titleCate) => {
-    refIDCate.current = id;
-    refCate.current = titleCate;
-    refBrandID.current = brandID;
-    setTitle(title);
-    setToggleModalAdd2(true);
-  };
-
-  const handleToggleModalAddCategory = () => {
-    setToggleModalAdd3(true);
-  };
-
-  const handleAddNewBrand = () => {
-    fetch("http://quyt.ddns.net:3000/brand/", {
-      method: "POST",
+  useEffect(() => {
+    fetch("http://quyt.ddns.net:3000/coupon/", {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         "x-access-token": DataLogin.token,
       },
-      body: JSON.stringify({
-        title: title,
-        category: refIDCate.current,
-      }),
     })
-      .then((res) => {
-        res.json();
-        setToggleModalAdd(false);
-        window.location.reload(false);
+      .then((response) => {
+        return response.json();
       })
-      .then((res) => console.log(res));
+      .then((data) => {
+        setCoupons((prev) => [...prev, ...data.data]);
+      });
+  }, []);
+
+  const handleToggleModalAddCategory = () => {
+    setToggleModalAdd3(true);
   };
 
   const handleUpdateBrand = () => {
@@ -179,10 +168,6 @@ function Brand() {
       });
   };
 
-  const handleUpdateFile = (e) => {
-    setImageIcon(e.target.files[0]);
-  };
-
   const handleUpdateFile2 = (e) => {
     setImageIconUpdate(e.target.files[0]);
   };
@@ -193,24 +178,49 @@ function Brand() {
 
    </div>
     `;
-    fetch("http://quyt.ddns.net:3000/brand/", {
+    fetch("http://quyt.ddns.net:3000/coupon/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-access-token": DataLogin.token,
       },
       body: JSON.stringify({
-        title: titleCategory,
-        category: currentIdCate.current,
+        title: title,
+        code: code,
+        value: giagiam,
+        quantity: quantity,
+        expiredAt: expiredAt,
+        active: toggleOnOff,
       }),
     })
       .then((res) => res.json())
       .then((res) => {
-        refModal.current.innerHTML = `<h2>Successful</h2>`;
+        if (res.code != 200) {
+          // refModal.current.innerHTML = `
+          // <div style="animation:none;display:flex;flex-direction:column;align-items:center;">
+          //   <h2>${res.message}</h2>
+          //   <button>Thử lại</button>
+          // </div>`;
+          const div = document.createElement("div");
+          const h2 = document.createElement("h2");
+          const button = document.createElement("button");
+          div.style.animation = "none";
+          div.style.display = "flex";
+          div.style.flexDirection = "column";
+          div.style.alignItems = "center";
+          h2.innerText = res.message;
+          button.innerText = "Thử Lại";
+          div.appendChild(h2);
+          div.appendChild(button);
 
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
+          refModal.current.appendChild(div);
+        }
+
+        console.log(res);
+
+        // setTimeout(() => {
+        //   window.location.reload(false);
+        // }, 1500);
       })
       .catch((err) => {
         refModal.current.innerHTML = `<h2>${err}</h2>`;
@@ -281,31 +291,6 @@ function Brand() {
   const handleDeleteCategory = () => {
     setToggleModalAdd5(true);
   };
-  const handleDeleteCategory2 = () => {
-    refModal3.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
-
-   </div>
-    `;
-    fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-    })
-      .then((res) => {
-        res.json();
-      })
-      .then((res) => {
-        refModal3.current.innerHTML = `<h2>Successful</h2>`;
-
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => (refModal3.current.innerHTML = `<h2>${err}</h2>`));
-  };
 
   const handleCancel = () => {
     setTitleCategory("");
@@ -320,7 +305,6 @@ function Brand() {
     setToggleDropDown(false);
   };
 
-
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("listcategory"))}>
@@ -332,7 +316,7 @@ function Brand() {
           }}
         >
           <div>
-            <h3 style={{ margin: "0px" }}>Danh Sách Thương Hiệu</h3>
+            <h3 style={{ margin: "0px" }}>Danh Sách Phiếu Mua Hàng</h3>
           </div>
           <div
             onClick={handleToggleModalAddCategory}
@@ -349,20 +333,33 @@ function Brand() {
                 <p>Số thứ tự</p>
               </th>
               <th>
-                <p>Tên</p>
+                <p>Mã Code</p>
               </th>
               <th>
-                <p>Ngày Thêm</p>
+                <p>Giá giảm</p>
+              </th>
+              <th>
+                <p>Ngày hết hạn</p>
+              </th>
+              <th>
+                <p>Hạn sử dụng</p>
+              </th>
+              <th>
+                <p>Trạng thái</p>
               </th>
             </tr>
           </thead>
           <tbody>
-            {brands.map((brand, index) => {
+            {coupons.map((coupon, index) => {
               return (
                 <tr
                   ref={test}
                   onClick={() =>
-                    handleUpdateCategory(brand._id, brand.title, brand.category)
+                    handleUpdateCategory(
+                      coupon._id
+                      // coupon.title,
+                      // coupon.category
+                    )
                   }
                   key={index}
                 >
@@ -370,84 +367,64 @@ function Brand() {
                     <img src={category.icon}></img>
                   </td> */}
                   <td>{index + 1}</td>
-                  <td>{brand.title}</td>
-                  <td>{(brand.createdAt).substring(0, 10).split('-').reverse().join('/')}</td>
+                  <td>{coupon.code}</td>
+                  <td>{dollarUSLocale.format(coupon.value)}</td>
+                  <td>
+                    {coupon.expiredAt
+                      .substring(0, 10)
+                      .split("-")
+                      .reverse()
+                      .join("/")}
+                  </td>
+                  <td style={{ display: "flex", justifyContent: "center" }}>
+                    <div
+                      // style={
+                      //   refStatus.current.textContent == "Hết hạn"
+                      //     ? { backgroundColor: "lightcoral" }
+                      //     : { backgroundColor: "lightgreen" }
+                      // }
+                      className={clsx(cx("status"))}
+                    >
+                      {coupon.expiredAt < currentDate.toISOString() ? (
+                        <p
+                          style={{ backgroundColor: "lightcoral" }}
+                          ref={refStatus}
+                        >
+                          Hết hạn
+                        </p>
+                      ) : (
+                        <p
+                          style={{ backgroundColor: "lightgreen" }}
+                          ref={refStatus}
+                        >
+                          Còn hạn
+                        </p>
+                      )}
+                    </div>
+                  </td>
+                  <td>
+                    {coupon.active == true ? (
+                      <p
+                        style={{ backgroundColor: "lightgreen" }}
+                        ref={refStatus}
+                      >
+                        Đang bật
+                      </p>
+                    ) : (
+                      <p
+                        style={{ backgroundColor: "lightcoral" }}
+                        ref={refStatus}
+                      >
+                        Đang tắt
+                      </p>
+                    )}
+                  </td>
                 </tr>
               );
             })}
           </tbody>
         </Table>
       </div>
-
-      {/* <div
-        onClick={() => {
-          setToggleModalAdd(false);
-        }}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd,
-        })}
-      >
-        <div onClick={(e) => e.stopPropagation()} className={clsx(cx("modal"))}>
-          <div className={clsx(cx("modal-header"))}>
-            <h3>HIGH TECH</h3>
-          </div>
-          <div className={clsx(cx("modal-body"))}>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>name</p>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              ></input>
-            </div>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>Category</p>
-              <input disabled value={refCate.current}></input>
-            </div>
-          </div>
-          <div className={clsx(cx("modal-footer"))}>
-            <button
-              onClick={() => {
-                setTitle("");
-                setToggleModalAdd(false);
-              }}
-            >
-              Cancel
-            </button>
-            <button onClick={handleAddNewBrand}>Save</button>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div
-        onClick={() => setToggleModalAdd2(false)}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd2,
-        })}
-      >
-        <div onClick={(e) => e.stopPropagation()} className={clsx(cx("modal"))}>
-          <div className={clsx(cx("modal-header"))}>
-            <h3>HIGH TECH</h3>
-          </div>
-          <div className={clsx(cx("modal-body"))}>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>name</p>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              ></input>
-            </div>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>Category</p>
-              <input disabled value={refCate.current}></input>
-            </div>
-          </div>
-          <div className={clsx(cx("modal-footer"))}>
-            <button onClick={() => setToggleModalAdd2(false)}>Cancel</button>
-            <button onClick={handleDeleteBrand}>Delete</button>
-            <button onClick={handleUpdateBrand}>Update</button>
-          </div>
-        </div>
-      </div> */}
 
       <div
         onClick={handleCancel}
@@ -473,42 +450,89 @@ function Brand() {
             >
               <p>Tên</p>
               <input
-                value={titleCategory}
-                onChange={(e) => setTitleCategory(e.target.value)}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              ></input>
+            </div>
+
+            <div
+              style={{ animation: "none" }}
+              className={clsx(cx("modal-body-group"))}
+            >
+              <p>Mã code</p>
+              <input
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
               ></input>
             </div>
             <div
               style={{ animation: "none" }}
               className={clsx(cx("modal-body-group"))}
             >
-              <p>Danh Mục</p>
+              <p>Giá giảm</p>
+              <input
+                type="number"
+                value={giagiam}
+                onChange={(e) => setGiagiam(e.target.value)}
+              ></input>
+            </div>
+            <div
+              style={{ animation: "none" }}
+              className={clsx(cx("modal-body-group"))}
+            >
+              <p>Ngày hết hạn</p>
+              <input
+                type="date"
+                value={expiredAt}
+                onChange={(e) => setExpiredAt(e.target.value)}
+              ></input>
+            </div>
+            <div
+              style={{ animation: "none" }}
+              className={clsx(cx("modal-body-group"))}
+            >
+              <p>Số lượng</p>
+              <input
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+              ></input>
+            </div>
+            <div
+              style={{ animation: "none" }}
+              className={clsx(cx("modal-body-group"))}
+            >
+              <p>Bật/Tắt</p>
+              {/* <input
+                type="date"
+                // value={titleCategory}
+                // onChange={(e) => setTitleCategory(e.target.value)}
+              ></input> */}
               <div
-                onClick={() => {
-                  setToggleDropDown(true);
-                }}
-                style={{ animation: "none" }}
-                className={clsx(cx("modal-body-group-current-category"))}
-              >
-                <p>{currentTitleCate.current}</p>
-                <BsCaretDownFill />
-              </div>
-              <div
-                style={{ animation: "none" }}
-                className={clsx(cx("modal-body-group-dropdown-category"), {
-                  [styles.activedropdown]: toggleDropDown,
+                onClick={() => setToggleOnOff(!toggleOnOff)}
+                className={clsx(cx("onoffbutton"), {
+                  [styles.onToggle2]: toggleOnOff,
                 })}
               >
-                {categorys.map((category, index) => {
-                  return (
-                    <p
-                      onClick={() =>
-                        handleChangeCurrentCate(category.title, category._id)
-                      }
-                    >
-                      {category.title}
-                    </p>
-                  );
-                })}
+                <div
+                  className={clsx({
+                    [styles.onToggle]: toggleOnOff,
+                  })}
+                ></div>
+                <p
+                  className={clsx({
+                    [styles.onToggle3]: toggleOnOff,
+                  })}
+                >
+                  Tắt
+                </p>
+                <p
+                  className={clsx({
+                    [styles.onToggle3]: !toggleOnOff,
+                  })}
+                >
+                  Bật
+                </p>
               </div>
             </div>
           </div>
@@ -531,7 +555,7 @@ function Brand() {
               })}
               onClick={handleAddNewCategory}
             >
-              Save
+              Lưu
             </button>
             <button
               className={clsx({
@@ -637,4 +661,4 @@ function Brand() {
   );
 }
 
-export default Brand;
+export default Coupon;

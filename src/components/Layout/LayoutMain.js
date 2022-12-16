@@ -15,6 +15,7 @@ import {
   BsReceiptCutoff,
   BsList,
   BsBell,
+  BsGift,
 } from "react-icons/bs";
 import { useRef, useState, createContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -157,6 +158,27 @@ function LayoutMain({ children }) {
                   >
                     <FiUsers />
                     <span>Quản Trị Viên</span>
+                  </div>
+                </li>
+              </Link>
+              <Link
+                to="/coupon"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/coupon"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <BsGift />
+                    <span>Phiếu mua hàng</span>
                   </div>
                 </li>
               </Link>
@@ -350,10 +372,13 @@ function LayoutMain({ children }) {
                     }}
                   />
                 </div>
-                <div onClick={() => {
-                  navigate('/account')
-                  setToggleUserOption(false)
-                }} className={clsx(cx("user-option-header-button-profile2"))}>
+                <div
+                  onClick={() => {
+                    navigate("/account");
+                    setToggleUserOption(false);
+                  }}
+                  className={clsx(cx("user-option-header-button-profile2"))}
+                >
                   <p>Hồ Sơ Của Tôi</p>
                   <p>Cài Đặt</p>
                 </div>

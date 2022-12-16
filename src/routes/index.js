@@ -14,6 +14,7 @@ import ProductsSold from "../pages/Products_Sold";
 import Revuene from "../pages/Revuene";
 import DetailOrder from "../pages/Detail_Order";
 import Account from "../pages/Account";
+import Coupon from "../pages/Coupon";
 
 const privateRoutes = [
   {
@@ -94,6 +95,11 @@ const privateRoutes = [
   {
     path: "/account",
     component: Account,
+    layout: "MainLayout",
+  },
+  {
+    path: "/coupon",
+    component: Coupon,
     layout: "MainLayout",
   },
 ];

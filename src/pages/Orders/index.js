@@ -362,7 +362,7 @@ function Orders() {
           }}
         >
           <div>
-            <h3 style={{ margin: "0px" }}>Orders</h3>
+            <h3 style={{ margin: "0px" }}>Danh sách đơn hàng</h3>
           </div>
           <div className={clsx(cx("soft"))}>
             <div style={{cursor:'pointer'}} onClick={() => setToggleSoft(!toggleSoft)}>
@@ -409,13 +409,13 @@ function Orders() {
           <thead>
             <tr>
               <th>
-                <p>Order ID</p>
+                <p>Số thứ tự</p>
               </th>
               <th>
-                <p>Status</p>
+                <p>Trạng thái</p>
               </th>
               <th>
-                <p>Created At</p>
+                <p>Ngày tạo đơn</p>
               </th>
             </tr>
           </thead>
@@ -428,23 +428,31 @@ function Orders() {
                       onClick={() => handleUpdateCategory(category._id)}
                       key={index}
                     >
-                      <td>{category._id}</td>
+                      <td>{index + 1}</td>
                       <td>
                         <p
                           style={
                             category.status == "Processing"
                               ? { backgroundColor: "lightgreen" }
                               : category.status == "Shipping"
-                              ? { backgroundColor: "yellow",color:'black' }
+                              ? { backgroundColor: "yellow", color: "black" }
                               : category.status == "Completed"
                               ? { backgroundColor: "lightblue" }
-                              : category.status == "Cancelled" ? {backgroundColor:'gray'} : undefined
+                              : category.status == "Cancelled"
+                              ? { backgroundColor: "gray" }
+                              : undefined
                           }
                         >
                           {category.status}
                         </p>
                       </td>
-                      <td>{category.createdAt}</td>
+                      <td>
+                        {category.createdAt
+                          .substring(0, 10)
+                          .split("-")
+                          .reverse()
+                          .join("/")}
+                      </td>
                     </tr>
                   );
                 })
