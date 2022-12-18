@@ -33,6 +33,7 @@ function AddProduct() {
   const [salePercent, setSalePercent] = useState();
   const [quantity, setQuantity] = useState(0);
   const [specifications, setSpecifications] = useState([]);
+  const [toggleOnOff, setToggleOnOff] = useState(false);
 
   const [category, setCategory] = useState("Màn hình");
   const [currentCategoryID, setCurrentCategoryID] = useState(
@@ -137,6 +138,7 @@ function AddProduct() {
       createdAt: new Date(),
       updatedAt: new Date(),
       favorite: false,
+      active : toggleOnOff
     };
     fetch("http://quyt.ddns.net:3000/product/", {
       method: "POST",
@@ -156,9 +158,9 @@ function AddProduct() {
           refMessage.current.appendChild(h2);
           setToggleMessage(true);
 
-          // setTimeout(() => {
-          //   navigate("/product");
-          // }, 1500);
+          setTimeout(() => {
+            navigate("/product");
+          }, 1500);
         } else {
           const h2 = document.createElement("h2");
           const button = document.createElement("button");
@@ -186,17 +188,6 @@ function AddProduct() {
     var input = document.createElement("input");
     input.style.margin = "5px 0";
     refDesc.current.appendChild(input);
-  };
-
-  const handleAppendChildSpec = () => {
-    const div = document.createElement("div");
-    const input = document.createElement("input");
-    const input2 = document.createElement("input");
-
-    div.appendChild(input);
-    div.appendChild(input2);
-
-    refSpec.current.appendChild(div);
   };
 
   const openUploadImage = () => {
@@ -348,11 +339,11 @@ function AddProduct() {
       <div className={clsx(cx("from"))}>
         <div className={clsx(cx("from-header"))}>
           <h2>HIGHTECH</h2>
-          <p>ADD NEW PRODUCT FORM</p>
+          <p>Thêm mới sản phẩm</p>
         </div>
         <div className={clsx(cx("from-body"))}>
           <div ref={refErrName} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>NAME</p>
+            <p style={{ fontWeight: "bold" }}>Tên</p>
             <input
               onBlur={(e) => handleValidateName(e)}
               value={title}
@@ -364,7 +355,7 @@ function AddProduct() {
             <p style={{ margin: "2px" }}></p>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>DESCRIPTION</p>
+            <p style={{ fontWeight: "bold" }}>Mô Tả</p>
             <div
               style={{ display: "flex", flexDirection: "column" }}
               ref={refDesc}
@@ -377,7 +368,7 @@ function AddProduct() {
             <BsPlusCircle onClick={handleAppendChild} />
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>IMAGE</p>
+            <p style={{ fontWeight: "bold" }}>Hình Ảnh</p>
             <div style={{ display: "flex" }}>
               {Array.from(images).length == null
                 ? undefined
@@ -400,8 +391,11 @@ function AddProduct() {
                     );
                   })}
 
-              <div className={clsx(cx("from-body-group-addimage"))}>
-                <BsPlusCircle onClick={openUploadImage} />
+              <div
+                onClick={openUploadImage}
+                className={clsx(cx("from-body-group-addimage"))}
+              >
+                <BsPlusCircle />
               </div>
             </div>
             <input
@@ -413,7 +407,7 @@ function AddProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>PRICE</p>
+            <p style={{ fontWeight: "bold" }}>Giá</p>
             <input
               value={costPrice}
               onChange={(e) => {
@@ -424,7 +418,7 @@ function AddProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>SALE</p>
+            <p style={{ fontWeight: "bold" }}>Giảm Giá</p>
             <input
               value={salePercent}
               onChange={(e) => {
@@ -434,7 +428,7 @@ function AddProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>QUANTITY</p>
+            <p style={{ fontWeight: "bold" }}>Số Lượng</p>
             <input
               value={quantity}
               onChange={(e) => {
@@ -445,7 +439,7 @@ function AddProduct() {
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>SPECIFICATIONS</p>
+            <p style={{ fontWeight: "bold" }}>Thông Số Kỹ Thuật</p>
             <div className={clsx(cx("from-body-group-spec"))} ref={refSpec}>
               <div className={clsx(cx("from-body-group-spec-1"))}>
                 {/* <input placeholder="ex: Nhu cầu"></input>
@@ -485,7 +479,41 @@ function AddProduct() {
             {/* <BsPlusCircle onClick={handleAppendChildSpec} /> */}
           </div>
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>CATEGORY</p>
+            <p style={{ fontWeight: "bold" }}>Trạng Thái Sản Phẩm</p>
+            <div
+              onClick={() => setToggleOnOff(!toggleOnOff)}
+              className={clsx(cx("onoffbutton"), {
+                [styles.onToggle2]: toggleOnOff,
+              })}
+            >
+              <div
+                className={clsx({
+                  [styles.onToggle]: toggleOnOff,
+                })}
+              ></div>
+              <p
+                className={clsx({
+                  [styles.onToggle3]: toggleOnOff,
+                })}
+              >
+                Tắt
+              </p>
+              <p
+                className={clsx({
+                  [styles.onToggle3]: !toggleOnOff,
+                })}
+              >
+                Bật
+              </p>
+            </div>
+          </div>
+          <div
+            onClick={() => {
+              setToggleDropDown(!toggleDropDown);
+            }}
+            className={clsx(cx("from-body-group"))}
+          >
+            <p style={{ fontWeight: "bold" }}>Danh Mục</p>
             <div
               className={clsx(cx("drop-down"))}
               style={{
@@ -499,11 +527,7 @@ function AddProduct() {
               }}
             >
               <p style={{ margin: "0px" }}>{category}</p>
-              <BsCaretDownFill
-                onClick={() => {
-                  setToggleDropDown(!toggleDropDown);
-                }}
-              />
+              <BsCaretDownFill />
               <div
                 className={clsx(cx("drop-down-menu"), {
                   [styles.activedropdown]: toggleDropDown,
@@ -538,8 +562,13 @@ function AddProduct() {
               </div>
             </div>
           </div>
-          <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>BRAND</p>
+          <div
+            onClick={() => {
+              setToggleDropDownBrand(!toggleDropDownBrand);
+            }}
+            className={clsx(cx("from-body-group"))}
+          >
+            <p style={{ fontWeight: "bold" }}>Thương Hiệu</p>
             <div
               className={clsx(cx("drop-down"))}
               style={{
@@ -553,11 +582,7 @@ function AddProduct() {
               }}
             >
               <p style={{ margin: "0px" }}>{brand}</p>
-              <BsCaretDownFill
-                onClick={() => {
-                  setToggleDropDownBrand(!toggleDropDownBrand);
-                }}
-              />
+              <BsCaretDownFill />
               <div
                 className={clsx(cx("drop-down-menu"), {
                   [styles.activedropdown]: toggleDropDownBrand,
@@ -594,7 +619,7 @@ function AddProduct() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button onClick={()=>navigate('/product')}>Hủy</button>
+            <button onClick={() => navigate("/product")}>Hủy</button>
           </div>
           <div>
             <button

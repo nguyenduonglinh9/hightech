@@ -5,14 +5,21 @@ import classNames from "classnames/bind";
 import Table from "react-bootstrap/Table";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { browserHistory } from "react-router";
 const warning = require("../Category/assets/imgs/warning.png");
 const imageicon = require("../Category/assets/imgs/image.png");
 
 
+
 function Category() {
+  
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
+
+  
+ 
+
 
   const refCate = useRef();
   const refIDCate = useRef();
@@ -41,6 +48,8 @@ function Category() {
   const [toggleModalAdd3, setToggleModalAdd3] = useState(false);
   const [toggleModalAdd4, setToggleModalAdd4] = useState(false);
   const [toggleModalAdd5, setToggleModalAdd5] = useState(false);
+  const [toggleOnOff, setToggleOnOff] = useState(false);
+
 
 
   useEffect(() => {
@@ -139,15 +148,14 @@ function Category() {
         body: JSON.stringify({
           title: titleCategory,
           icon: URLIcon,
-          type: 22,
-          active:true
+          active: toggleOnOff,
+          type:22
         }),
       })
         .then((res) => res.json())
         .then((res) => {
           refModal.current.innerHTML = `<h2>${res.message}</h2>`;
           console.log(res);
-
           // setTimeout(() => {
           //   window.location.reload(false);
           // }, 1500);
@@ -158,11 +166,12 @@ function Category() {
     });
   };
 
-  const handleUpdateCategory = (id, title, icon) => {
+  const handleUpdateCategory = (id, title, icon, active) => {
     setTitleCategory(title);
     refIDCate.current = id;
     setImageIconUpdate(icon);
     setToggleModalAdd4(true);
+    setToggleOnOff(active);
   };
 
   const handleUpdateCate = () => {
@@ -200,15 +209,17 @@ function Category() {
         body: JSON.stringify({
           title: titleCategory,
           icon: URLIcon,
+          active: toggleOnOff,
         }),
       })
         .then((res) => res.json())
         .then((res) => {
+          console.log(res)
           refModal2.current.innerHTML = `<h2>Thành Công</h2>`;
 
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
+          // setTimeout(() => {
+          //   window.location.reload(false);
+          // }, 1500);
         })
         .catch((err) => {
           refModal2.current.innerHTML = `<h2>${err}</h2>`;
@@ -296,12 +307,13 @@ function Category() {
                     handleUpdateCategory(
                       category._id,
                       category.title,
-                      category.icon
+                      category.icon,
+                      category.active
                     )
                   }
                   key={index}
                 >
-                  <td>{index+1}</td>
+                  <td>{index + 1}</td>
                   <td>
                     <img src={category.icon}></img>
                   </td>
@@ -312,77 +324,6 @@ function Category() {
           </tbody>
         </Table>
       </div>
-
-      {/* <div
-        onClick={() => {
-          setToggleModalAdd(false);
-        }}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd,
-        })}
-      >
-        <div onClick={(e) => e.stopPropagation()} className={clsx(cx("modal"))}>
-          <div className={clsx(cx("modal-header"))}>
-            <h3>HIGH TECH</h3>
-          </div>
-          <div className={clsx(cx("modal-body"))}>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>name</p>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              ></input>
-            </div>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>Category</p>
-              <input disabled value={refCate.current}></input>
-            </div>
-          </div>
-          <div className={clsx(cx("modal-footer"))}>
-            <button
-              onClick={() => {
-                setTitle("");
-                setToggleModalAdd(false);
-              }}
-            >
-              Cancel
-            </button>
-            <button onClick={handleAddNewBrand}>Save</button>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div
-        onClick={() => setToggleModalAdd2(false)}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd2,
-        })}
-      >
-        <div onClick={(e) => e.stopPropagation()} className={clsx(cx("modal"))}>
-          <div className={clsx(cx("modal-header"))}>
-            <h3>HIGH TECH</h3>
-          </div>
-          <div className={clsx(cx("modal-body"))}>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>name</p>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              ></input>
-            </div>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>Category</p>
-              <input disabled value={refCate.current}></input>
-            </div>
-          </div>
-          <div className={clsx(cx("modal-footer"))}>
-            <button onClick={() => setToggleModalAdd2(false)}>Cancel</button>
-            <button onClick={handleDeleteBrand}>Delete</button>
-            <button onClick={handleUpdateBrand}>Update</button>
-          </div>
-        </div>
-      </div> */}
-
       <div
         onClick={() => setToggleModalAdd3(false)}
         className={clsx(cx("modal-add-brand"), {
@@ -424,6 +365,36 @@ function Category() {
                   imageIcon == null ? undefined : URL.createObjectURL(imageIcon)
                 }
               ></img>
+            </div>
+            <div className={clsx(cx("modal-body-group"))}>
+              <p style={{ fontWeight: "bold" }}>Trạng Thái Sản Phẩm</p>
+              <div
+                style={{ animation: "none" }}
+                onClick={() => setToggleOnOff(!toggleOnOff)}
+                className={clsx(cx("onoffbutton"), {
+                  [styles.onToggle2]: toggleOnOff,
+                })}
+              >
+                <div
+                  className={clsx({
+                    [styles.onToggle]: toggleOnOff,
+                  })}
+                ></div>
+                <p
+                  className={clsx({
+                    [styles.onToggle3]: toggleOnOff,
+                  })}
+                >
+                  Tắt
+                </p>
+                <p
+                  className={clsx({
+                    [styles.onToggle3]: !toggleOnOff,
+                  })}
+                >
+                  Bật
+                </p>
+              </div>
             </div>
           </div>
           <div
@@ -481,13 +452,43 @@ function Category() {
                 }
               ></img>
             </div>
+            <div className={clsx(cx("modal-body-group"))}>
+              <p style={{ fontWeight: "bold" }}>Trạng Thái Sản Phẩm</p>
+              <div
+                style={{ animation: "none" }}
+                onClick={() => setToggleOnOff(!toggleOnOff)}
+                className={clsx(cx("onoffbutton"), {
+                  [styles.onToggle2]: toggleOnOff,
+                })}
+              >
+                <div
+                  className={clsx({
+                    [styles.onToggle]: toggleOnOff,
+                  })}
+                ></div>
+                <p
+                  className={clsx({
+                    [styles.onToggle3]: toggleOnOff,
+                  })}
+                >
+                  Tắt
+                </p>
+                <p
+                  className={clsx({
+                    [styles.onToggle3]: !toggleOnOff,
+                  })}
+                >
+                  Bật
+                </p>
+              </div>
+            </div>
           </div>
           <div
             style={{ animation: "none" }}
             className={clsx(cx("modal-footer"))}
           >
             <button onClick={handleCancel}>Hủy</button>
-            <button onClick={handleDeleteCategory}>Xóa</button>
+            {/* <button onClick={handleDeleteCategory}>Xóa</button> */}
             <button onClick={handleUpdateCate}>Lưu</button>
           </div>
         </div>

@@ -21,6 +21,7 @@ function Coupon() {
   const refModal2 = useRef();
   const refModal3 = useRef();
   const refStatus = useRef();
+  const refMessage = useRef();
 
   const currentIdCate = useRef();
   const currentTitleCate = useRef();
@@ -52,6 +53,9 @@ function Coupon() {
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleButton, setToggleButton] = useState(true);
   const [toggleOnOff, setToggleOnOff] = useState(false);
+  const [toggleMessage, setToggleMessage] = useState(false);
+
+  const [currentIDCoupon, setCurrentIDCoupon] = useState()
 
   console.log(expiredAt);
   useEffect(() => {
@@ -115,23 +119,27 @@ function Coupon() {
 
    </div>
     `;
-    fetch(`http://quyt.ddns.net:3000/brand/${currentIdBrand.current}`, {
+    fetch(`http://quyt.ddns.net:3000/coupon/${currentIDCoupon}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "x-access-token": DataLogin.token,
       },
       body: JSON.stringify({
-        title: titleCategory,
-        category: currentIdCate.current,
+        title: title,
+        code: code,
+        value: giagiam,
+        quantity: quantity,
+        expiredAt: expiredAt,
+        active: toggleOnOff,
       }),
     })
       .then((res) => {
         res.json();
       })
       .then((res) => {
+        console.log(res)
         refModal.current.innerHTML = `<h2>Successful</h2>`;
-
         setTimeout(() => {
           window.location.reload(false);
         }, 1500);
@@ -173,7 +181,8 @@ function Coupon() {
   };
 
   const handleAddNewCategory = () => {
-    refModal.current.innerHTML = `
+    setToggleMessage(true);
+    refMessage.current.innerHTML = `
    <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
 
    </div>
@@ -201,6 +210,7 @@ function Coupon() {
           //   <h2>${res.message}</h2>
           //   <button>Thử lại</button>
           // </div>`;
+          refMessage.current.innerHTML = "<p></p>";
           const div = document.createElement("div");
           const h2 = document.createElement("h2");
           const button = document.createElement("button");
@@ -210,35 +220,51 @@ function Coupon() {
           div.style.alignItems = "center";
           h2.innerText = res.message;
           button.innerText = "Thử Lại";
+          button.addEventListener("click", () => {
+            setToggleMessage(false);
+            refMessage.current.removeChild(div);
+          });
           div.appendChild(h2);
           div.appendChild(button);
 
-          refModal.current.appendChild(div);
+          refMessage.current.appendChild(div);
+        } else {
+          const h2 = document.createElement("h2");
+          h2.innerText = res.message;
+          refMessage.current.appendChild(h2);
+          setTimeout(() => {
+          window.location.reload(false);
+        }, 1500);
         }
 
         console.log(res);
 
-        // setTimeout(() => {
-        //   window.location.reload(false);
-        // }, 1500);
+        // 
       })
       .catch((err) => {
         refModal.current.innerHTML = `<h2>${err}</h2>`;
       });
   };
+  console.log(currentIDCoupon)
 
-  const handleUpdateCategory = (id, title, category) => {
-    const currentTitle = categorys.find((item) => item._id == category);
-    setTitleCategory(title);
-    currentIdBrand.current = id;
-    currentIdCate.current = category;
-    currentTitleCate.current = currentTitle.title;
+  const handleUpdateCoupon = (id) => {
+    const coupon = coupons.find(item => item._id == id);
+    setCurrentIDCoupon(id)
+    setTitle(coupon.title);
+    setCode(coupon.code);
+    setGiagiam(coupon.value);
+    setQuantity(coupon.quantity);
+    setToggleOnOff(coupon.active);
+    const date = new Date(coupon.expiredAt);
+    console.log(date.toISOString().substring(0,10));
+    setExpiredAt(date.toISOString())
     setToggleModalAdd3(true);
     setToggleButton(false);
   };
 
   const handleUpdateCate = () => {
-    refModal2.current.innerHTML = `
+    setToggleMessage(true);
+    refMessage.current.innerHTML = `
    <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
 
    </div>
@@ -355,7 +381,7 @@ function Coupon() {
                 <tr
                   ref={test}
                   onClick={() =>
-                    handleUpdateCategory(
+                    handleUpdateCoupon(
                       coupon._id
                       // coupon.title,
                       // coupon.category
@@ -483,8 +509,12 @@ function Coupon() {
               <p>Ngày hết hạn</p>
               <input
                 type="date"
-                value={expiredAt}
-                onChange={(e) => setExpiredAt(e.target.value)}
+                value={expiredAt.substring(0,10)}
+                // onChange={(e) => setExpiredAt(e.target.value)}
+                onChange={(e) => {
+                  const date = new Date(e.target.value);
+                  setExpiredAt(date.toISOString())
+                }}
               ></input>
             </div>
             <div
@@ -567,6 +597,12 @@ function Coupon() {
             </button>
           </div>
         </div>
+        <div
+          ref={refMessage}
+          className={clsx(cx("modal"), {
+            [styles.offMess]: !toggleMessage,
+          })}
+        ></div>
       </div>
 
       <div

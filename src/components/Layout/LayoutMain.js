@@ -16,6 +16,7 @@ import {
   BsList,
   BsBell,
   BsGift,
+  BsNewspaper,
 } from "react-icons/bs";
 import { useRef, useState, createContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -183,6 +184,27 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                to="/banner"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/banner"
+                        ? true
+                        : false,
+                  })}
+                >
+                  <div
+                    style={{ pointerEvents: "none" }}
+                    className={clsx(cx("bodyNav_group"))}
+                  >
+                    <BsNewspaper />
+                    <span>Banner</span>
+                  </div>
+                </li>
+              </Link>
+              <Link
                 to="/orders"
                 style={{ textDecoration: "none", color: "white" }}
               >
@@ -289,7 +311,7 @@ function LayoutMain({ children }) {
                   className={clsx(cx("header-from-input"))}
                 ></input>
                 <div className={clsx(cx("header-from-button"))}>
-                  <FaSearch />
+                  <FaSearch style={{ color: "rgb(3,201,215)" }} />
                 </div>
               </div>
             </form>

@@ -55,22 +55,26 @@ function DetailUser() {
     setToggleLoading(true);
     var promise = new Promise(function (resolve, reject) {
       //xử lý hình ảnh
-      const dataImage = new FormData();
-      let URLIcon;
-      dataImage.append("source", avatar);
-      fetch(
-        "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
-        {
+      if (typeof avatar == "object") {
+        const dataImage = new FormData();
+        let URLIcon;
+        dataImage.append("files", avatar);
+        fetch("http://quyt.ddns.net:2607", {
           method: "POST",
           body: dataImage,
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          URLIcon = res["image"]["url"];
-          resolve(URLIcon);
         })
-        .catch((err) => console.log(err));
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            URLIcon = res.data[0];
+            resolve(URLIcon);
+          })
+          .catch((err) => console.log(err));
+      }
+      else {
+        resolve(avatar);
+      }
+      
     });
     promise.then((URLIcon) => {
       let data = function () {
@@ -229,11 +233,12 @@ function DetailUser() {
               <div style={{ position: "relative" }}>
                 <img
                   styles={{ width: "80px" }}
-                  src={
-                    typeof avatar == "object"
-                      ? URL.createObjectURL(avatar)
-                      : avatar
-                  }
+                  // src={
+                  //   typeof avatar == "object"
+                  //     ? URL.createObjectURL(avatar)
+                  //     : avatar
+                  // }
+                  src={avatar == null ? null : typeof avatar == "object" ? URL.createObjectURL(avatar) : avatar}
                 ></img>
                 <BsXCircleFill
                   onClick={handleDeleteImage}
@@ -288,7 +293,7 @@ function DetailUser() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button>CANCEL</button>
+            <button onClick={()=>navigate('/users')}>CANCEL</button>
           </div>
           <div>
             <button onClick={handleDeleteUser}>DELETE</button>

@@ -190,6 +190,7 @@
       .modal-body-group {
         display: flex;
         flex-direction: column;
+        animation: none;
         input {
           max-width: 100%;
           padding: 15px;
@@ -318,6 +319,53 @@
 .button-add-new p {
   margin: 0px 5px;
   pointer-events: none;
+}
+.onoffbutton {
+  width: 100px;
+  height: 30px;
+  background: #6a6d72;
+  animation: none;
+  border-radius: 20px;
+  position: relative;
+  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  div {
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    animation: none !important;
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 5%;
+    transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  }
+  p {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    margin: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+    animation: none;
+
+  }
+  p:last-child {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    margin: 0;
+    transform: translateY(-50%);
+  }
+}
+.onToggle {
+  left: 75% !important;
+}
+.onToggle2 {
+  background: lightgreen !important;
+}
+.onToggle3 {
+  opacity: 0;
 }
 @keyframes xoay {
   to {

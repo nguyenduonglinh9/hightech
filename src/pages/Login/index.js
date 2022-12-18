@@ -115,7 +115,6 @@ function Login() {
           <div className={clsx(styles.content)}>
             <div className={clsx(styles.header_content)}>
               <h3 className={clsx(styles.header_content_title)}>HIGHTECH</h3>
-              <h3>NO_TEXT</h3>
             </div>
             <div className={clsx(styles.body_content)}>
               <img src={require("./assets/fonts/img/img_3d_2.png")}></img>

@@ -192,6 +192,7 @@
         display: flex;
         flex-direction: column;
         position: relative;
+        animation: none;
         input {
           max-width: 100%;
           padding: 15px;
@@ -217,7 +218,7 @@
             font-weight: 400;
             font-size: 14px;
             color: #000;
-             cursor: pointer;
+            cursor: pointer;
           }
         }
         .modal-body-group-dropdown-category {
@@ -230,7 +231,7 @@
           outline: none;
           margin-top: 10px;
           position: absolute;
-          top:100%;
+          top: 100%;
           z-index: 2;
           display: block;
           display: none;
@@ -258,10 +259,10 @@
         }
       }
     }
-    .activedropdown{
+    .activedropdown {
       display: block !important;
     }
-    .hidebutton{
+    .hidebutton {
       display: none !important;
     }
     .modal-footer {
@@ -373,6 +374,67 @@
     font-weight: 400;
   }
 }
+.container-header {
+  .drop-down-current {
+    padding: 10px 15px;
+    width: 170px;
+    border: 1px solid rgb(224, 224, 224);
+    border-radius: 5px;
+    background-color: white;
+    margin-left: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    div {
+      display: flex;
+      justify-content: space-around;
+      p {
+        margin: 0 0px;
+      }
+    }
+    .drop-down-option {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      border: 1px solid rgb(224, 224, 224);
+      border-radius: 5px;
+      background-color: white;
+      left: 0;
+      top: 100%;
+      margin-top: 10px;
+      z-index: 2;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      // max-height: 400px;
+      // overflow-y: scroll;
+      display: none;
+      // transform: scaleY(0);
+      // transform-origin: top;
+      // // transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+      // animation: dropdown 2s cubic-bezier(0.075, 0.82, 0.165, 1) infinite;
+      
+
+      p {
+        margin: 0px 0px;
+        padding: 8px 4px;    
+      }
+      p:first-child {
+        border-radius: 5px 0px 0px 0px;
+        border: none;
+        outline: none;
+      }
+      p:last-child {
+        border-radius: 0px 0px 0px 5px;
+        border: none;
+        outline: none;
+      }
+      p:hover {
+        background-color: #000;
+        color: #fff;
+        cursor: pointer;
+      }
+    }
+  }
+}
 .button-add-new:hover {
   transform: scale(1.1);
   box-shadow: rgba(0, 0, 0, 0.45) 0px 25px 20px -20px;
@@ -383,8 +445,63 @@
 }
 .modal-body-group-current-category {
 }
+.onoffbutton {
+  width: 100px;
+  height: 30px;
+  background: #6a6d72;
+  animation: none;
+  border-radius: 20px;
+  position: relative;
+  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  div {
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    animation: none;
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 5%;
+    transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  }
+  p {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    margin: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  p:last-child {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    margin: 0;
+    transform: translateY(-50%);
+  }
+}
+.onToggle {
+  left: 75% !important;
+}
+.onToggle2 {
+  background: lightgreen !important;
+}
+.onToggle3 {
+  opacity: 0;
+}
+.turnonDropDown{
+  display: flex !important;
+}
 @keyframes xoay {
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes dropdown {
+  
+  to {
+    transform: scaleY(1);
+    
   }
 }

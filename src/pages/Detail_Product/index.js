@@ -10,7 +10,8 @@ import {
   BsXCircle,
 } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
-const xmark = require('../../pages/Detail_Product/assets/fonts/img/x-mark.png')
+const xmark = require("../../pages/Detail_Product/assets/fonts/img/x-mark.png");
+const success = require("../../pages/Detail_Product/assets/fonts/img/success.png");
 
 function DetailProduct() {
   const id = useLocation();
@@ -22,6 +23,7 @@ function DetailProduct() {
   const refInputUpload = useRef();
   const refSpec = useRef();
   const refModal = useRef();
+  const refModalContainer = useRef();
 
   const [product, setProduct] = useState({});
   const [category, setCategory] = useState([]);
@@ -31,6 +33,10 @@ function DetailProduct() {
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleDropDownBrand, setToggleDropDownBrand] = useState(false);
   const [toggleModal, setToggleModal] = useState(false);
+  const [toggleModal2, setToggleModal2] = useState(false);
+
+  const [toggleOnOff, setToggleOnOff] = useState(false);
+
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState([]);
@@ -39,12 +45,17 @@ function DetailProduct() {
   const [salePercent, setSalePercent] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [specifications, setSpecifications] = useState([]);
+  const [active, setActive] = useState();
+
 
   const [currentCategory, setCurrentCategory] = useState("");
   const [currentCategoryID, setCurrentCategoryID] = useState("");
 
   const [currentBrand, setCurrentBrand] = useState("");
   const [currentBrandID, setCurrentBrandID] = useState("");
+
+  console.log(currentCategory, currentCategoryID);
+  console.log(currentBrand, currentBrandID);
 
   useEffect(() => {
     fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
@@ -68,6 +79,7 @@ function DetailProduct() {
         setSpecifications([...data.data.specifications]);
         setCurrentCategoryID(data.data.category);
         setCurrentBrandID(data.data.brand);
+        setToggleOnOff(data.data.active);
       });
   }, [id]);
 
@@ -134,75 +146,22 @@ function DetailProduct() {
 
   const handleAppendChild = () => {
     var input = document.createElement("input");
-    var div = document.createElement('div');
-    var img = document.createElement('img');
-    img.setAttribute('src', xmark)
-    img.style.width = '20px';
-    img.style.height = '20px'
+    var div = document.createElement("div");
+    var img = document.createElement("img");
+    img.setAttribute("src", xmark);
+    img.style.width = "20px";
+    img.style.height = "20px";
     input.style.margin = "5px 0";
-    input.style.minWidth = "90%"
-    div.style.display = 'flex';
-    div.style.alignItems = 'center';
-    img.addEventListener('click', () => {
-      refDesc.current.removeChild(div)
-    })
+    input.style.minWidth = "90%";
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    img.addEventListener("click", () => {
+      refDesc.current.removeChild(div);
+    });
     div.appendChild(input);
-    div.appendChild(img)
-   
+    div.appendChild(img);
+
     refDesc.current.appendChild(div);
-  };
-  const handleClose = () => {
-    setToggleModal(false);
-  };
-  const handleDeleteProduct = () => {
-    refModal.current.innerHTML = `
-    <div style="animation:none;">
-        <h2>Do you want to delete this product?</h2>
-        <div style="animation:none;">
-            <button>Yes</button>
-             <button>No</button>
-        </div>
-    </div>`;
-
-    refModal.current.children[0].children[1].children[1].addEventListener(
-      "click",
-      () => {
-        setToggleModal(false);
-      }
-    );
-
-    refModal.current.children[0].children[1].children[0].addEventListener(
-      "click",
-      () => {
-        refModal.current.innerHTML = `
-            <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
-                
-            </div>`;
-        fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "x-access-token": DataLogin.token,
-          },
-        })
-          .then((res) => {
-            return res.json();
-          })
-          .then((res) => {
-            console.log(res);
-            refModal.current.innerHTML = `
-            <div style="animation:none;">
-                <h2>Successfully</h2>
-            </div>`;
-            setTimeout(() => {
-              navigate("/product");
-              window.location.reload(false);
-            }, 1500);
-          });
-      }
-    );
-
-    setToggleModal(true);
   };
 
   const openUploadImage = () => {
@@ -222,13 +181,10 @@ function DetailProduct() {
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
-        //  setImagesUpload((prev) => [...prev, res["image"]["url"]]);
         setImages((prev) => [...prev, res["image"]["url"]]);
         arrimageUrl.push(res["image"]["url"]);
       })
       .catch((err) => console.log(err));
-
-    // setImages((prev) => [...prev, ...Array.from(e.target.files)]);
   };
 
   const handleDeleteImage = (image) => {
@@ -237,17 +193,6 @@ function DetailProduct() {
         return item !== image;
       })
     );
-  };
-
-  const handleAppendChildSpec = () => {
-    const div = document.createElement("div");
-    const input = document.createElement("input");
-    const input2 = document.createElement("input");
-
-    div.appendChild(input);
-    div.appendChild(input2);
-
-    refSpec.current.appendChild(div);
   };
 
   const handleChangeCurrentCategory = (id, title) => {
@@ -268,19 +213,6 @@ function DetailProduct() {
     const arrDataInputDesc = listInputDesc.map((item, index) => {
       return item.firstChild.value;
     });
-  
-    // //xử lý specifications
-    const listDiv = [...refSpec.current.children];
-    var newArr = [];
-    for (let i = 0; i < listDiv.length; i++) {
-      var a = listDiv[i];
-      var b = a.children;
-      var ojb = {};
-      ojb["title"] = b[0].value;
-      ojb["content"] = b[1].value;
-      // setSpecifications()
-      newArr.push(ojb);
-    }
     fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
       method: "PUT",
       headers: {
@@ -295,19 +227,112 @@ function DetailProduct() {
         salePrice: costPrice * (salePercent / 100),
         salePercent: salePercent,
         quantity: quantity,
-        specifications: newArr,
+        specifications: specifications,
         category: currentCategoryID,
         brand: currentBrandID,
         favorite: false,
+        active:toggleOnOff
       }),
     })
       .then((res) => res.json())
-      .then((res) => console.log(res));
+      .then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          const div = document.createElement("div");
+          div.style.width = "300px";
+          div.style.height = "300px";
+          div.style.display = "flex";
+          div.style.flexDirection = "column";
+          div.style.justifyContent = "center";
+          div.style.alignItems = "center";
+          const h2 = document.createElement("h2");
+          h2.innerText = "Tác vụ thành công";
+          const img = document.createElement("img");
+          img.setAttribute("src", success);
+          img.style.width = "100px";
+          div.appendChild(img);
+          div.appendChild(h2);
+          refModalContainer.current.appendChild(div);
+          setToggleModal2(true);
+          setTimeout(() => {
+            navigate("/product");
+            refModalContainer.current.removeChild(div);
+          }, 1500);
+        } else {
+          const div = document.createElement("div");
+          div.style.width = "300px";
+          div.style.height = "300px";
+          div.style.display = "flex";
+          div.style.flexDirection = "column";
+          div.style.justifyContent = "center";
+          div.style.alignItems = "center";
+
+          const h2 = document.createElement("h2");
+          h2.innerText = res.message;
+          
+          const div2 = document.createElement("div");
+          div2.style.boxShadow = "none";
+          const button = document.createElement("button");
+          const button2 = document.createElement("button");
+          button.innerText = "Thử lại";
+         
+          button.style.margin = "5px";
+
+          button.addEventListener("click", () => {
+            refModalContainer.current.removeChild(div);
+            setToggleModal2(false);
+          });
+          div2.appendChild(button);
+          div.appendChild(h2)
+          div.appendChild(div2);
+          refModalContainer.current.appendChild(div);
+          setToggleModal2(true);
+        }
+      });
   };
 
   const handleDeleteSpec = (index) => {
-    refDesc.current.removeChild(refDesc.current.children[index])
-  }
+    refDesc.current.removeChild(refDesc.current.children[index]);
+  };
+  const handleUpdateJson = () => {
+    const div = document.createElement("div");
+    div.style.width = "500px";
+    div.style.height = "500px";
+    div.style.display = "flex";
+    div.style.flexDirection = "column";
+    // div.style.justifyContent = 'center'
+    div.style.alignItems = "center";
+    const textaera = document.createElement("textarea");
+    textaera.innerText = JSON.stringify(specifications);
+    textaera.style.width = "90%";
+    textaera.style.height = "70%";
+    textaera.style.margin = "10px 0px";
+    textaera.style.borderRadius = "10px";
+    textaera.style.padding = "10px";
+    const div2 = document.createElement("div");
+    div2.style.boxShadow = "none";
+    const button = document.createElement("button");
+    const button2 = document.createElement("button");
+    button.innerText = "Hủy";
+    button2.innerText = "Lưu";
+    button.style.margin = "5px";
+    button2.style.margin = "5px";
+    div2.appendChild(button);
+    div2.appendChild(button2);
+    div.appendChild(textaera);
+    div.appendChild(div2);
+    refModalContainer.current.appendChild(div);
+    setToggleModal2(true);
+    button.addEventListener("click", () => {
+      refModalContainer.current.removeChild(div);
+      setToggleModal2(false);
+    });
+    button2.addEventListener("click", () => {
+      setSpecifications(JSON.parse(textaera.value));
+      refModalContainer.current.removeChild(div);
+      setToggleModal2(false);
+    });
+  };
 
   return (
     <div className={clsx(cx("container"))}>
@@ -377,8 +402,11 @@ function DetailProduct() {
                       </div>
                     );
                   })}
-              <div className={clsx(cx("from-body-group-addimage"))}>
-                <BsPlusCircle onClick={openUploadImage} />
+              <div
+                onClick={openUploadImage}
+                className={clsx(cx("from-body-group-addimage"))}
+              >
+                <BsPlusCircle />
               </div>
             </div>
             <input
@@ -423,15 +451,59 @@ function DetailProduct() {
                 : specifications.map((item2, index2) => {
                     return (
                       <div key={index2}>
-                        <input defaultValue={item2.title}></input>
-                        <input defaultValue={item2.content}></input>
+                        <input value={item2.title}></input>
+                        <input value={item2.content}></input>
                       </div>
                     );
                   })}
+              <button
+                onClick={handleUpdateJson}
+                style={
+                  specifications.length !== 0
+                    ? { display: "inline-block" }
+                    : { display: "none" }
+                }
+              >
+                Chỉnh sửa
+              </button>
             </div>
-            <BsPlusCircle onClick={handleAppendChildSpec} />
+            {/* <BsPlusCircle onClick={handleAppendChildSpec} /> */}
           </div>
           <div className={clsx(cx("from-body-group"))}>
+            <p style={{ fontWeight: "bold" }}>Trạng Thái Sản Phẩm</p>
+            <div
+              onClick={() => setToggleOnOff(!toggleOnOff)}
+              className={clsx(cx("onoffbutton"), {
+                [styles.onToggle2]: toggleOnOff,
+              })}
+            >
+              <div
+                className={clsx({
+                  [styles.onToggle]: toggleOnOff,
+                })}
+              ></div>
+              <p
+                className={clsx({
+                  [styles.onToggle3]: toggleOnOff,
+                })}
+              >
+                Tắt
+              </p>
+              <p
+                className={clsx({
+                  [styles.onToggle3]: !toggleOnOff,
+                })}
+              >
+                Bật
+              </p>
+            </div>
+          </div>
+          <div
+            onClick={() => {
+              setToggleDropDown(!toggleDropDown);
+            }}
+            className={clsx(cx("from-body-group"))}
+          >
             <p style={{ fontWeight: "bold" }}>Danh Mục</p>
             <div
               className={clsx(cx("drop-down"))}
@@ -446,11 +518,7 @@ function DetailProduct() {
               }}
             >
               <p style={{ margin: "0px" }}>{currentCategory}</p>
-              <BsCaretDownFill
-                onClick={() => {
-                  setToggleDropDown(!toggleDropDown);
-                }}
-              />
+              <BsCaretDownFill />
               <div
                 className={clsx(cx("drop-down-menu"), {
                   [styles.activedropdown]: toggleDropDown,
@@ -484,7 +552,12 @@ function DetailProduct() {
               </div>
             </div>
           </div>
-          <div className={clsx(cx("from-body-group"))}>
+          <div
+            onClick={() => {
+              setToggleDropDownBrand(!toggleDropDownBrand);
+            }}
+            className={clsx(cx("from-body-group"))}
+          >
             <p style={{ fontWeight: "bold" }}>Thương Hiệu</p>
             <div
               className={clsx(cx("drop-down"))}
@@ -499,11 +572,7 @@ function DetailProduct() {
               }}
             >
               <p style={{ margin: "0px" }}>{currentBrand}</p>
-              <BsCaretDownFill
-                onClick={() => {
-                  setToggleDropDownBrand(!toggleDropDownBrand);
-                }}
-              />
+              <BsCaretDownFill />
               <div
                 className={clsx(cx("drop-down-menu"), {
                   [styles.activedropdown]: toggleDropDownBrand,
@@ -539,10 +608,9 @@ function DetailProduct() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button onClick={handleDeleteProduct}>DELETE</button>
+            <button onClick={() => navigate("/product")}>Trở Lại</button>
           </div>
           <div>
-            <button onClick={() => navigate("/product")}>Trở Lại</button>
             <button
               style={{ backgroundColor: "rgb(3, 201, 215)" }}
               onClick={handleUpdateProduct}
@@ -561,6 +629,12 @@ function DetailProduct() {
           <div className={clsx(cx("loading"))}></div>
         </div>
       </div>
+      <div
+        ref={refModalContainer}
+        className={clsx(cx("Modal-container"), {
+          [styles.turnonModal]: toggleModal2,
+        })}
+      ></div>
     </div>
   );
 }

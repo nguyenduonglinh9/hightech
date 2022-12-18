@@ -5,11 +5,13 @@ import classNames from "classnames/bind";
 import { useLocation } from "react-router-dom";
 import { BsPlusCircle, BsXCircleFill, BsCaretDownFill } from "react-icons/bs";
 import { Button } from "bootstrap";
+import { useNavigate } from "react-router-dom";
 
 function AddUser() {
 
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const cx = classNames.bind(styles);
+  let navigate = useNavigate();
 
   const refInputUpload = useRef();
   const refErrEmail = useRef();
@@ -73,7 +75,9 @@ function AddUser() {
         .then((res) => res.json())
         .then((res) => {
           console.log(res);
-          setToggleLoading(false);
+          setTimeout(() => {
+            navigate('/users')
+          },1500)
         });
     });
   };
@@ -162,7 +166,7 @@ function AddUser() {
         </div>
         <div className={clsx(cx("from-body"))}>
           <div ref={refErrEmail} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>EMAIL</p>
+            <p style={{ fontWeight: "bold" }}>Email</p>
             <input
               required
               value={email}
@@ -175,7 +179,7 @@ function AddUser() {
           </div>
 
           <div ref={refErrFullName} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>FULLNAME</p>
+            <p style={{ fontWeight: "bold" }}>Họ Và Tên</p>
             <div>
               <input
                 placeholder="ex: Nguyen Van A"
@@ -190,7 +194,7 @@ function AddUser() {
           </div>
 
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>AVATAR</p>
+            <p style={{ fontWeight: "bold" }}>Ảnh Đại Diện</p>
             <div style={{ display: "flex" }}>
               <div style={{ position: "relative" }}>
                 <img
@@ -202,8 +206,11 @@ function AddUser() {
                   className={clsx(cx("icon-delete"))}
                 />
               </div>
-              <div className={clsx(cx("from-body-group-addimage"))}>
-                <BsPlusCircle onClick={openUploadImage} />
+              <div
+                onClick={openUploadImage}
+                className={clsx(cx("from-body-group-addimage"))}
+              >
+                <BsPlusCircle />
               </div>
             </div>
             <input
@@ -215,7 +222,7 @@ function AddUser() {
           </div>
 
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>PHONE</p>
+            <p style={{ fontWeight: "bold" }}>Số Điện Thoại</p>
             <input
               value={phone}
               onChange={(e) => {
@@ -227,7 +234,7 @@ function AddUser() {
           </div>
 
           <div ref={refErrPass} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>PASSWORD</p>
+            <p style={{ fontWeight: "bold" }}>Mật Khẩu</p>
             <input
               value={passWord}
               onChange={(e) => {
@@ -238,7 +245,7 @@ function AddUser() {
           </div>
 
           <div ref={refErrRePass} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>RE-TYPE PASSWORD</p>
+            <p style={{ fontWeight: "bold" }}>Nhập Lại Mật Khẩu</p>
             <input
               value={passWord2}
               onChange={(e) => {
@@ -250,7 +257,7 @@ function AddUser() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button>CANCEL</button>
+            <button>Hủy</button>
           </div>
           <div>
             <button
@@ -267,14 +274,14 @@ function AddUser() {
               }
               onClick={handleAddUser}
             >
-              SAVE
+              Lưu
             </button>
           </div>
         </div>
       </div>
       <div
         className={clsx(cx("loading"), {
-          [styles.abc] : toggleLoading
+          [styles.abc]: toggleLoading,
         })}
       >
         <div></div>

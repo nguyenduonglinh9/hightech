@@ -3,8 +3,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap");
 .container {
   width: 100%;
-  // height: 100%;
+  height: 100%;
   position: relative;
+  overflow: scroll;
 
   .from {
     height: fit-content;
@@ -271,7 +272,7 @@
 
   .Modal-container-header {
     width: 300px;
-    height: 200px;
+    height: 300px;
     background-color: #fff;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
       rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
@@ -280,51 +281,63 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    input {
-      padding: 10px;
-      border-radius: 5px;
-      width: 80%;
-      outline: none;
-      border: none;
-      background-color: rgb(215, 215, 215);
-      font-size: 16px;
+    justify-content: center;
+    div{
+        animation: xoay 1s linear infinite;
+      }
+    .Modal-container-group {
+      width: -moz-fit-content;
+      width: fit-content;
+      margin: 10px 0px;
+      animation: none;
+      
+      input {
+        padding: 10px;
+        border-radius: 5px;
+        width: 90%;
+        outline: none;
+        border: none;
+        background-color: rgb(215, 215, 215);
+        font-size: 16px;
+      }
+      /* CSS */
+      
     }
-    /* CSS */
     button {
-      background-color: #fff;
-      border: 1px solid #d5d9d9;
-      border-radius: 8px;
-      box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
-      box-sizing: border-box;
-      color: #0f1111;
-      cursor: pointer;
-      display: inline-block;
-      font-family: "Amazon Ember", sans-serif;
-      font-size: 13px;
-      line-height: 29px;
-      padding: 0 10px 0 11px;
-      position: relative;
-      text-align: center;
-      text-decoration: none;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-      vertical-align: middle;
-      width: 100px;
-    }
+        background-color: #fff;
+        border: 1px solid #d5d9d9;
+        border-radius: 8px;
+        box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+        box-sizing: border-box;
+        color: #0f1111;
+        cursor: pointer;
+        display: inline-block;
+        font-family: "Amazon Ember", sans-serif;
+        font-size: 13px;
+        line-height: 29px;
+        padding: 0 10px 0 11px;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        vertical-align: middle;
+        width: 100px;
+      }
 
-    button:hover {
-      background-color: #f7fafa;
-    }
+      button:hover {
+        background-color: #f7fafa;
+      }
 
-    button:focus {
-      border-color: #008296;
-      box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
-      outline: 0;
-    }
+      button:focus {
+        border-color: #008296;
+        box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+        outline: 0;
+      }
   }
 }
-.activechangepass{
+.activechangepass {
   display: flex !important;
 }
 
