@@ -16,7 +16,7 @@ function DetailUser() {
   const refErrFullName = useRef();
   const refErrPass = useRef();
   const refErrRePass = useRef();
-  const refLoading = useRef()
+  const refLoading = useRef();
 
   const [avatar, setAvatar] = useState();
   const [email, setEmail] = useState();
@@ -49,7 +49,7 @@ function DetailUser() {
         setAvatar(data.data.avatar);
         setPhone(data.data.phone);
       });
-  },[id]);
+  }, [id]);
 
   const handleAddUser = () => {
     setToggleLoading(true);
@@ -70,28 +70,26 @@ function DetailUser() {
             resolve(URLIcon);
           })
           .catch((err) => console.log(err));
-      }
-      else {
+      } else {
         resolve(avatar);
       }
-      
     });
     promise.then((URLIcon) => {
       let data = function () {
         if (passWord == null || passWord == "") {
           return {
-            email : email,
-            fullname : fullName,
-            phone : phone,
-            role: 'admin',
-            avatar : URLIcon
+            email: email,
+            fullname: fullName,
+            phone: phone,
+            role: "admin",
+            avatar: URLIcon,
           };
         } else {
           return {
-            email : email,
-            fullname : fullName,
-            phone : phone,
-            password : passWord,
+            email: email,
+            fullname: fullName,
+            phone: phone,
+            password: passWord,
             role: "admin",
             avatar: URLIcon,
           };
@@ -189,8 +187,82 @@ function DetailUser() {
   };
 
   const handleDeleteUser = () => {
+    const div = document.createElement("div");
+    div.style.animation = "none";
+    const h2 = document.createElement("h2");
+    h2.innerText = "Bạn muốn xóa tài khoản này ?";
+    const div2 = document.createElement("div");
+    div2.style.display = "flex";
+    div2.style.justifyContent = "center";
+    div2.style.animation = "none";
+    const button = document.createElement("button");
+    const button2 = document.createElement("button");
+    button.innerText = "Hủy";
+    button2.innerText = "Xóa";
+    button.style.margin = "0 5px";
+    button2.style.margin = "0 5px";
+    div2.appendChild(button);
+    div2.appendChild(button2);
+    div.appendChild(h2);
+    div.appendChild(div2);
+    button.addEventListener("click", () => {
+      refLoading.current.removeChild(div);
+      setToggleLoading(false);
+    });
+    button2.addEventListener("click", () => {
+      const div3 = document.createElement("div");
+      div3.style.width = "100px";
+      div3.style.height = "100px";
+      div3.style.border = "7px solid transparent";
+      div3.style.borderTop = "7px solid rgb(3, 201, 215)";
+      div3.style.borderRadius = "50%";
+      refLoading.current.removeChild(div);
+      refLoading.current.appendChild(div3);
+      fetch(`http://quyt.ddns.net:3000/admin/${id.state.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": DataLogin.token,
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res);
+          if (res.code == 200) {
+            const div4 = document.createElement("div");
+            div4.style.display = "flex";
+            div4.style.justifyContent = "center";
+            div4.style.animation = "none";
+            const h2 = document.createElement("h2");
+            h2.innerText = "Tác Vụ Thành Công !";
+            div4.appendChild(h2);
+            refLoading.current.removeChild(div3);
+            refLoading.current.appendChild(div4);
+          } else {
+            const div4 = document.createElement("div");
+            div4.style.display = "flex";
+            div4.style.flexDirection = "column";
+            div4.style.justifyContent = "center";
+            div4.style.alignItems = "center";
+            div4.style.animation = "none";
+            const h2 = document.createElement("h2");
+            h2.innerText = res.message;
+            const button = document.createElement("button");
+            button.innerText = "Thử Lại";
+            button.addEventListener("click", () => {
+              refLoading.current.removeChild(div4);
+              setToggleLoading(false);
+            });
+            div4.appendChild(h2);
+            div4.appendChild(button);
+            refLoading.current.removeChild(div3);
+            refLoading.current.appendChild(div4);
+          }
+        });
+    });
+    refLoading.current.appendChild(div);
     setToggleLoading(true);
-  }
+  };
 
   return (
     <div className={clsx(cx("container"))}>
@@ -200,7 +272,7 @@ function DetailUser() {
         </div>
         <div className={clsx(cx("from-body"))}>
           <div ref={refErrEmail} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>EMAIL</p>
+            <p style={{ fontWeight: "bold" }}>Email</p>
             <input
               required
               defaultValue={email}
@@ -213,7 +285,7 @@ function DetailUser() {
           </div>
 
           <div ref={refErrFullName} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>FULLNAME</p>
+            <p style={{ fontWeight: "bold" }}>Họ Và Tên</p>
             <div>
               <input
                 placeholder="ex: Nguyen Van A"
@@ -228,7 +300,7 @@ function DetailUser() {
           </div>
 
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>AVATAR</p>
+            <p style={{ fontWeight: "bold" }}>Hình Ảnh</p>
             <div style={{ display: "flex" }}>
               <div style={{ position: "relative" }}>
                 <img
@@ -238,7 +310,13 @@ function DetailUser() {
                   //     ? URL.createObjectURL(avatar)
                   //     : avatar
                   // }
-                  src={avatar == null ? null : typeof avatar == "object" ? URL.createObjectURL(avatar) : avatar}
+                  src={
+                    avatar == null
+                      ? null
+                      : typeof avatar == "object"
+                      ? URL.createObjectURL(avatar)
+                      : avatar
+                  }
                 ></img>
                 <BsXCircleFill
                   onClick={handleDeleteImage}
@@ -258,7 +336,7 @@ function DetailUser() {
           </div>
 
           <div className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>PHONE</p>
+            <p style={{ fontWeight: "bold" }}>Số Điện Thoại</p>
             <input
               defaultValue={phone}
               onChange={(e) => {
@@ -270,7 +348,7 @@ function DetailUser() {
           </div>
 
           <div ref={refErrPass} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>NEW-PASSWORD</p>
+            <p style={{ fontWeight: "bold" }}>Mật Khẩu</p>
             <input
               value={passWord}
               onChange={(e) => {
@@ -281,7 +359,7 @@ function DetailUser() {
           </div>
 
           <div ref={refErrRePass} className={clsx(cx("from-body-group"))}>
-            <p style={{ fontWeight: "bold" }}>RE-TYPE PASSWORD</p>
+            <p style={{ fontWeight: "bold" }}>Nhập Lại Mật Khẩu</p>
             <input
               value={passWord2}
               onChange={(e) => {
@@ -293,36 +371,30 @@ function DetailUser() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button onClick={()=>navigate('/users')}>CANCEL</button>
+            <button onClick={() => navigate("/users")}>Hủy</button>
           </div>
           <div>
-            <button onClick={handleDeleteUser}>DELETE</button>
+            <button onClick={handleDeleteUser}>Xóa</button>
           </div>
           <div>
             <button
               className={clsx({
                 [styles.activebutton]: true,
               })}
-              disabled={
-                errEmail == true &&
-                errName == true 
-                  ? false
-                  : true
-              }
+              disabled={errEmail == true && errName == true ? false : true}
               onClick={handleAddUser}
             >
-              SAVE
+              Lưu
             </button>
           </div>
         </div>
       </div>
       <div
-        ref={refLoading}
         className={clsx(cx("loading"), {
           [styles.abc]: toggleLoading,
         })}
       >
-        <div></div>
+        <div ref={refLoading} className={clsx(cx("message"))}></div>
       </div>
     </div>
   );
