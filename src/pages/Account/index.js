@@ -214,7 +214,7 @@ function Account() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button>Trở Lại</button>
+            <button onClick={()=>navigate('/product')}>Trở Lại</button>
           </div>
           <div>
             <button onClick={() => setToggleChangepass(true)}>

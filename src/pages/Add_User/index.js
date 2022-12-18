@@ -257,7 +257,7 @@ function AddUser() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button>Hủy</button>
+            <button onClick={()=>navigate('/users')}>Hủy</button>
           </div>
           <div>
             <button
