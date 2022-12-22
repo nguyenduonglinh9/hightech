@@ -370,6 +370,26 @@
 .from-body-group-spec-1 {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  div {
+    display: flex;
+    flex-direction: column;
+    div {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+
+      input:nth-child(1) {
+        width: 20px;
+        margin-right: 5px;
+        flex: 1;
+      }
+      input:nth-child(2) {
+        max-width: 20px;
+        flex: 5;
+      }
+    }
+  }
 }
 .loading {
   width: 100%;

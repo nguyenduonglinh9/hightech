@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import { BsPlusCircle, BsXCircleFill, BsCaretDownFill } from "react-icons/bs";
 import { Button } from "bootstrap";
 import { useNavigate } from "react-router-dom";
+const deleteIcon = require("./assets/imgs/delete.png");
 const warning = require("../Category/assets/imgs/warning.png");
 
 function AddProduct() {
@@ -20,6 +21,8 @@ function AddProduct() {
   const refErrName = useRef();
   const refModalContainer = useRef();
   const refMessage = useRef();
+  const refSpec2 = useRef();
+  const refTest = useRef([]);
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -48,6 +51,8 @@ function AddProduct() {
   const [toggleModal, setToggleModal] = useState(false);
   const [toggleLoading, setToggleLoading] = useState(false);
   const [toggleMessage, setToggleMessage] = useState(false);
+
+  const [arr, setArr] = useState([]);
 
   useEffect(() => {
     if (imagesUpload.length === images.length) {
@@ -106,81 +111,84 @@ function AddProduct() {
   }, [brands]);
 
   const handleAddProduct = () => {
-    setToggleLoading(true);
-    //xử lý state Description
-    const listInputDesc = [...refDesc.current.children];
-    const arrDataInputDesc = listInputDesc.map((item, index) => {
-      return item.value;
-    });
-    //xử lý specifications
-    const listDiv = [...refSpec.current.children];
-
-    var newArr = [];
-    for (let i = 0; i < listDiv.length; i++) {
-      var a = listDiv[i];
-      var b = a.children;
-      var ojb = {};
-      ojb["title"] = b[0].value;
-      ojb["content"] = b[1].value;
-      newArr.push(ojb);
+    if (specifications.length == 0) {
+      console.dir([...refSpec2.current.children])
     }
-    const data = {
-      title: title,
-      description: arrDataInputDesc,
-      images: images,
-      costPrice: costPrice,
-      salePrice: costPrice * (salePercent / 100),
-      salePercent: salePercent,
-      quantity: quantity,
-      specifications: specifications,
-      category: currentCategoryID,
-      brand: brandCurrentID,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      favorite: false,
-      active : toggleOnOff
-    };
-    fetch("http://quyt.ddns.net:3000/product/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((res) => {
-        if (res.code == 200) {
-          const h2 = document.createElement("h2");
-          h2.innerText = "Tác vụ thành công !";
-          refMessage.current.appendChild(h2);
-          setToggleMessage(true);
+    // setToggleLoading(true);
+    // //xử lý state Description
+    // const listInputDesc = [...refDesc.current.children];
+    // const arrDataInputDesc = listInputDesc.map((item, index) => {
+    //   return item.value;
+    // });
+    // //xử lý specifications
+    // const listDiv = [...refSpec.current.children];
 
-          setTimeout(() => {
-            navigate("/product");
-          }, 1500);
-        } else {
-          const h2 = document.createElement("h2");
-          const button = document.createElement("button");
-          h2.innerText = res.message;
-          button.innerText = "Thử lại";
-          refMessage.current.appendChild(h2);
-          refMessage.current.appendChild(button);
-          button.addEventListener("click", () => {
-            setToggleLoading(false);
-            setToggleMessage(false);
-            refMessage.current.removeChild(h2);
-            refMessage.current.removeChild(button);
-          });
-          setToggleMessage(true);
-        }
+    // var newArr = [];
+    // for (let i = 0; i < listDiv.length; i++) {
+    //   var a = listDiv[i];
+    //   var b = a.children;
+    //   var ojb = {};
+    //   ojb["title"] = b[0].value;
+    //   ojb["content"] = b[1].value;
+    //   newArr.push(ojb);
+    // }
+    // const data = {
+    //   title: title,
+    //   description: arrDataInputDesc,
+    //   images: images,
+    //   costPrice: costPrice,
+    //   salePrice: costPrice * (salePercent / 100),
+    //   salePercent: salePercent,
+    //   quantity: quantity,
+    //   specifications: specifications,
+    //   category: currentCategoryID,
+    //   brand: brandCurrentID,
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    //   favorite: false,
+    //   active: toggleOnOff,
+    // };
+    // fetch("http://quyt.ddns.net:3000/product/", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //     "x-access-token": DataLogin.token,
+    //   },
+    //   body: JSON.stringify(data),
+    // })
+    //   .then((response) => {
+    //     return response.json();
+    //   })
+    //   .then((res) => {
+    //     if (res.code == 200) {
+    //       const h2 = document.createElement("h2");
+    //       h2.innerText = "Tác vụ thành công !";
+    //       refMessage.current.appendChild(h2);
+    //       setToggleMessage(true);
 
-        console.log(res);
+    //       setTimeout(() => {
+    //         navigate("/product");
+    //       }, 1500);
+    //     } else {
+    //       const h2 = document.createElement("h2");
+    //       const button = document.createElement("button");
+    //       h2.innerText = res.message;
+    //       button.innerText = "Thử lại";
+    //       refMessage.current.appendChild(h2);
+    //       refMessage.current.appendChild(button);
+    //       button.addEventListener("click", () => {
+    //         setToggleLoading(false);
+    //         setToggleMessage(false);
+    //         refMessage.current.removeChild(h2);
+    //         refMessage.current.removeChild(button);
+    //       });
+    //       setToggleMessage(true);
+    //     }
 
-        // navigate("/product");
-      });
+    //     console.log(res);
+
+    //     // navigate("/product");
+    //   });
     // }))
   };
 
@@ -334,6 +342,35 @@ function AddProduct() {
     });
   };
 
+  const handleAppendSpec = () => {
+    const img = document.createElement("img");
+    img.setAttribute("src", deleteIcon);
+    img.style.width = "20px";
+    img.style.height = "20px";
+    const div = document.createElement("div");
+    const input = document.createElement("input");
+    const input2 = document.createElement("input");
+    div.appendChild(input);
+    div.appendChild(input2);
+    div.appendChild(img);
+    refSpec2.current.appendChild(div);
+
+    // const leng = refSpec2.current.children.length;
+     
+    // const a = [...refSpec2.current.children].find((item,index) => {
+    //   // refTest.current.push({title: item.children[0].value, content: item.children[1].value})
+    //   return index == leng - 1
+    //   // setArr(prev => [...prev,
+    //   //   {
+    //   //     title: item[leng - 1].children[0].value,
+    //   //     content: item[leng - 1].children[1].value,
+    //   //   },
+    //   // ]);
+    // });
+    // setArr(prev => [...prev, {title: a.children[0].value, content: a.children[1].value}])
+  };
+  console.log(arr)
+
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("from"))}>
@@ -444,16 +481,28 @@ function AddProduct() {
               <div className={clsx(cx("from-body-group-spec-1"))}>
                 {/* <input placeholder="ex: Nhu cầu"></input>
                 <input placeholder="ex: Gaming, Văn phòng, Đồ họa - Kỹ thuật, Doanh nghiệp, Học sinh - Sinh viên"></input> */}
-                {specifications.length == 0
-                  ? undefined
-                  : specifications.map((item, index) => {
-                      return (
-                        <div key={index}>
-                          <input disabled value={item.title}></input>
-                          <input disabled value={item.content}></input>
-                        </div>
-                      );
-                    })}
+                {specifications.length == 0 ? (
+                  <>
+                    <div ref={refSpec2} style={{ width: "100%" }}>
+                      {/* <div>
+                        <input></input>
+                        <input></input>
+                        <img style={{width:'20px',height:'20px'}} src={deleteIcon}></img>
+                      </div> */}
+                    </div>
+                    <BsPlusCircle onClick={handleAppendSpec} />
+                  </>
+                ) : (
+                  specifications.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <input disabled value={item.title}></input>
+                        <input disabled value={item.content}></input>
+                      </div>
+                    );
+                  })
+                )}
+
                 <button
                   style={
                     specifications.length == 0
@@ -464,6 +513,7 @@ function AddProduct() {
                 >
                   Thêm mã json
                 </button>
+
                 <button
                   onClick={handleUpdateJson}
                   style={

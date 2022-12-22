@@ -13,7 +13,6 @@ import { BsPlusLg } from "react-icons/bs";
 import { DataSearchContext } from "../../components/Layout/LayoutMain";
 import Table from "react-bootstrap/Table";
 import jwt_decode from "jwt-decode";
-import { Buffer } from "buffer";
 import noUiSlider from "nouislider";
 import "nouislider/dist/nouislider.css";
 
