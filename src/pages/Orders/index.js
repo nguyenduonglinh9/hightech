@@ -14,33 +14,7 @@ function Orders() {
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
 
-  const mqtt = require("mqtt");
-  const url = "ws://test.mosquitto.org:8080";
-  const options = {
-    debug: true,
-    // Clean session
-    clean: true,
-    connectTimeout: 30000,
-    // Auth
-    clientId: "Hightech cms",
-    username: "test",
-    password: "123456",
-  };
-  const client = mqtt.connect(url, options);
-  console.log("Hello");
-  client.on("connect", function () {
-    client.subscribe("highttech-topic", function (err) {
-      if (!err) {
-        console.log("thanh cong");
-      }
-    });
-  });
-
-  client.on("message", function (topic, message) {
-    // message is Buffer
-    console.log(message.toString());
-    client.end();
-  });
+ 
 
   const refCate = useRef();
   const refIDCate = useRef();
@@ -529,7 +503,7 @@ function Orders() {
                           onClick={() => handleUpdateCategory(item._id)}
                           key={index}
                         >
-                          <td>{item._id}</td>
+                          <td>{index + 1}</td>
                           <td>
                             <p
                               style={
@@ -572,7 +546,7 @@ function Orders() {
                         onClick={() => handleUpdateCategory(item2._id)}
                         key={index2}
                       >
-                        <td>{item2._id}</td>
+                        <td>{index2 + 1}</td>
                         <td>
                           <p
                             style={
@@ -620,7 +594,7 @@ function Orders() {
                         onClick={() => handleUpdateCategory(item._id)}
                         key={index}
                       >
-                        <td>{item._id}</td>
+                        <td>{index + 1}</td>
                         <td>
                           <p
                             style={

@@ -69,11 +69,12 @@ function DetailOrder() {
       .then((res) => res.json())
       .then((res) => {
         console.log(res)
+        window.location.reload(false);
         
-        setTimeout(() => {
-          navigate("/orders");
-          // window.location.reload(false);
-        }, 1500);
+        // setTimeout(() => {
+        //   navigate("/orders");
+        //   // window.location.reload(false);
+        // }, 1500);
 
         // setToggleLoading(false);
       });

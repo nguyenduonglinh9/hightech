@@ -43,7 +43,36 @@ function LayoutMain({ children }) {
   const useRefActive = useRef();
   let navigate = useNavigate();
   let dollarUSLocale = Intl.NumberFormat("en-US");
+  
   AOS.init();
+
+   const mqtt = require("mqtt");
+   const url = "ws://test.mosquitto.org:8080";
+   const options = {
+     debug: true,
+     // Clean session
+     clean: true,
+     connectTimeout: 30000,
+     // Auth
+     clientId: "Hightech cms",
+     username: "test",
+     password: "123456",
+   };
+   const client = mqtt.connect(url, options);
+   console.log("Hello");
+   client.on("connect", function () {
+     client.subscribe("highttech-topic", function (err) {
+       if (!err) {
+         console.log("thanh cong");
+       }
+     });
+   });
+
+   client.on("message", function (topic, message) {
+     // message is Buffer
+     console.log(message.toString());
+     client.end();
+   });
 
   const [toggleUserOption, setToggleUserOption] = useState(false);
   const [search, setSearch] = useState("");
