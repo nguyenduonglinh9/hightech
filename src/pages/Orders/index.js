@@ -6,8 +6,8 @@ import Table from "react-bootstrap/Table";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { BiCaretDown } from "react-icons/bi";
+import { datepicker } from "js-datepicker";
 const warning = require("../Category/assets/imgs/warning.png");
-
 
 function Orders() {
   const cx = classNames.bind(styles);
@@ -20,14 +20,14 @@ function Orders() {
     debug: true,
     // Clean session
     clean: true,
-    connectTimeout: 4000,
+    connectTimeout: 30000,
     // Auth
     clientId: "Hightech cms",
     username: "test",
     password: "123456",
   };
   const client = mqtt.connect(url, options);
-
+  console.log("Hello");
   client.on("connect", function () {
     client.subscribe("highttech-topic", function (err) {
       if (!err) {
@@ -54,8 +54,8 @@ function Orders() {
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [currentSoft, setCurrentSoft] = useState('all');
-
+  const [currentSoft, setCurrentSoft] = useState("all");
+  const [dateSoft, setDateSoft] = useState();
 
   const [title, setTitle] = useState("");
   const [titleCategory, setTitleCategory] = useState("");
@@ -72,7 +72,6 @@ function Orders() {
   const [toggleModalAdd5, setToggleModalAdd5] = useState(false);
   const [toggleSoft, setToggleSoft] = useState(false);
 
-
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/order/", {
       method: "GET",
@@ -87,10 +86,9 @@ function Orders() {
       .then((data) => {
         setOrders((prev) => [...prev, ...data.data]);
       });
-  },[])
+  }, []);
 
-  console.log(orders)
-
+  console.log(orders);
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/category/", {
@@ -262,7 +260,7 @@ function Orders() {
   };
 
   const handleUpdateCategory = (id) => {
-   navigate("/detail-order", { state: { id: id } });
+    navigate("/detail-order", { state: { id: id } });
   };
 
   const handleUpdateCate = () => {
@@ -317,11 +315,10 @@ function Orders() {
   };
 
   const handleDeleteCategory = () => {
-    setToggleModalAdd5(true)
-    
+    setToggleModalAdd5(true);
   };
   const handleDeleteCategory2 = () => {
-     refModal3.current.innerHTML = `
+    refModal3.current.innerHTML = `
    <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
 
    </div>
@@ -344,13 +341,20 @@ function Orders() {
         }, 1500);
       })
       .catch((err) => (refModal3.current.innerHTML = `<h2>${err}</h2>`));
-  }
-  
+  };
+
   const handleCancel = () => {
-    setTitleCategory('');
+    setTitleCategory("");
     setToggleModalAdd4(false);
-  }
-  console.log(orders)
+  };
+  console.log(orders);
+
+  // useEffect(() => {
+  //   if (dateSoft !== null || undefined) {
+  //     console.log(dateSoft.replace(/^(\d{1,2}\/)(\d{1,2}\/)(\d{4})$/,"$2$1$3"));
+  //   }
+  // }, [dateSoft])
+
   return (
     <div className={clsx(cx("container"))}>
       <div className={clsx(cx("listcategory"))}>
@@ -365,7 +369,10 @@ function Orders() {
             <h3 style={{ margin: "0px" }}>Danh sách đơn hàng</h3>
           </div>
           <div className={clsx(cx("soft"))}>
-            <div style={{cursor:'pointer'}} onClick={() => setToggleSoft(!toggleSoft)}>
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => setToggleSoft(!toggleSoft)}
+            >
               <p>Trạng thái đơn hàng</p>
               <BiCaretDown />
             </div>
@@ -374,33 +381,81 @@ function Orders() {
                 [styles.activesoft]: toggleSoft,
               })}
             >
-              <p onClick={() => {
-                setCurrentSoft("Not Processed")
-                setToggleSoft(false);
-              }}>
+              <p
+                onClick={() => {
+                  setCurrentSoft("Not Processed");
+                  setToggleSoft(false);
+                }}
+              >
                 Not Processed
               </p>
-              <p onClick={() => {
-                setCurrentSoft("Processing")
-                setToggleSoft(false)
-              }}>Processing</p>
-              <p onClick={() => {
-                setCurrentSoft("Shipping")
-                setToggleSoft(false);
-              }}>Shipping</p>
-              <p onClick={() => {
-                setCurrentSoft("Completed")
-                setToggleSoft(false);
-              }}>Completed</p>
-              <p onClick={() => {
-                setCurrentSoft("Cancelled")
-                setToggleSoft(false);
-
-              }}>Cancelled</p>
-              <p onClick={() => {
-                setCurrentSoft("all")
-                setToggleSoft(false);
-              }}>All</p>
+              <p
+                onClick={() => {
+                  setCurrentSoft("Processing");
+                  setToggleSoft(false);
+                }}
+              >
+                Processing
+              </p>
+              <p
+                onClick={() => {
+                  setCurrentSoft("Shipping");
+                  setToggleSoft(false);
+                }}
+              >
+                Shipping
+              </p>
+              <p
+                onClick={() => {
+                  setCurrentSoft("Completed");
+                  setToggleSoft(false);
+                }}
+              >
+                Completed
+              </p>
+              <p
+                onClick={() => {
+                  setCurrentSoft("Cancelled");
+                  setToggleSoft(false);
+                }}
+              >
+                Cancelled
+              </p>
+              <p
+                onClick={() => {
+                  setCurrentSoft("all");
+                  setToggleSoft(false);
+                }}
+              >
+                All
+              </p>
+            </div>
+          </div>
+          <div
+            style={{ padding: "0px", border: "none" }}
+            className={clsx(cx("soft"))}
+          >
+            <div
+              style={{ cursor: "pointer" }}
+              // onClick={() => setToggleSoft(!toggleSoft)}
+            >
+              <input
+                onChange={(e) => {
+                  console.log(e.target.value)
+                  setDateSoft(
+                    e.target.value == ""
+                      ? null
+                      : new Date(e.target.value)
+                        .toISOString()
+                        .substring(0, 10)
+                        .split("-")
+                        .reverse()
+                        .join("/")
+                  )
+                }
+                }
+                type="date"
+              ></input>
             </div>
           </div>
         </div>
@@ -421,42 +476,92 @@ function Orders() {
           </thead>
           <tbody>
             {currentSoft == "all"
-              ? orders.map((category, index) => {
-                  return (
-                    <tr
-                      ref={test}
-                      onClick={() => handleUpdateCategory(category._id)}
-                      key={index}
-                    >
-                      <td>{index + 1}</td>
-                      <td>
-                        <p
-                          style={
-                            category.status == "Processing"
-                              ? { backgroundColor: "lightgreen" }
-                              : category.status == "Shipping"
-                              ? { backgroundColor: "yellow", color: "black" }
-                              : category.status == "Completed"
-                              ? { backgroundColor: "lightblue" }
-                              : category.status == "Cancelled"
-                              ? { backgroundColor: "gray" }
-                              : undefined
-                          }
-                        >
-                          {category.status}
-                        </p>
-                      </td>
-                      <td>
-                        {category.createdAt
+              ? dateSoft == null
+                ? orders.map((category, index) => {
+                    return (
+                      <tr
+                        ref={test}
+                        onClick={() => handleUpdateCategory(category._id)}
+                        key={index}
+                      >
+                        <td>{index + 1}</td>
+                        <td>
+                          <p
+                            style={
+                              category.status == "Processing"
+                                ? { backgroundColor: "lightgreen" }
+                                : category.status == "Shipping"
+                                ? { backgroundColor: "yellow", color: "black" }
+                                : category.status == "Completed"
+                                ? { backgroundColor: "lightblue" }
+                                : category.status == "Cancelled"
+                                ? { backgroundColor: "gray" }
+                                : undefined
+                            }
+                          >
+                            {category.status}
+                          </p>
+                        </td>
+                        <td>
+                          {category.createdAt
+                            .substring(0, 10)
+                            .split("-")
+                            .reverse()
+                            .join("/")}
+                        </td>
+                      </tr>
+                    );
+                  })
+                : orders
+                    .filter((item, index) => {
+                      return (
+                        item.createdAt
                           .substring(0, 10)
                           .split("-")
                           .reverse()
-                          .join("/")}
-                      </td>
-                    </tr>
-                  );
-                })
-              : orders
+                          .join("/") == dateSoft
+                      );
+                    })
+                    .map((item, index) => {
+                      return (
+                        <tr
+                          ref={test}
+                          onClick={() => handleUpdateCategory(item._id)}
+                          key={index}
+                        >
+                          <td>{item._id}</td>
+                          <td>
+                            <p
+                              style={
+                                item.status == "Processing"
+                                  ? { backgroundColor: "lightgreen" }
+                                  : item.status == "Shipping"
+                                  ? {
+                                      backgroundColor: "yellow",
+                                      color: "black",
+                                    }
+                                  : item.status == "Completed"
+                                  ? { backgroundColor: "lightblue" }
+                                  : item.status == "Cancelled"
+                                  ? { backgroundColor: "gray" }
+                                  : undefined
+                              }
+                            >
+                              {item.status}
+                            </p>
+                          </td>
+                          <td>
+                            {item.createdAt
+                              .substring(0, 10)
+                              .split("-")
+                              .reverse()
+                              .join("/")}
+                          </td>
+                        </tr>
+                      );
+                    })
+              : dateSoft == null
+              ? orders
                   .filter((item, index) => {
                     return item.status == currentSoft;
                   })
@@ -474,7 +579,7 @@ function Orders() {
                               item2.status == "Processing"
                                 ? { backgroundColor: "lightgreen" }
                                 : item2.status == "Shipping"
-                                ? { backgroundColor: "yellow",color:'black' }
+                                ? { backgroundColor: "yellow", color: "black" }
                                 : item2.status == "Completed"
                                 ? { backgroundColor: "lightblue" }
                                 : item2.status == "Cancelled"
@@ -485,7 +590,61 @@ function Orders() {
                             {item2.status}
                           </p>
                         </td>
-                        <td>{item2.createdAt}</td>
+                        <td>
+                          {item2.createdAt
+                            .substring(0, 10)
+                            .split("-")
+                            .reverse()
+                            .join("/")}
+                        </td>
+                      </tr>
+                    );
+                  })
+              : orders
+                  .filter((item, index) => {
+                    return item.status == currentSoft;
+                  })
+                  .filter((item, index) => {
+                    return (
+                      item.createdAt
+                        .substring(0, 10)
+                        .split("-")
+                        .reverse()
+                        .join("/") == dateSoft
+                    );
+                  })
+                  .map((item, index) => {
+                    return (
+                      <tr
+                        ref={test}
+                        onClick={() => handleUpdateCategory(item._id)}
+                        key={index}
+                      >
+                        <td>{item._id}</td>
+                        <td>
+                          <p
+                            style={
+                              item.status == "Processing"
+                                ? { backgroundColor: "lightgreen" }
+                                : item.status == "Shipping"
+                                ? { backgroundColor: "yellow", color: "black" }
+                                : item.status == "Completed"
+                                ? { backgroundColor: "lightblue" }
+                                : item.status == "Cancelled"
+                                ? { backgroundColor: "gray" }
+                                : undefined
+                            }
+                          >
+                            {item.status}
+                          </p>
+                        </td>
+                        <td>
+                          {item.createdAt
+                            .substring(0, 10)
+                            .split("-")
+                            .reverse()
+                            .join("/")}
+                        </td>
                       </tr>
                     );
                   })}

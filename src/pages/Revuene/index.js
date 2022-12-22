@@ -5,40 +5,34 @@ import classNames from "classnames/bind";
 import Table from "react-bootstrap/Table";
 import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import Chart from "chart.js/auto";
+
+import { Bar } from "react-chartjs-2";
 const warning = require("../Category/assets/imgs/warning.png");
+const chart = require("./assets/imgs/chart1.png");
 
 function Revuene() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
 
-  const refCate = useRef();
   const refIDCate = useRef();
-  const refBrandID = useRef();
-  const refModal = useRef();
-  const refModal2 = useRef();
-  const refModal3 = useRef();
 
   const test = useRef();
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
   const [orders, setOrders] = useState([]);
-  const [products, setProducts]= useState([])
-
-  const [title, setTitle] = useState("");
-  const [titleCategory, setTitleCategory] = useState("");
-  const [imageIcon, setImageIcon] = useState();
-
-  const [imageIconUpdate, setImageIconUpdate] = useState();
+  const [orders2, setOrders2] = useState([]);
+  const [ordersCan, setOrdersCan] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [productsSold, setProductsSold] = useState([]);
+  const [count, setCount] = useState(0);
 
   const [nextType, setNextType] = useState();
+  const [currentYear, setCurrentYear] = useState();
 
-  const [toggleModalAdd, setToggleModalAdd] = useState(false);
-  const [toggleModalAdd2, setToggleModalAdd2] = useState(false);
-  const [toggleModalAdd3, setToggleModalAdd3] = useState(false);
-  const [toggleModalAdd4, setToggleModalAdd4] = useState(false);
-  const [toggleModalAdd5, setToggleModalAdd5] = useState(false);
+  const [currentFilter, setCurrentFilter] = useState("Tất Cả");
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/order/", {
@@ -52,32 +46,47 @@ function Revuene() {
         return response.json();
       })
       .then((data) => {
-        setOrders((prev) => [...prev, ...data.data]);
+        console.log(data.data);
+        setOrders2((prev) => [...prev, ...data.data]);
+        const orderComplete = data.data.filter((item) => {
+          return item.status == "Completed";
+        });
+        console.log(orderComplete);
+        setOrders((prev) => [...prev, ...orderComplete]);
+
+        const orderCan = data.data.filter((item) => {
+          return item.status == "Cancelled";
+        });
+        setOrdersCan((prev) => [...prev, ...orderCan]);
       });
-  }, [])
-  
-   useEffect(() => {
-     fetch("http://quyt.ddns.net:3000/product/", {
-       method: "GET",
-       headers: {
-         "Content-Type": "application/json",
-         "x-access-token": DataLogin.token,
-       },
-     })
-       .then((response) => {
-         return response.json();
-       })
-       .then((data) => {
-         setProducts((prev) => [...prev, ...data.data]);
-       });
-   }, []);
+  }, []);
 
+  useEffect(() => {
+    var monthName = new Intl.DateTimeFormat("en-US", { month: "long" }).format;
+    const tesst = orders.map((item) =>
+      item.updatedAt.substring(0, 10).split("-").join("/")
+    );
+    const test = tesst.map((item) => new Date(item));
+    console.log(monthName(test[0]));
+  }, [orders]);
 
-  console.log(orders);
-  if (orders.length !== null) {
-    
-  }
+  console.log(new Date("20-12-1998"));
 
+  useEffect(() => {
+    fetch("http://quyt.ddns.net:3000/product/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setProducts((prev) => [...prev, ...data.data]);
+      });
+  }, []);
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/category/", {
@@ -112,235 +121,23 @@ function Revuene() {
       });
   }, []);
 
-  const handleToggleModal = (title, id) => {
-    refCate.current = title;
-    refIDCate.current = id;
-    setTitle("");
-    setToggleModalAdd(true);
-  };
-
-  const handleToggleModal2 = (title, brandID, id, titleCate) => {
-    refIDCate.current = id;
-    refCate.current = titleCate;
-    refBrandID.current = brandID;
-    setTitle(title);
-    setToggleModalAdd2(true);
-  };
-
-  const handleToggleModalAddCategory = () => {
-    setToggleModalAdd3(true);
-  };
-
-  const handleAddNewBrand = () => {
-    fetch("http://quyt.ddns.net:3000/brand/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-      body: JSON.stringify({
-        title: title,
-        category: refIDCate.current,
-      }),
-    })
-      .then((res) => {
-        res.json();
-        setToggleModalAdd(false);
-        window.location.reload(false);
-      })
-      .then((res) => console.log(res));
-  };
-
-  const handleUpdateBrand = () => {
-    fetch(`http://quyt.ddns.net:3000/brand/${refBrandID.current}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-      body: JSON.stringify({
-        title: title,
-        category: refIDCate.current,
-      }),
-    })
-      .then((res) => {
-        res.json();
-        setToggleModalAdd2(false);
-        window.location.reload(false);
-      })
-      .then((res) => console.log(res));
-  };
-
-  const handleDeleteBrand = () => {
-    fetch(`http://quyt.ddns.net:3000/brand/${refBrandID.current}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-    })
-      .then((res) => {
-        res.json();
-        setToggleModalAdd2(false);
-        window.location.reload(false);
-      })
-      .then((res) => console.log(res));
-  };
-
-  const handleUpdateFile = (e) => {
-    setImageIcon(e.target.files[0]);
-  };
-
-  const handleUpdateFile2 = (e) => {
-    setImageIconUpdate(e.target.files[0]);
-  };
-
-  const handleAddNewCategory = () => {
-    refModal.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
-
-   </div>
-    `;
-    var promise = new Promise(function (resolve, reject) {
-      //xử lý hình ảnh
-      const dataImage = new FormData();
-      let URLIcon;
-
-      dataImage.append("source", imageIcon);
-      fetch(
-        "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
-        {
-          method: "POST",
-          body: dataImage,
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          URLIcon = res["image"]["url"];
-          resolve(URLIcon);
-        })
-        .catch((err) => console.log(err));
-    });
-    promise.then((URLIcon) => {
-      fetch("http://quyt.ddns.net:3000/category/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": DataLogin.token,
-        },
-        body: JSON.stringify({
-          title: titleCategory,
-          icon: URLIcon,
-          type: nextType + 1,
-        }),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          refModal.current.innerHTML = `<h2>Successful</h2>`;
-
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
-        })
-        .catch((err) => {
-          refModal.current.innerHTML = `<h2>${err}</h2>`;
+  useEffect(() => {
+    if (orders.length !== 0) {
+      orders.map((item) => {
+        return item.items.map((item2) => {
+          setProductsSold((prev) => [...prev, item2]);
         });
+      });
+    }
+  }, [orders]);
+
+  useEffect(() => {
+    orders.map((item) => {
+      item.items.map((item2) => setCount((prev) => prev + item2.quantity));
     });
-  };
-
-  const handleUpdateCategory = (id, title, icon) => {
-    setTitleCategory(title);
-    refIDCate.current = id;
-    setImageIconUpdate(icon);
-    setToggleModalAdd4(true);
-  };
-
-  const handleUpdateCate = () => {
-    refModal2.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
-
-   </div>
-    `;
-    var promise = new Promise(function (resolve, reject) {
-      //xử lý hình ảnh
-      const dataImage = new FormData();
-      let URLIcon;
-      dataImage.append("source", imageIconUpdate);
-      fetch(
-        "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
-        {
-          method: "POST",
-          body: dataImage,
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          URLIcon = res["image"]["url"];
-          resolve(URLIcon);
-        })
-        .catch((err) => console.log(err));
-    });
-    promise.then((URLIcon) => {
-      fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": DataLogin.token,
-        },
-        body: JSON.stringify({
-          title: titleCategory,
-          icon: URLIcon,
-        }),
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          refModal2.current.innerHTML = `<h2>Successful</h2>`;
-
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
-        })
-        .catch((err) => {
-          refModal2.current.innerHTML = `<h2>${err}</h2>`;
-        });
-    });
-  };
-
-  const handleDeleteCategory = () => {
-    setToggleModalAdd5(true)
-    
-  };
-  const handleDeleteCategory2 = () => {
-     refModal3.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
-
-   </div>
-    `;
-    fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-    })
-      .then((res) => {
-        res.json();
-      })
-      .then((res) => {
-        refModal3.current.innerHTML = `<h2>Successful</h2>`;
-
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
-      })
-      .catch((err) => (refModal3.current.innerHTML = `<h2>${err}</h2>`));
-  }
-  
-  const handleCancel = () => {
-    setTitleCategory('');
-    setToggleModalAdd4(false);
-
-  }
+  }, [orders]);
+  console.log(orders);
+  console.log(count);
 
   return (
     <div className={clsx(cx("container"))}>
@@ -353,234 +150,108 @@ function Revuene() {
           }}
         >
           <div>
-            <h3 style={{ margin: "0px" }}>Revuene</h3>
-            <input
-              style={{
-                padding: "10px",
-                borderRadius: "10px",
-                border: "1px solid black",
-              }}
-              type="date"
-            ></input>
-            <button style={{ padding: "10px", borderRadius: "10px" }}>
-              Show
-            </button>
-            <div>
-              <h3>Total revenue for the day</h3>
-              <h1></h1>
+            <h3 style={{ margin: "0px" }}>Tổng Quan</h3>
+            <div className={clsx(cx("overview"))}>
+              <div className={clsx(cx("totalProduct"))}>
+                <img src={chart}></img>
+                <div>
+                  <h2>{count}</h2>
+                  <p>Sản Phẩm Đã Bán</p>
+                </div>
+              </div>
+              <div className={clsx(cx("totalOrders"))}>
+                <img src={chart}></img>
+                <div>
+                  <h2>{orders2.length}</h2>
+                  <p>Đơn Hàng Đã Đặt</p>
+                </div>
+              </div>
+              <div className={clsx(cx("totalOrdersCom"))}>
+                <img src={chart}></img>
+                <div>
+                  <h2>{orders.length}</h2>
+                  <p>Đơn Hàng Thành Công</p>
+                </div>
+              </div>
+              <div className={clsx(cx("totalOrdersCan"))}>
+                <img src={chart}></img>
+                <div>
+                  <h2>{ordersCan.length}</h2>
+                  <p>Đơn Hàng Bị Hủy</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <h1 style={{ margin: "auto", fontSize: "80px" }}>150.000.000</h1>
-        <h3>Products Sold For The Day</h3>
+        <Bar
+          data={{
+            labels: [
+              "Tháng 1",
+              "Tháng 2",
+              "Tháng 3",
+              "Tháng 4",
+              "Tháng 5",
+              "Tháng 6",
+              "Tháng 7",
+              "Tháng 8",
+              "Tháng 9",
+              "Tháng 10",
+              "Tháng 11",
+              "Tháng 12",
+            ],
+            datasets: [
+              {
+                label: "Population (millions)",
+                backgroundColor: [
+                  "#3e95cd",
+                  "#8e5ea2",
+                  "#3cba9f",
+                  "#e8c3b9",
+                  "#c45850",
+                  "#e8c3b9",
+                  "#3e95cd",
+                  "#8e5ea2",
+                  "#3cba9f",
+                  "#e8c3b9",
+                  "#c45850",
+                  "#e8c3b9",
+                ],
+                data: [2478, 5267, 734, 784, 433],
+              },
+            ],
+          }}
+          options={{
+            legend: { display: false },
+            title: {
+              display: true,
+              text: "Predicted world population (millions) in 2050",
+            },
+          }}
+        />
+        {/* <h1 style={{ margin: "auto", fontSize: "80px" }}>150.000.000</h1> */}
+        {/* <h3>Products Sold For The Day</h3> */}
         <Table className={clsx(cx("table"))} striped bordered hover>
           <thead>
             <tr>
               <th>
-                <p>Image</p>
+                <p>Hình Ảnh</p>
               </th>
               <th>
-                <p>Name</p>
+                <p>Tên</p>
               </th>
               <th>
-                <p>Quanlity</p>
+                <p>Đã Bán</p>
               </th>
               <th>
-                <p>Date</p>
+                <p>Ngày Bán</p>
               </th>
               <th>
-                <p>Total amount</p>
+                <p>Mã Đơn Hàng</p>
               </th>
             </tr>
           </thead>
-          <tbody>
-            {products.map((category, index) => {
-              return (
-                <tr
-                  ref={test}
-                  onClick={() =>
-                    handleUpdateCategory(
-                      category._id,
-                      category.status,
-                      category.createdAt
-                    )
-                  }
-                  key={index}
-                >
-                  <td>
-                    <img
-                      style={{ width: "100px" }}
-                      src={category.images[0]}
-                    ></img>
-                  </td>
-                  <td>{category.title}</td>
-                  <td>10</td>
-                  <td>{category.createdAt}</td>
-                  <td>10.000.000</td>
-                </tr>
-              );
-            })}
-          </tbody>
+          <tbody></tbody>
         </Table>
-      </div>
-
-      {/* <div
-        onClick={() => {
-          setToggleModalAdd(false);
-        }}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd,
-        })}
-      >
-        <div onClick={(e) => e.stopPropagation()} className={clsx(cx("modal"))}>
-          <div className={clsx(cx("modal-header"))}>
-            <h3>HIGH TECH</h3>
-          </div>
-          <div className={clsx(cx("modal-body"))}>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>name</p>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              ></input>
-            </div>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>Category</p>
-              <input disabled value={refCate.current}></input>
-            </div>
-          </div>
-          <div className={clsx(cx("modal-footer"))}>
-            <button
-              onClick={() => {
-                setTitle("");
-                setToggleModalAdd(false);
-              }}
-            >
-              Cancel
-            </button>
-            <button onClick={handleAddNewBrand}>Save</button>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <div
-        onClick={() => setToggleModalAdd2(false)}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd2,
-        })}
-      >
-        <div onClick={(e) => e.stopPropagation()} className={clsx(cx("modal"))}>
-          <div className={clsx(cx("modal-header"))}>
-            <h3>HIGH TECH</h3>
-          </div>
-          <div className={clsx(cx("modal-body"))}>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>name</p>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              ></input>
-            </div>
-            <div className={clsx(cx("modal-body-group"))}>
-              <p>Category</p>
-              <input disabled value={refCate.current}></input>
-            </div>
-          </div>
-          <div className={clsx(cx("modal-footer"))}>
-            <button onClick={() => setToggleModalAdd2(false)}>Cancel</button>
-            <button onClick={handleDeleteBrand}>Delete</button>
-            <button onClick={handleUpdateBrand}>Update</button>
-          </div>
-        </div>
-      </div> */}
-
-      <div
-        onClick={handleCancel}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd4,
-        })}
-      >
-        <div
-          ref={refModal2}
-          style={{ animation: "none" }}
-          onClick={(e) => e.stopPropagation()}
-          className={clsx(cx("modal"))}
-        >
-          <div
-            style={{ animation: "none" }}
-            className={clsx(cx("modal-header"))}
-          >
-            <h3>HIGH TECH</h3>
-          </div>
-          <div style={{ animation: "none" }} className={clsx(cx("modal-body"))}>
-            <h3>Customer Information</h3>
-            <div
-              style={{ animation: "none" }}
-              className={clsx(cx("modal-body-group"))}
-            >
-              <p>Customer ID</p>
-              <input
-                value={titleCategory}
-                onChange={(e) => setTitleCategory(e.target.value)}
-              ></input>
-            </div>
-            <div
-              style={{ animation: "none" }}
-              className={clsx(cx("modal-body-group"))}
-            >
-              <p>Icon</p>
-              <input type="file" onChange={(e) => handleUpdateFile2(e)}></input>
-              <img
-                style={{ width: "100px" }}
-                src={
-                  typeof imageIconUpdate == "object"
-                    ? URL.createObjectURL(imageIconUpdate)
-                    : imageIconUpdate
-                }
-              ></img>
-            </div>
-          </div>
-          <div
-            style={{ animation: "none" }}
-            className={clsx(cx("modal-footer"))}
-          >
-            <button onClick={handleCancel}>Cancel</button>
-            <button onClick={handleDeleteCategory}>Delete</button>
-            <button onClick={handleUpdateCate}>Save</button>
-          </div>
-        </div>
-      </div>
-
-      <div
-        onClick={() => setToggleModalAdd5(false)}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd5,
-        })}
-      >
-        <div
-          ref={refModal3}
-          style={{ animation: "none" }}
-          onClick={(e) => e.stopPropagation()}
-          className={clsx(cx("modal"))}
-        >
-          <div
-            style={{ animation: "none" }}
-            className={clsx(cx("modal-header"))}
-          >
-            <img
-              style={{ width: "100px", height: "100px" }}
-              src={warning}
-            ></img>
-            <h3>Do you want to delete this item?</h3>
-          </div>
-          <div
-            style={{ animation: "none" }}
-            className={clsx(cx("modal-footer"))}
-          >
-            <button onClick={handleDeleteCategory2}>Yes</button>
-            <button onClick={() => setToggleModalAdd5(false)}>No</button>
-          </div>
-        </div>
       </div>
     </div>
   );

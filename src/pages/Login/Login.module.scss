@@ -215,19 +215,86 @@
   font-weight: bold;
   font-size: 18px;
   text-align: center;
+
+  /* CSS */
+  button {
+    background-color: #fff;
+    border: 1px solid #d5d9d9;
+    border-radius: 8px;
+    box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+    box-sizing: border-box;
+    color: #0f1111;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Amazon Ember", sans-serif;
+    font-size: 13px;
+    line-height: 29px;
+    padding: 0 10px 0 11px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: middle;
+    width: 100px;
+  }
+
+  button:hover {
+    background-color: #f7fafa;
+  }
+
+  button:focus {
+    border-color: #008296;
+    box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+    outline: 0;
+  }
   div {
     animation: circle 1s linear infinite;
 
     button {
-      box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px,
-        rgba(0, 0, 0, 0.3) 0px 7px 13px -3px,
-        rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
-      font-family: "Open Sans", sans-serif;
-      font-weight: 400;
-      font-size: 14px;
-      color: #000;
+      background-color: #fff;
+      border: 1px solid #d5d9d9;
+      border-radius: 8px;
+      box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+      box-sizing: border-box;
+      color: #0f1111;
+      cursor: pointer;
+      display: inline-block;
+      font-family: "Amazon Ember", sans-serif;
+      font-size: 13px;
+      line-height: 29px;
+      padding: 0 10px 0 11px;
+      position: relative;
+      text-align: center;
+      text-decoration: none;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      vertical-align: middle;
+      width: 100px;
+      margin-top: 10px;
     }
-    h2{
+
+    button:hover {
+      background-color: #f7fafa;
+    }
+
+    button:focus {
+      border-color: #008296;
+      box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+      outline: 0;
+    }
+    input {
+      padding: 10px;
+      border-radius: 5px;
+      width: 90%;
+      outline: none;
+      border: none;
+      background-color: rgb(215, 215, 215);
+      font-size: 16px;
+    }
+    h2 {
       font-family: "Open Sans", sans-serif;
       font-weight: 600;
       font-size: 24px;

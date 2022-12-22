@@ -53,13 +53,16 @@
           line-height: 20px;
           margin: 5px;
           max-width: 250px;
-          p{
+          p {
             background-color: lightcoral;
             padding: 10px;
             width: fit-content;
             margin: 10px auto;
             border-radius: 5px;
             color: #fff;
+          }
+          img {
+            width: 80px;
           }
         }
       }
@@ -313,6 +316,129 @@
     font-family: "Open Sans", sans-serif;
     font-size: 16px;
     font-weight: 400;
+  }
+}
+.overview {
+  margin-top: 20px;
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: space-around;
+  width: 1100px;
+  .totalProduct {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 200px;
+    height: 100px;
+    background-image: linear-gradient(
+      to right,
+      rgb(255, 159, 189),
+      rgb(255, 110, 145)
+    );
+    box-shadow: rgb(251,201,216) 0px 20px 30px -10px;
+    border-radius: 10px;
+
+    img {
+      width: 60px;
+      height: 60px;
+    }
+    div {
+      h2{
+        text-align: center;
+        color: #fff;
+      }
+      p {
+        font-size: 14px;
+        color: #fff;
+      }
+    }
+  }
+  .totalOrders {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 200px;
+    height: 100px;
+    background-image: linear-gradient(
+      to right,
+      rgb(214,171,255),
+      rgb(181,126,255)
+    );
+    box-shadow: rgb(221,199,252) 0px 20px 30px -10px;
+    border-radius: 10px;
+
+    img {
+      width: 60px;
+      height: 60px;
+    }
+    div {
+      h2{
+        text-align: center;
+        color: #fff;
+      }
+      p {
+        font-size: 14px;
+        color: #fff;
+      }
+    }
+  }
+  .totalOrdersCom {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 200px;
+    height: 100px;
+    background-image: linear-gradient(
+      to right,
+      rgb(135,225,190),
+      rgb(88,198,147)
+    );
+    box-shadow: rgb(135,225,190) 0px 20px 30px -10px;
+    border-radius: 10px;
+
+    img {
+      width: 60px;
+      height: 60px;
+    }
+    div {
+      h2{
+        text-align: center;
+        color: #fff;
+      }
+      p {
+        font-size: 14px;
+        color: #fff;
+      }
+    }
+  }
+  .totalOrdersCan {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 200px;
+    height: 100px;
+    background-image: linear-gradient(
+      to right,
+      rgb(229,224,103),
+      rgb(228,201,73)
+    );
+    box-shadow: rgb(229,224,103) 0px 20px 30px -10px;
+    border-radius: 10px;
+
+    img {
+      width: 60px;
+      height: 60px;
+    }
+    div {
+      h2{
+        text-align: center;
+        color: #fff;
+      }
+      p {
+        font-size: 14px;
+        color: #fff;
+      }
+    }
   }
 }
 .button-add-new:hover {

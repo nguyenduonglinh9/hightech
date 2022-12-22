@@ -7,41 +7,32 @@ import emailjs from "@emailjs/browser";
 import { FcCheckmark } from "react-icons/fc";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
-const imgCheck = require('../Login/assets/fonts/img/check.png');
+import { clear } from "@testing-library/user-event/dist/clear";
+import jwt_decode from "jwt-decode";
+const imgCheck = require("../Login/assets/fonts/img/check.png");
 const imgCancel = require("../Login/assets/fonts/img/cancel.png");
 
-
-
 function Login() {
-
   // if (JSON.parse(localStorage.getItem("data")).isLoggin == true)
   // {
   //   navigate("/product");
   // }
-  
-  
+
   const cx = classNames.bind(styles);
   let navigate = useNavigate();
 
   const refModal = useRef();
   const refLogin = useRef();
   const refUsername = useRef();
-  const refPassword = useRef()
+  const refPassword = useRef();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [toggleModal, setToggleModal] = useState(false);
-
-  // tippy(refUsername.current, {
-  //   content: "Không được bỏ trống",
-  // });
-
 
   const handleLogin = () => {
     refModal.current.innerHTML = `
     <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
-
     </div>
     `;
     setToggleModal(true);
@@ -61,49 +52,254 @@ function Login() {
       })
       .then(function (data) {
         if (data.code == 200) {
-          refModal.current.innerHTML = `
+          fetch("http://quyt.ddns.net:3000/access/me", {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "x-access-token": data.data.token,
+            },
+          })
+            .then((res) => res.json())
+            .then((res) => {
+              if (
+                (res.code == 200 && res.data.role == "superadmin") ||
+                res.data.role == "admin"
+              ) {
+                refModal.current.innerHTML = `
           <div style="animation:none">
             <img style="width:50px;height:50px" src="${imgCheck}"></img>
-            <h2>Successful login</h2>
+            <h2>Đăng Nhập Thành Công</h2>
           </div>
           `;
-          setTimeout(() => {
-            navigate('/product');
-          }, 2000)
-          localStorage.setItem(
-            "DataLogin",
-            JSON.stringify({
-              token: data.data.token,
-              isLogin: true
-            })
-          );
-          localStorage.setItem(
-            "isLogin",
-            JSON.stringify({
-              isLogin: true,
-            })
-          );
-        }
-        else {
-          refModal.current.innerHTML = `
-          <div style="animation:none">
-            <img style="width:50px;height:50px" src="${imgCancel}"></img>
-            <h2>${data.message}</h2>
-            <button style="padding:10px 20px;border:none;border-radius:10px";>Retry</button>
-          </div>
-          `;
-          refModal.current.children[0].children[2].addEventListener('click', () => {
-            setToggleModal(false)
-          })
-
-          localStorage.setItem(
-            "isLogin",
-            JSON.stringify({
-              isLogin: false,
-            })
-          );
+                setTimeout(() => {
+                  navigate("/product");
+                }, 2000);
+                localStorage.setItem(
+                  "DataLogin",
+                  JSON.stringify({
+                    token: data.data.token,
+                    isLogin: true,
+                  })
+                );
+                localStorage.setItem(
+                  "isLogin",
+                  JSON.stringify({
+                    isLogin: true,
+                  })
+                );
+              } else if (
+                (res.code == 200 && res.data.role !== "superadmin") ||
+                res.data.role !== "admin"
+              ) {
+                refModal.current.removeChild(refModal.current.children[0]);
+                const h2 = document.createElement("h2");
+                h2.innerText = "Thông Tin Đăng Nhập Không Đúng !";
+                const button = document.createElement("button");
+                const img = document.createElement("img");
+                img.setAttribute("src", imgCancel);
+                img.style.width = "50px";
+                button.innerText = "Thử Lại";
+                button.addEventListener("click", () => {
+                  refModal.current.removeChild(h2);
+                  refModal.current.removeChild(button);
+                  setToggleModal(false);
+                });
+                refModal.current.appendChild(img);
+                refModal.current.appendChild(h2);
+                refModal.current.appendChild(button);
+              } else if (res.code !== 200) {
+              }
+            });
+        } else {
+          refModal.current.removeChild(refModal.current.children[0]);
+          const h2 = document.createElement("h2");
+          h2.innerText = "Thông Tin Đăng Nhập Không Đúng !";
+          const button = document.createElement("button");
+          const img = document.createElement("img");
+          img.setAttribute("src", imgCancel);
+          img.style.width = "80px";
+          button.innerText = "Thử Lại";
+          button.addEventListener("click", () => {
+            refModal.current.removeChild(h2);
+            refModal.current.removeChild(button);
+            setToggleModal(false);
+          });
+          refModal.current.appendChild(img);
+          refModal.current.appendChild(h2);
+          refModal.current.appendChild(button);
         }
       });
+  };
+  const handleForgotPass = () => {
+    const div = document.createElement("div");
+    const div2 = document.createElement("div");
+    const h2 = document.createElement("h2");
+    div.style.animation = "none";
+    div2.style.animation = "none";
+    h2.innerText = "Mời nhập email !";
+    const button = document.createElement("button");
+    button.textContent = "Gửi Mã";
+    const button2 = document.createElement("button");
+    button2.textContent = "Hủy";
+    const input = document.createElement("input");
+    button2.addEventListener("click", () => {
+      refModal.current.removeChild(div);
+      setToggleModal(false);
+    });
+    button.addEventListener("click", () => {
+      const div3 = document.createElement("div");
+      div3.style.width = "70px";
+      div3.style.height = "70px";
+      div3.style.border = "7px solid transparent";
+      div3.style.borderTop = "7px solid rgb(3,201,215)";
+      div3.style.borderRadius = "50%";
+      refModal.current.removeChild(div);
+      refModal.current.appendChild(div3);
+      fetch("http://quyt.ddns.net:3000/access/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: input.value,
+        }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.code == 200) {
+            const div4 = document.createElement("div");
+            div4.style.animation = "none";
+            const h2 = document.createElement("h2");
+            h2.innerText = "Đã Gửi Mã Đến Email Của Bạn !";
+            const textarea = document.createElement("textarea");
+            textarea.value = `mã người dùng của bạn là ${res.data["user"]}`;
+            textarea.style.height = "60px";
+            textarea.style.width = "200px";
+            const p = document.createElement("p");
+            p.innerText = "* lưu mã người dùng để đổi mật khẩu mới";
+            p.style.fontStyle = "italic";
+            p.style.fontSize = "10px ";
+            const div5 = document.createElement("div");
+            div5.style.animation = "none";
+            const button = document.createElement("button");
+            button.innerText = "Thử Lại";
+            button.addEventListener("click", () => {
+              refModal.current.removeChild(div4);
+              refModal.current.appendChild(div);
+            });
+            const button2 = document.createElement("button");
+            button2.innerText = "Tiếp Theo";
+            button2.addEventListener("click", () => {
+              const divChangePass = document.createElement("div");
+              divChangePass.style.animation = "none";
+              const h2 = document.createElement("h2");
+              h2.innerText = "Đổi Mật Khẩu";
+              const divGroup = document.createElement("div");
+              divGroup.style.animation = "none";
+              const divGroup2 = document.createElement("div");
+              divGroup2.style.animation = "none";
+              const divGroup3 = document.createElement("div");
+              divGroup3.style.animation = "none";
+              const divGroup4 = document.createElement("div");
+              divGroup4.style.animation = "none";
+
+              const span = document.createElement("span");
+              span.textContent = "Mã Người Dùng";
+              span.style.fontSize = "14px";
+              const span2 = document.createElement("span");
+              span2.textContent = "Mật Khẩu Mới";
+              span2.style.fontSize = "14px";
+              const span3 = document.createElement("span");
+              span3.textContent = "Mã Bảo Mật";
+              span3.style.fontSize = "14px";
+
+              const input = document.createElement("input");
+              const input2 = document.createElement("input");
+              const input3 = document.createElement("input");
+              const button = document.createElement("button");
+              button.innerText = "Hủy";
+              const button2 = document.createElement("button");
+              button2.innerText = "Lưu";
+              button2.addEventListener("click", () => {
+                const divLoading = document.createElement("div");
+                divLoading.style.width = "70px";
+                divLoading.style.height = "70px";
+                divLoading.style.border = "7px solid transparent";
+                divLoading.style.borderTop = "7px solid rgb(3,201,215)";
+                divLoading.style.borderRadius = "50%";
+                refModal.current.removeChild(divChangePass);
+                refModal.current.appendChild(divLoading);
+                fetch("http://quyt.ddns.net:3000/access/reset-password", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    user: input.value,
+                    newPassword: input2.value,
+                    verifyCode: input3.value,
+                  }),
+                })
+                  .then((res) => res.json())
+                  .then((res) => {
+                    if (res.code == 200) {
+                      const divSuccess = document.createElement("div");
+                      divSuccess.style.animation = "none";
+                      const h2 = document.createElement("h2");
+                      h2.innerText = "Đổi Mật Khẩu Thành Công !";
+                      const button = document.createElement("button");
+                      button.innerText = "Đăng Nhập";
+                      button.addEventListener("click", () => {
+                        refModal.current.removeChild(divSuccess);
+                        setToggleModal(false);
+                      });
+                      divSuccess.appendChild(h2);
+                      divSuccess.appendChild(button);
+
+                      refModal.current.removeChild(divLoading);
+                      refModal.current.appendChild(divSuccess);
+                    }
+                  });
+              });
+
+              divGroup.appendChild(span);
+              divGroup.appendChild(input);
+
+              divGroup2.appendChild(span2);
+              divGroup2.appendChild(input2);
+
+              divGroup3.appendChild(span3);
+              divGroup3.appendChild(input3);
+
+              divGroup4.appendChild(button);
+              divGroup4.appendChild(button2);
+
+              divChangePass.appendChild(h2);
+              divChangePass.appendChild(divGroup);
+              divChangePass.appendChild(divGroup2);
+              divChangePass.appendChild(divGroup3);
+              divChangePass.appendChild(divGroup4);
+
+              refModal.current.removeChild(div4);
+              refModal.current.appendChild(divChangePass);
+            });
+            div5.appendChild(button);
+            div5.appendChild(button2);
+            div4.appendChild(h2);
+            div4.appendChild(textarea);
+            div4.appendChild(p);
+            div4.appendChild(div5);
+            refModal.current.removeChild(div3);
+            refModal.current.appendChild(div4);
+          }
+        });
+    });
+    div2.appendChild(button2);
+    div2.appendChild(button);
+    div.appendChild(h2);
+    div.appendChild(input);
+    div.appendChild(div2);
+
+    refModal.current.appendChild(div);
+    setToggleModal(true);
   };
 
   return (
@@ -171,7 +367,9 @@ function Login() {
                       <button type="button" onClick={handleLogin}>
                         LOGIN
                       </button>
-                      <button>FORGOT PASSWORD</button>
+                      <button onClick={handleForgotPass} type="button">
+                        FORGOT PASSWORD
+                      </button>
                     </div>
                   </form>
                 </div>
@@ -189,20 +387,20 @@ function Login() {
             ref={refModal}
             onClick={(e) => e.stopPropagation()}
             className={clsx(cx("modal"))}
-          >
-            {/* <p>{message}</p>
-            {message != "success" ? (
-              <button
-                onClick={() => setToggleModal(false)}
-                className={clsx(cx("modal_button"))}
-              >
-                RETRY
-              </button>
-            ) : (
-              <div></div>
-            )} */}
-          </div>
+          ></div>
         </div>
+
+        {/* <div
+          className={clsx(cx("containerModal"), {
+            [styles.openModal]: toggleModal2,
+          })}
+        >
+          <div
+            ref={refModal}
+            onClick={(e) => e.stopPropagation()}
+            className={clsx(cx("modal"))}
+          ></div>
+        </div> */}
       </div>
     </>
   );

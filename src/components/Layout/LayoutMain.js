@@ -42,11 +42,33 @@ function LayoutMain({ children }) {
   const Decode_token = jwt_decode(DataLogin.token);
   const useRefActive = useRef();
   let navigate = useNavigate();
+  let dollarUSLocale = Intl.NumberFormat("en-US");
   AOS.init();
 
   const [toggleUserOption, setToggleUserOption] = useState(false);
   const [search, setSearch] = useState("");
   const [menu, setMenu] = useState(false);
+
+  const [searchResult, setSearchResult] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://quyt.ddns.net:3000/product/?all=true&title=/${search}/i`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (search !== "") {
+          setSearchResult((prev) => [...res.data]);
+        } else {
+          setSearchResult([]);
+        }
+      });
+  }, [search]);
+  console.log(searchResult);
 
   const handleToggleOn = (e) => {
     setToggleUserOption(true);
@@ -61,8 +83,13 @@ function LayoutMain({ children }) {
   };
 
   const handleLogout = () => {
-    localStorage.setItem("isLogin", JSON.stringify({ isLoggin: false}));
+    localStorage.setItem("isLogin", JSON.stringify({ isLoggin: false }));
     navigate("/");
+  };
+  const HandleDetail = (id) => {
+    navigate("/detail-product", { state: { id: id } });
+    setSearchResult([]);
+    setSearch("");
   };
 
   return (
@@ -227,7 +254,7 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <p className={clsx(cx("title"))}>Tổng Kết</p>
-              <Link
+              {/* <Link
                 to="/products-sold"
                 style={{ textDecoration: "none", color: "white" }}
               >
@@ -248,7 +275,7 @@ function LayoutMain({ children }) {
                     <span>Sản Phẩm Đã Bán</span>
                   </div>
                 </li>
-              </Link>
+              </Link> */}
               <Link
                 to="/revuene"
                 style={{ textDecoration: "none", color: "white" }}
@@ -312,6 +339,23 @@ function LayoutMain({ children }) {
                 ></input>
                 <div className={clsx(cx("header-from-button"))}>
                   <FaSearch style={{ color: "rgb(3,201,215)" }} />
+                </div>
+
+                <div className={clsx(cx("header-result"))}>
+                  {searchResult.map((item, index) => {
+                    return (
+                      <div
+                        onClick={() => HandleDetail(item._id)}
+                        className={clsx(cx("header-result-item"))}
+                      >
+                        <img src={item.images[0]}></img>
+                        <div>
+                          <p>{item.title}</p>
+                          <p>{dollarUSLocale.format(item.costPrice)}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </form>

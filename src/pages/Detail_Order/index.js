@@ -72,9 +72,10 @@ function DetailOrder() {
         
         setTimeout(() => {
           navigate("/orders");
-          window.location.reload(false);
+          // window.location.reload(false);
         }, 1500);
-        setToggleLoading(false);
+
+        // setToggleLoading(false);
       });
   };
   return (
@@ -94,22 +95,12 @@ function DetailOrder() {
             <p style={{ fontWeight: "bold" }}>Thông tin khách hàng</p>
             <div>
               <p>Mã khách hàng : {order.user}</p>
+              <p>
+                Tên khách hàng :{" "}
+                {order.length == 0 ? " " : order.shippingAddress.name}
+              </p>
               <p>Số liên hệ : {order.phone}</p>
-              <p>
-                {order.length === 0
-                  ? undefined
-                  : `Địa chỉ nhận hàng : ${
-                      order.shippingAddress["address"]
-                    },${" "}
-                ${order.shippingAddress["city"]},${" "}
-                ${order.shippingAddress["country"]}`}
-              </p>
-              <p>
-                Mã bưu chính :{" "}
-                {order.length === 0
-                  ? undefined
-                  : order.shippingAddress["postalCode"]}
-              </p>
+              <p>Địa chỉ nhận hàng : {order.length == 0 ? " " : order.shippingAddress.address}</p>
               <p>Phương thức thanh toán : {order.paymentMethod}</p>
             </div>
             <p></p>
@@ -158,7 +149,7 @@ function DetailOrder() {
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button onClick={()=>navigate('/orders')}>Trở lại</button>
+            <button onClick={() => navigate("/orders")}>Trở lại</button>
           </div>
           <div>
             <button onClick={handleDeleteUser}>Xóa</button>
@@ -169,7 +160,11 @@ function DetailOrder() {
                 [styles.activebutton]: true,
               })}
               onClick={handleUpdateOrder}
-              disabled={order.status == "Completed" || order.status == "Cancelled" ? true : false}
+              disabled={
+                order.status == "Completed" || order.status == "Cancelled"
+                  ? true
+                  : false
+              }
             >
               {order.status == "Not Processed"
                 ? "Processing"
@@ -177,7 +172,11 @@ function DetailOrder() {
                 ? "Shipping"
                 : order.status == "Shipping"
                 ? "Completed"
-                : order.status == "Completed" ? "Completed" : order.status == "Cancelled" ? "Cancelled" : null}
+                : order.status == "Completed"
+                ? "Completed"
+                : order.status == "Cancelled"
+                ? "Cancelled"
+                : null}
             </button>
           </div>
         </div>

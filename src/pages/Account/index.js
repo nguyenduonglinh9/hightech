@@ -9,6 +9,7 @@ import {
   BsFillEyeFill,
   BsFillEyeSlashFill,
 } from "react-icons/bs";
+import { BiEditAlt } from "react-icons/bi";
 import jwt_decode from "jwt-decode";
 
 function Account() {
@@ -24,6 +25,12 @@ function Account() {
   const refMessage = useRef();
   const refOld = useRef();
   const refNew = useRef();
+
+  const refInputEmail = useRef();
+  const refInputName = useRef();
+  const refInputPhone = useRef();
+  const refInputImage = useRef();
+
 
   const [toggleLoading, setToggleLoading] = useState(false);
   const [toggleChangepass, setToggleChangepass] = useState(false);
@@ -42,16 +49,15 @@ function Account() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "x-access-token": DataLogin.token
-      }
+        "x-access-token": DataLogin.token,
+      },
     })
-      .then(res => res.json())
-      .then(res => {
-      setMyProfile(res.data)
-        console.log(res.data)
-    })
-  }, [])
-  console.log(myProflie)
+      .then((res) => res.json())
+      .then((res) => {
+        setMyProfile(res.data);
+      });
+  }, []);
+  console.log(myProflie);
 
   const handleChangePass = () => {
     if (oldPass == null || newPass == null) {
@@ -149,8 +155,8 @@ function Account() {
             });
             div2.appendChild(h2);
             div2.appendChild(button);
-             refMessage.current.removeChild(div);
-             refMessage.current.appendChild(div2);
+            refMessage.current.removeChild(div);
+            refMessage.current.appendChild(div2);
           }
         });
     }
@@ -171,6 +177,7 @@ function Account() {
     refNew.current.setAttribute("type", "password");
     setToggleEyeNew(false);
   };
+  console.log(myProflie)
 
   return (
     <div className={clsx(cx("container"))}>
@@ -181,40 +188,85 @@ function Account() {
         <div className={clsx(cx("from-body"))}>
           <div ref={refErrEmail} className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>Email</p>
-            <input
-              required
-              defaultValue={Decode_token.email}
-              disabled
-              placeholder="ex: abc@gmail.com"
-            ></input>
-            <p></p>
+            <div
+              style={{ width: "100%", display: "flex", alignItems: "center" }}
+            >
+              <input
+                ref={refInputEmail}
+                required
+                defaultValue={myProflie == null ? "" : myProflie.email}
+                disabled
+                placeholder="ex: abc@gmail.com"
+              ></input>
+              <p></p>
+              {/* <div onClick={(e) => (refInputEmail.current.disabled = false)}>
+                <BiEditAlt />
+              </div> */}
+            </div>
+          </div>
+
+          <div ref={refErrEmail} className={clsx(cx("from-body-group"))}>
+            <p style={{ fontWeight: "bold" }}>Hình Ảnh</p>
+            <div
+              style={{ width: "100%", display: "flex", alignItems: "center" }}
+            >
+              <input
+                ref={refInputImage}
+                required
+                // defaultValue={Decode_token.email}
+                disabled
+                type="file"
+                placeholder="ex: abc@gmail.com"
+              ></input>
+              <p></p>
+              {/* <BiEditAlt
+                onClick={(e) => (refInputImage.current.disabled = false)}
+              /> */}
+            </div>
+            <img src={myProflie == null ? "" : myProflie.avatar}></img>
           </div>
 
           <div ref={refErrFullName} className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>Họ Và Tên</p>
-            <div>
+            <div
+              style={{ width: "100%", display: "flex", alignItems: "center" }}
+            >
               <input
+                ref={refInputName}
                 placeholder="ex: Nguyen Van A"
                 style={{ margin: "5px 0" }}
                 disabled
-                defaultValue={Decode_token.fullname}
+                defaultValue={myProflie == null ? "" : myProflie.fullname}
               ></input>
+              <p></p>
+              {/* <BiEditAlt
+                onClick={(e) => (refInputName.current.disabled = false)}
+              /> */}
             </div>
-            <p></p>
           </div>
+
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>Số Điện Thoại</p>
-            <input
-              defaultValue={Decode_token.phone}
-              disabled
-              placeholder="ex: 0932xxxxxx"
-              type="number"
-            ></input>
+            <div
+              style={{ width: "100%", display: "flex", alignItems: "center" }}
+            >
+              <input
+                ref={refInputPhone}
+                defaultValue={myProflie == null ? "" : myProflie.phone}
+                disabled
+                placeholder="ex: 0932xxxxxx"
+                type="number"
+              ></input>
+              <p></p>
+              {/* <BiEditAlt
+                onClick={(e) => (refInputPhone.current.disabled = false)}
+              /> */}
+            </div>
           </div>
         </div>
         <div className={clsx(cx("from-footer"))}>
           <div>
-            <button onClick={()=>navigate('/product')}>Trở Lại</button>
+            <button onClick={() => navigate("/product")}>Trở Lại</button>
           </div>
           <div>
             <button onClick={() => setToggleChangepass(true)}>

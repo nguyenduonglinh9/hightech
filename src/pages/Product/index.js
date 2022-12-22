@@ -14,6 +14,8 @@ import { DataSearchContext } from "../../components/Layout/LayoutMain";
 import Table from "react-bootstrap/Table";
 import jwt_decode from "jwt-decode";
 import { Buffer } from "buffer";
+import noUiSlider from "nouislider";
+import "nouislider/dist/nouislider.css";
 
 // @ts-ignore
 // import everything inside the mqtt module and give it the namespace "mqtt"
@@ -28,35 +30,54 @@ function Product() {
   const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
   const DataSearch = useContext(DataSearchContext);
   let dollarUSLocale = Intl.NumberFormat("en-US");
- 
+
   if (isLogin2["isLoggin"] === false) {
     navigate("/");
   }
+
+  // const reftest = useRef()
+
+  // useEffect(() => {
+  //   noUiSlider.create(reftest.current, {
+  //     start: [20, 80],
+  //     connect: true,
+  //     range: {
+  //       min: 0,
+  //       max: 100,
+  //     },
+  //   });
+  // },[])
 
   const [category, setCategory] = useState([]);
   const [products, setProducts] = useState([]);
   const [brands, setBrands] = useState([]);
   const [toggleCategory, setToggleCategory] = useState(false);
   const [toggleBrand, setToggleBrand] = useState(false);
+  const [togglePriceOption, setTogglePriceOption] = useState(false);
   const [curentItemName, setCurrentItemName] = useState("Tất Cả");
   const [idCate, setIdCate] = useState("634f9eea3f879eb6fc81bf01");
   const [loading, setLoading] = useState(false);
+  const [minPrice, setMinPrice] = useState();
+  const [maxPrice, setMaxPrice] = useState();
+  const [softProduct, setSoftProduct] = useState([]);
+  const [count, setCount] = useState(0);
+
+
   const softSearch = useRef();
 
-
-  if (DataSearch != "") {
-    if (typeof DataSearch == "string") {
-      softSearch.current = products.filter((item, index) => {
-        return (
-          item.name.includes(DataSearch) ||
-          String(item.price).includes(DataSearch) ||
-          item.description.includes(DataSearch)
-        );
-      });
-    }
-  } else {
-    softSearch.current = undefined;
-  }
+  // if (DataSearch != "") {
+  //   if (typeof DataSearch == "string") {
+  //     softSearch.current = products.filter((item, index) => {
+  //       return (
+  //         item.name.includes(DataSearch) ||
+  //         String(item.price).includes(DataSearch) ||
+  //         item.description.includes(DataSearch)
+  //       );
+  //     });
+  //   }
+  // } else {
+  //   softSearch.current = undefined;
+  // }
 
   const refItem = useRef();
 
@@ -77,8 +98,8 @@ function Product() {
   }, []);
 
   useEffect(() => {
-    category.push({title : 'Tất Cả'})
-  },[])
+    category.push({ title: "Tất Cả" });
+  }, []);
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/brand/", {
@@ -97,7 +118,7 @@ function Product() {
   }, []);
 
   useEffect(() => {
-    fetch("http://quyt.ddns.net:3000/product/", {
+    fetch("http://quyt.ddns.net:3000/product?all=true/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -108,11 +129,10 @@ function Product() {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         setProducts((prev) => [...prev, ...data.data]);
         setLoading(true);
       });
-  }, []);
+  }, []); 
 
   // console.log(list)
   const handleOpenCategory = () => {
@@ -132,6 +152,20 @@ function Product() {
   const handleNavigateAddProduct = () => {
     navigate("/add-product");
   };
+  const handleSoft = () => {
+    fetch(
+      `http://quyt.ddns.net:3000/product/?all=true&salePrice>=${minPrice}&salePrice<=${maxPrice}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": DataLogin.token,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => setSoftProduct([...res.data]));
+  };
 
   return (
     <div className={clsx(cx("container"))}>
@@ -139,7 +173,7 @@ function Product() {
         <div className={clsx(cx("list-search"))}>
           {softSearch.current.map((item, index) => {
             return (
-              <div className={clsx(cx("item-search"))}>
+              <div key={index} className={clsx(cx("item-search"))}>
                 <img style={{ width: "70px" }} src={item.image}></img>
                 <div>
                   <p>{item.name}</p>
@@ -161,7 +195,10 @@ function Product() {
           })}
         </div>
       )}
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div
+        onClick={() => setTogglePriceOption(false)}
+        style={{ display: "flex" }}
+      >
         <div>
           <div
             onClick={handleOpenCategory}
@@ -177,9 +214,8 @@ function Product() {
           >
             {category.map((item, index) => {
               return (
-                <div>
+                <div key={index}>
                   <div
-                    key={index}
                     onClick={() => {
                       setIdCate(item._id);
                       setCurrentItemName(item.title);
@@ -192,6 +228,45 @@ function Product() {
                 </div>
               );
             })}
+          </div>
+        </div>
+        <div
+          onClick={(e) => {
+            setTogglePriceOption(!togglePriceOption);
+            e.stopPropagation();
+          }}
+          className={clsx(cx("drop-down-menu"))}
+        >
+          <p style={{ margin: "0" }}>Giá</p>
+          <div
+            className={clsx(cx("drop-down-price"), {
+              [styles.openPrice]: togglePriceOption,
+            })}
+          >
+            <div style={{ display: "flex" }}>
+              <div>
+                <span>Từ</span>
+                <input
+                  value={minPrice}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    setMinPrice(e.target.value);
+                  }}
+                  type="number"
+                ></input>
+              </div>
+              <div>
+                <span>Đến</span>
+                <input
+                  onClick={(e) => e.stopPropagation()}
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  type="number"
+                ></input>
+              </div>
+            </div>
+            <button onClick={handleSoft}>Kết Quả</button>
           </div>
         </div>
 
@@ -232,7 +307,10 @@ function Product() {
           </div>
         </div> */}
       </div>
-      <div className={clsx(cx("listproduct"))}>
+      <div
+        onClick={(e) => setTogglePriceOption(false)}
+        className={clsx(cx("listproduct"))}
+      >
         <div
           style={{
             display: "flex",
@@ -254,7 +332,9 @@ function Product() {
         <Table className={clsx(cx("table"))} striped bordered hover>
           <thead>
             <tr>
-              <th><p>Số thứ tự</p></th>
+              <th>
+                <p>Số thứ tự</p>
+              </th>
               <th>Hình Ảnh</th>
               <th>
                 <p>Tên</p>
@@ -277,7 +357,86 @@ function Product() {
             </tr>
           </thead>
           <tbody>
-            {curentItemName !== "Tất Cả"
+            {softProduct.length !== 0
+              ? curentItemName !== "Tất Cả"
+                ? softProduct
+                    .filter((item, index) => {
+                      return item.category == idCate;
+                    })
+                    .map((item2, index2) => {
+                      return (
+                        <tr
+                          onClick={() => HandleDetail(item2._id)}
+                          key={index2}
+                        >
+                          <td>{index2 + 1}</td>
+                          <td>
+                            <img src={item2.images[0]}></img>
+                          </td>
+                          <td className={clsx(cx("title_td"))}>
+                            {item2.title}
+                          </td>
+                          <td>{dollarUSLocale.format(item2.salePrice)}</td>
+                          <td>
+                            {category
+                              .filter((cate) => cate._id == item2.category)
+                              .map((item3) => item3.title)}
+                          </td>
+                          <td>
+                            {brands
+                              .filter((brand) => brand._id == item2.brand)
+                              .map((item2) => item2.title)}
+                          </td>
+                          <td>{item2.quantity}</td>
+                          <td>
+                            {item2.quantity > 0 ? (
+                              <div className={clsx(cx("status_conhang"))}>
+                                <p>On-Sale</p>
+                              </div>
+                            ) : (
+                              <div className={clsx(cx("status_hethang"))}>
+                                <p>Out Of Stock</p>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                : softProduct.map((item, index) => {
+                    return (
+                      <tr onClick={() => HandleDetail(item._id)} key={index}>
+                        <td>{index + 1}</td>
+                        <td>
+                          <img src={item.images[0]}></img>
+                        </td>
+                        <td className={clsx(cx("title_td"))}>{item.title}</td>
+                        <td>{dollarUSLocale.format(item.salePrice)}</td>
+                        <td>
+                          {category
+                            .filter((cate) => cate._id == item.category)
+                            .map((item3) => item3.title)}
+                        </td>
+                        <td>
+                          {brands
+                            .filter((brand) => brand._id == item.brand)
+                            .map((item2) => item2.title)}
+                        </td>
+                        <td>{item.quantity}</td>
+                        <td>
+                          {item.quantity > 0 ? (
+                            <div className={clsx(cx("status_conhang"))}>
+                              <p>On-Sale</p>
+                            </div>
+                          ) : (
+                            <div className={clsx(cx("status_hethang"))}>
+                              <p>Out Of Stock</p>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+              : curentItemName !== "Tất Cả"
               ? products
                   .filter((product, index) => {
                     return product.category == idCate;
@@ -285,12 +444,12 @@ function Product() {
                   .map((item, index) => {
                     return (
                       <tr onClick={() => HandleDetail(item._id)} key={index}>
-                        <td>{index+1}</td>
+                        <td>{index + 1}</td>
                         <td>
                           <img src={item.images[0]}></img>
                         </td>
                         <td className={clsx(cx("title_td"))}>{item.title}</td>
-                        <td>{dollarUSLocale.format(item.costPrice)}</td>
+                        <td>{dollarUSLocale.format(item.salePrice)}</td>
                         <td>
                           {category
                             .filter((cate) => cate._id == item.category)
@@ -319,12 +478,12 @@ function Product() {
               : products.map((product, index) => {
                   return (
                     <tr onClick={() => HandleDetail(product._id)} key={index}>
-                      <td>{index+1}</td>
+                      <td>{index + 1}</td>
                       <td>
                         <img src={product.images[0]}></img>
                       </td>
                       <td className={clsx(cx("title_td"))}>{product.title}</td>
-                      <td>{dollarUSLocale.format(product.costPrice)}</td>
+                      <td>{dollarUSLocale.format(product.salePrice)}</td>
                       <td>
                         {category
                           .filter((cate) => cate._id == product.category)

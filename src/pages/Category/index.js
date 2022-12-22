@@ -122,17 +122,14 @@ function Category() {
       
       let URLIcon;
 
-      dataImage.append("source", imageIcon);
-      fetch(
-        "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
-        {
-          method: "POST",
-          body: dataImage,
-        }
-      )
+      dataImage.append("files", imageIcon);
+      fetch("http://quyt.ddns.net:2607", {
+        method: "POST",
+        body: dataImage,
+      })
         .then((res) => res.json())
         .then((res) => {
-          URLIcon = res["image"]["url"];
+          URLIcon = res.data[0];
           resolve(URLIcon);
         })
         .catch((err) => console.log(err));
@@ -149,16 +146,15 @@ function Category() {
           title: titleCategory,
           icon: URLIcon,
           active: toggleOnOff,
-          type:22
         }),
       })
         .then((res) => res.json())
         .then((res) => {
-          refModal.current.innerHTML = `<h2>${res.message}</h2>`;
+          refModal.current.innerHTML = `<h2>Tác Vụ Thành Công</h2>`;
           console.log(res);
-          // setTimeout(() => {
-          //   window.location.reload(false);
-          // }, 1500);
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
         .catch((err) => {
           refModal.current.innerHTML = `<h2>${err}</h2>`;
@@ -180,26 +176,52 @@ function Category() {
 
    </div>
     `;
-    var promise = new Promise(function (resolve, reject) {
-      //xử lý hình ảnh
-      const dataImage = new FormData();
-      let URLIcon;
-      dataImage.append("source", imageIconUpdate);
-      fetch(
-        "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
-        {
-          method: "POST",
-          body: dataImage,
-        }
-      )
-        .then((res) => res.json())
-        .then((res) => {
-          URLIcon = res["image"]["url"];
-          resolve(URLIcon);
-        })
-        .catch((err) => console.log(err));
-    });
-    promise.then((URLIcon) => {
+    if (typeof imageIconUpdate == 'object') {
+       var promise = new Promise(function (resolve, reject) {
+         //xử lý hình ảnh
+         const dataImage = new FormData();
+         let URLIcon;
+         dataImage.append("files", imageIconUpdate);
+         fetch("http://quyt.ddns.net:2607", {
+           method: "POST",
+           body: dataImage,
+         })
+           .then((res) => res.json())
+           .then((res) => {
+             console.log(res);
+             URLIcon = res.data[0];
+             resolve(URLIcon);
+           })
+           .catch((err) => console.log(err));
+       });
+       promise.then((URLIcon) => {
+         fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
+           method: "PUT",
+           headers: {
+             "Content-Type": "application/json",
+             "x-access-token": DataLogin.token,
+           },
+           body: JSON.stringify({
+             title: titleCategory,
+             icon: URLIcon,
+             active: toggleOnOff,
+           }),
+         })
+           .then((res) => res.json())
+           .then((res) => {
+             console.log(res);
+             refModal2.current.innerHTML = `<h2>Tác Vụ Thành Công</h2>`;
+
+             setTimeout(() => {
+               window.location.reload(false);
+             }, 1500);
+           })
+           .catch((err) => {
+             refModal2.current.innerHTML = `<h2>${err}</h2>`;
+           });
+       });
+    }
+    else {
       fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
         method: "PUT",
         headers: {
@@ -208,23 +230,24 @@ function Category() {
         },
         body: JSON.stringify({
           title: titleCategory,
-          icon: URLIcon,
+          icon: imageIconUpdate,
           active: toggleOnOff,
         }),
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res)
-          refModal2.current.innerHTML = `<h2>Thành Công</h2>`;
+          console.log(res);
+          refModal2.current.innerHTML = `<h2>Tác Vụ Thành Công</h2>`;
 
-          // setTimeout(() => {
-          //   window.location.reload(false);
-          // }, 1500);
+          setTimeout(() => {
+            window.location.reload(false);
+          }, 1500);
         })
         .catch((err) => {
           refModal2.current.innerHTML = `<h2>${err}</h2>`;
         });
-    });
+    }
+     
   };
 
   const handleDeleteCategory = () => {
@@ -260,7 +283,6 @@ function Category() {
   const handleCancel = () => {
     setTitleCategory('');
     setToggleModalAdd4(false);
-
   }
 
   return (

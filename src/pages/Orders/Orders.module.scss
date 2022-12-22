@@ -332,6 +332,16 @@
   margin-bottom: 20px;
   position: relative;
 
+  input {
+    padding: 10px;
+    border: 1px solid rgb(224, 224, 224);
+    border-radius: 5px;
+  }
+  input:hover {
+    border: 1px solid #03c9d7;
+    color: #03c9d7;
+  }
+
   div {
     display: flex;
     align-items: center;
@@ -350,7 +360,6 @@
     z-index: 2;
     border-radius: 5px;
     display: none;
-
     p {
       border: 1px solid rgb(224, 224, 224);
       border-radius: 5px;
@@ -383,7 +392,7 @@
 .soft:hover {
   border: 1px solid #03c9d7;
   color: #03c9d7;
-  .soft2{
+  .soft2 {
     color: black;
   }
 }
