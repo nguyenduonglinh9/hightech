@@ -114,6 +114,7 @@ function AddProduct() {
   console.log(specifications);
 
   const handleAddProduct = () => {
+
     if (specifications.length == 0) {
       setToggleLoading(true);
       //xử lý state Description
@@ -123,14 +124,10 @@ function AddProduct() {
       });
       //xử lý specifications
       const arr = [];
-      [...refSpec2.current.children].map((item) => {
-        // setSpecifications((prev) => [
-        //   ...prev,
-        //   { title: item.children[0].value, content: item.children[1].value },
-        // ]);
+      [...refSpec3.current.children].map((item) => {
         arr.push({
-          title: item.children[0].value,
-          content: item.children[1].value,
+          title: item.children[0].innerText,
+          content: item.children[1].innerText,
         });
       });
       const data = {
@@ -205,8 +202,8 @@ function AddProduct() {
         //   { title: item.children[0].value, content: item.children[1].value },
         // ]);
         arr.push({
-          title: item.children[0].value,
-          content: item.children[1].value,
+          title: item.children[0].innerText,
+          content: item.children[1].innerText,
         });
       });
       const data = {
@@ -263,12 +260,9 @@ function AddProduct() {
           }
 
           console.log(res);
-
-          // navigate("/product");
         });
     }
 
-    // }))
   };
 
   const handleAppendChild = () => {
@@ -390,7 +384,7 @@ function AddProduct() {
     // div.style.justifyContent = 'center'
     div.style.alignItems = "center";
     const textaera = document.createElement("textarea");
-    textaera.innerText = JSON.stringify(specifications);
+    textaera.value = JSON.stringify(specifications,undefined,4);
     textaera.style.width = "90%";
     textaera.style.height = "70%";
     textaera.style.margin = "10px 0px";
@@ -426,9 +420,10 @@ function AddProduct() {
     img.setAttribute("src", deleteIcon);
     img.style.width = "20px";
     img.style.height = "20px";
-    img.addEventListener('click', () => {
-      refSpec2.current.removeChild(div);
-    })
+    img.addEventListener("click", () => {
+      refSpec2.current.removeChild(img.parentNode);
+      console.dir(refSpec2.current);
+    });
     const div = document.createElement("div");
     const input = document.createElement("input");
     const input2 = document.createElement("input");
@@ -457,16 +452,18 @@ function AddProduct() {
     img.style.width = "20px";
     img.style.height = "20px";
     img.addEventListener("click", () => {
-      refSpec2.current.removeChild(div);
+      refSpec3.current.removeChild(div);
     });
     const div = document.createElement("div");
-    const input = document.createElement("input");
-    const input2 = document.createElement("input");
-    div.appendChild(input);
-    div.appendChild(input2);
+    const p = document.createElement("p");
+    p.contentEditable = true
+    const p2 = document.createElement("p");
+     p2.contentEditable = true;
+    div.appendChild(p);
+    div.appendChild(p2);
     div.appendChild(img);
     refSpec3.current.appendChild(div);
-  }
+  };
   console.log(arr);
 
   return (
@@ -579,44 +576,40 @@ function AddProduct() {
               <div className={clsx(cx("from-body-group-spec-1"))}>
                 {/* <input placeholder="ex: Nhu cầu"></input>
                 <input placeholder="ex: Gaming, Văn phòng, Đồ họa - Kỹ thuật, Doanh nghiệp, Học sinh - Sinh viên"></input> */}
-                {specifications.length == 0 ? (
+                {/* {specifications.length == 0 ? (
                   <>
                     <div ref={refSpec2} style={{ width: "100%" }}>
-                      {/* <div>
-                        <input></input>
-                        <input></input>
-                        <img style={{width:'20px',height:'20px'}} src={deleteIcon}></img>
-                      </div> */}
+                     
                     </div>
                     <BsPlusCircle onClick={handleAppendSpec} />
                   </>
-                ) : (
-                  <>
-                    <div ref={refSpec3} style={{ width: "100%" }}>
-                      {specifications.map((item, index) => {
-                        return (
-                          <div key={index}>
-                            <input defaultValue={item.title}></input>
-                            <input defaultValue={item.content}></input>
-                            <img
-                              onClick={() => {
-                                const newArr = specifications.filter(
-                                  (item, index2) => {
-                                    return index2 !== index;
-                                  }
-                                );
-                                setSpecifications([...newArr]);
-                              }}
-                              style={{ width: "20px", height: "20px" }}
-                              src={deleteIcon}
-                            ></img>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <BsPlusCircle onClick={handleAppendSpec2} />
-                  </>
-                )}
+                ) : ( */}
+                <>
+                  <div ref={refSpec3} style={{ width: "100%" }}>
+                    {specifications.map((item, index) => {
+                      return (
+                        <div key={index}>
+                          {/* <input
+                            defaultValue={item.title}
+                          ></input> */}
+                          <p contentEditable={true}>{item.title}</p>
+                          <p contentEditable={true}>{item.content}</p>
+                          <img
+                            onClick={() => {
+                              const arr = [...specifications];
+                              arr.splice(index, 1);
+                              setSpecifications([...arr]);
+                            }}
+                            style={{ width: "20px", height: "20px" }}
+                            src={deleteIcon}
+                          ></img>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <BsPlusCircle onClick={handleAppendSpec2} />
+                </>
+                {/* )} */}
 
                 <button
                   style={

@@ -41,9 +41,9 @@ function AddUser() {
       //xử lý hình ảnh
       const dataImage = new FormData();
       let URLIcon;
-      dataImage.append("source", avatar);
+      dataImage.append("files", avatar);
       fetch(
-        "https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5",
+        "http://quyt.ddns.net:2607",
         {
           method: "POST",
           body: dataImage,
@@ -51,7 +51,7 @@ function AddUser() {
       )
         .then((res) => res.json())
         .then((res) => {
-          URLIcon = res["image"]["url"];
+          URLIcon = res.data[0];
           resolve(URLIcon);
         })
         .catch((err) => console.log(err));

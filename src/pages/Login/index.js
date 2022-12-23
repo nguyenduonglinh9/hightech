@@ -87,6 +87,21 @@ function Login() {
                     isLogin: true,
                   })
                 );
+
+                localStorage.setItem(
+                  "currentProduct",
+                  JSON.stringify({
+                    name: "Tất Cả",
+                    id: "634f9eea3f879eb6fc81bf01",
+                  })
+                );
+                localStorage.setItem(
+                  "currentBrand",
+                  JSON.stringify({
+                    name: "Tất cả",
+                    id: null,
+                  })
+                );
               } else if (
                 (res.code == 200 && res.data.role !== "superadmin") ||
                 res.data.role !== "admin"
@@ -209,10 +224,10 @@ function Login() {
               const input3 = document.createElement("input");
               const button = document.createElement("button");
               button.innerText = "Hủy";
-              button.addEventListener('click', () => {
+              button.addEventListener("click", () => {
                 refModal.current.removeChild(divChangePass);
-                 setToggleModal(false);
-              })
+                setToggleModal(false);
+              });
               const button2 = document.createElement("button");
               button2.innerText = "Lưu";
               button2.addEventListener("click", () => {

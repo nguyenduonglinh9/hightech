@@ -319,7 +319,7 @@ function DetailProduct() {
     // div.style.justifyContent = 'center'
     div.style.alignItems = "center";
     const textaera = document.createElement("textarea");
-    textaera.innerText = JSON.stringify(specifications);
+    textaera.value = JSON.stringify(specifications,undefined,4);
     textaera.style.width = "90%";
     textaera.style.height = "70%";
     textaera.style.margin = "10px 0px";

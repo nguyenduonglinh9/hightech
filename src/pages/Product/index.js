@@ -27,6 +27,8 @@ function Product() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
+  const productSave = JSON.parse(localStorage.getItem("currentProduct"));
+  console.log(productSave);
   const DataSearch = useContext(DataSearchContext);
   let dollarUSLocale = Intl.NumberFormat("en-US");
 
@@ -55,8 +57,8 @@ function Product() {
   const [toggleCategory, setToggleCategory] = useState(false);
   const [toggleBrand, setToggleBrand] = useState(false);
   const [togglePriceOption, setTogglePriceOption] = useState(false);
-  const [curentItemName, setCurrentItemName] = useState("Tất Cả");
-  const [idCate, setIdCate] = useState("634f9eea3f879eb6fc81bf01");
+  const [curentItemName, setCurrentItemName] = useState(productSave.name);
+  const [idCate, setIdCate] = useState(productSave.id);
   const [loading, setLoading] = useState(false);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
@@ -64,6 +66,13 @@ function Product() {
   const [count, setCount] = useState(0);
 
   const softSearch = useRef();
+
+  useEffect(() => {
+    localStorage.setItem(
+      "currentProduct",
+      JSON.stringify({ name: curentItemName, id: idCate })
+    );
+  }, []);
 
   // if (DataSearch != "") {
   //   if (typeof DataSearch == "string") {
@@ -220,6 +229,13 @@ function Product() {
                       setIdCate(item._id);
                       setCurrentItemName(item.title);
                       setToggleCategory(false);
+                      localStorage.setItem(
+                        "currentProduct",
+                        JSON.stringify({
+                          name: item.title,
+                          id: item._id,
+                        })
+                      );
                     }}
                     className={clsx(cx("drop-down-menu-item"))}
                   >
@@ -247,7 +263,7 @@ function Product() {
               <div onClick={(e) => e.stopPropagation()}>
                 <span>Từ</span>
                 <input
-                  value={parseInt(minPrice).toLocaleString()}
+                  value={minPrice}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => {
                     e.stopPropagation();
@@ -255,14 +271,14 @@ function Product() {
                     console.log(minPrice);
                   }}
                   // onBlur={(e) => dollarUSLocale.format(e.target.value)}
-                  type="text"
+                  type="number"
                 ></input>
               </div>
               <div>
                 <span>Đến</span>
                 <input
                   onClick={(e) => e.stopPropagation()}
-                  value={dollarUSLocale.format(maxPrice)}
+                  value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
                   type="number"
                 ></input>
@@ -356,6 +372,9 @@ function Product() {
               <th>
                 <p>Trạng Thái</p>
               </th>
+              <th>
+                <p>Hoạt Động</p>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -378,7 +397,7 @@ function Product() {
                           <td className={clsx(cx("title_td"))}>
                             {item2.title}
                           </td>
-                          <td>{dollarUSLocale.format(item2.salePrice)}</td>
+                          <td>{dollarUSLocale.format(item2.costPrice)}</td>
                           <td>
                             {category
                               .filter((cate) => cate._id == item2.category)
@@ -401,6 +420,40 @@ function Product() {
                               </div>
                             )}
                           </td>
+                          <td>
+                            <p
+                              style={
+                                item2.active == true
+                                  ? {
+                                      width: "-moz-fit-content",
+                                      width: "fit-content",
+                                      backgroundColor: "lightgreen",
+                                      borderRadius: "15px",
+                                      padding: "4px 8px",
+                                      fontWeight: "400",
+                                      fontStyle: "normal",
+                                      fontFamily:
+                                        "Roboto, 'Segoe UI', GeezaPro, 'DejaVu Serif','sans-serif', -apple-system, BlinkMacSystemFont",
+                                      color: "#fff",
+                                      margin: "0px auto",
+                                    }
+                                  : {
+                                      width: "fit-content",
+                                      backgroundColor: "lightcoral",
+                                      borderRadius: "15px",
+                                      padding: "4px 8px",
+                                      fontWeight: "400",
+                                      fontStyle: "normal",
+                                      fontFamily:
+                                        "Roboto, 'Segoe UI', GeezaPro, 'DejaVu Serif','sans-serif', -apple-system, BlinkMacSystemFont",
+                                      color: "#fff",
+                                      margin: "0px auto",
+                                    }
+                              }
+                            >
+                              {item2.active == true ? "Đang bán" : "Tạm ngưng"}
+                            </p>
+                          </td>
                         </tr>
                       );
                     })
@@ -412,7 +465,7 @@ function Product() {
                           <img src={item.images[0]}></img>
                         </td>
                         <td className={clsx(cx("title_td"))}>{item.title}</td>
-                        <td>{dollarUSLocale.format(item.salePrice)}</td>
+                        <td>{dollarUSLocale.format(item.costPrice)}</td>
                         <td>
                           {category
                             .filter((cate) => cate._id == item.category)
@@ -434,6 +487,40 @@ function Product() {
                               <p>Out Of Stock</p>
                             </div>
                           )}
+                        </td>
+                        <td>
+                          <p
+                            style={
+                              item.active == true
+                                ? {
+                                    width: "-moz-fit-content",
+                                    width: "fit-content",
+                                    backgroundColor: "lightgreen",
+                                    borderRadius: "15px",
+                                    padding: "4px 8px",
+                                    fontWeight: "400",
+                                    fontStyle: "normal",
+                                    fontFamily:
+                                      "Roboto, 'Segoe UI', GeezaPro, 'DejaVu Serif','sans-serif', -apple-system, BlinkMacSystemFont",
+                                    color: "#fff",
+                                    margin: "0px auto",
+                                  }
+                                : {
+                                    width: "fit-content",
+                                    backgroundColor: "lightcoral",
+                                    borderRadius: "15px",
+                                    padding: "4px 8px",
+                                    fontWeight: "400",
+                                    fontStyle: "normal",
+                                    fontFamily:
+                                      "Roboto, 'Segoe UI', GeezaPro, 'DejaVu Serif','sans-serif', -apple-system, BlinkMacSystemFont",
+                                    color: "#fff",
+                                    margin: "0px auto",
+                                  }
+                            }
+                          >
+                            {item.active == true ? "Đang bán" : "Tạm ngưng"}
+                          </p>
                         </td>
                       </tr>
                     );
@@ -451,7 +538,7 @@ function Product() {
                           <img src={item.images[0]}></img>
                         </td>
                         <td className={clsx(cx("title_td"))}>{item.title}</td>
-                        <td>{dollarUSLocale.format(item.salePrice)}</td>
+                        <td>{dollarUSLocale.format(item.costPrice)}</td>
                         <td>
                           {category
                             .filter((cate) => cate._id == item.category)
@@ -474,6 +561,40 @@ function Product() {
                             </div>
                           )}
                         </td>
+                        <td>
+                          <p
+                            style={
+                              item.active == true
+                                ? {
+                                    width: "-moz-fit-content",
+                                    width: "fit-content",
+                                    backgroundColor: "lightgreen",
+                                    borderRadius: "15px",
+                                    padding: "4px 8px",
+                                    fontWeight: "400",
+                                    fontStyle: "normal",
+                                    fontFamily:
+                                      "Roboto, 'Segoe UI', GeezaPro, 'DejaVu Serif','sans-serif', -apple-system, BlinkMacSystemFont",
+                                    color: "#fff",
+                                    margin: "0px auto",
+                                  }
+                                : {
+                                    width: "fit-content",
+                                    backgroundColor: "lightcoral",
+                                    borderRadius: "15px",
+                                    padding: "4px 8px",
+                                    fontWeight: "400",
+                                    fontStyle: "normal",
+                                    fontFamily:
+                                      "Roboto, 'Segoe UI', GeezaPro, 'DejaVu Serif','sans-serif', -apple-system, BlinkMacSystemFont",
+                                    color: "#fff",
+                                    margin: "0px auto",
+                                  }
+                            }
+                          >
+                            {item.active == true ? "Đang bán" : "Tạm ngưng"}
+                          </p>
+                        </td>
                       </tr>
                     );
                   })
@@ -485,7 +606,7 @@ function Product() {
                         <img src={product.images[0]}></img>
                       </td>
                       <td className={clsx(cx("title_td"))}>{product.title}</td>
-                      <td>{dollarUSLocale.format(product.salePrice)}</td>
+                      <td>{dollarUSLocale.format(product.costPrice)}</td>
                       <td>
                         {category
                           .filter((cate) => cate._id == product.category)
@@ -500,13 +621,47 @@ function Product() {
                       <td>
                         {product.quantity > 0 ? (
                           <div className={clsx(cx("status_conhang"))}>
-                            <p>On-Sale</p>
+                            <p>Còn hàng</p>
                           </div>
                         ) : (
                           <div className={clsx(cx("status_hethang"))}>
-                            <p>Out Of Stock</p>
+                            <p>Hết hàng</p>
                           </div>
                         )}
+                      </td>
+                      <td>
+                        <p
+                          style={
+                            product.active == true
+                              ? {
+                                  width: "-moz-fit-content",
+                                  width: "fit-content",
+                                  backgroundColor: "lightgreen",
+                                  borderRadius: "15px",
+                                  padding: "4px 8px",
+                                  fontWeight: "400",
+                                  fontStyle: "normal",
+                                  fontFamily:
+                                    "Roboto, 'Segoe UI', GeezaPro, 'DejaVu Serif','sans-serif', -apple-system, BlinkMacSystemFont",
+                                  color: "#fff",
+                                  margin: "0px auto",
+                                }
+                              : {
+                                  width: "fit-content",
+                                  backgroundColor: "lightcoral",
+                                  borderRadius: "15px",
+                                  padding: "4px 8px",
+                                  fontWeight: "400",
+                                  fontStyle: "normal",
+                                  fontFamily:
+                                    "Roboto, 'Segoe UI', GeezaPro, 'DejaVu Serif','sans-serif', -apple-system, BlinkMacSystemFont",
+                                  color: "#fff",
+                                  margin: "0px auto",
+                                }
+                          }
+                        >
+                          {product.active == true ? "Đang bán" : "Tạm ngưng"}
+                        </p>
                       </td>
                     </tr>
                   );

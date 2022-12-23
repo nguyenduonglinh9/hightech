@@ -175,11 +175,11 @@
           div {
             margin: 10px 0px;
             display: flex;
-            input:first-child {
-              flex: 2;
+            input:nth-child(1){
+              flex: 1;
               margin-right: 5px;
             }
-            input:last-child {
+            input:nth-child(2) {
               flex: 5;
             }
           }

@@ -42,6 +42,8 @@ function LayoutMain({ children }) {
   const Decode_token = jwt_decode(DataLogin.token);
   const useRefActive = useRef();
   const refNotifi = useRef();
+  
+
 
   let navigate = useNavigate();
   let dollarUSLocale = Intl.NumberFormat("en-US");
@@ -120,6 +122,8 @@ function LayoutMain({ children }) {
   const [menu, setMenu] = useState(false);
 
   const [searchResult, setSearchResult] = useState([]);
+  const [myProfile, setMyProfile] = useState();
+
 
   useEffect(() => {
     fetch(`http://quyt.ddns.net:3000/product/?all=true&title=/${search}/i`, {
@@ -138,7 +142,21 @@ function LayoutMain({ children }) {
         }
       });
   }, [search]);
-  console.log(searchResult);
+  
+   useEffect(() => {
+     fetch("http://quyt.ddns.net:3000/access/me", {
+       method: "GET",
+       headers: {
+         "Content-Type": "application/json",
+         "x-access-token": DataLogin.token,
+       },
+     })
+       .then((res) => res.json())
+       .then((res) => {
+         setMyProfile(res.data);
+       });
+   }, []);
+   console.log(myProfile);
 
   const handleToggleOn = (e) => {
     setToggleUserOption(true);
@@ -240,7 +258,11 @@ function LayoutMain({ children }) {
               </Link>
               <Link
                 to="/users"
-                style={{ textDecoration: "none", color: "white" }}
+                style={
+                  Decode_token.role == "superadmin"
+                    ? { textDecoration: "none", color: "white" }
+                    : { display: "none" }
+                }
               >
                 <li
                   className={clsx({
@@ -323,7 +345,14 @@ function LayoutMain({ children }) {
                   </div>
                 </li>
               </Link>
-              <p className={clsx(cx("title"))}>Tổng Kết</p>
+              <p
+                style={
+                  Decode_token.role == "admin" ? { display: "none" } : null
+                }
+                className={clsx(cx("title"))}
+              >
+                Thống Kê
+              </p>
               {/* <Link
                 to="/products-sold"
                 style={{ textDecoration: "none", color: "white" }}
@@ -348,7 +377,11 @@ function LayoutMain({ children }) {
               </Link> */}
               <Link
                 to="/revuene"
-                style={{ textDecoration: "none", color: "white" }}
+                style={
+                  Decode_token.role == "superadmin"
+                    ? { textDecoration: "none", color: "white" }
+                    : { display: "none" }
+                }
               >
                 <li
                   className={clsx({
@@ -369,12 +402,17 @@ function LayoutMain({ children }) {
               </Link>
               <Link
                 to="/revuene-users"
-                style={{ textDecoration: "none", color: "white" }}
+                style={
+                  Decode_token.role == "superadmin"
+                    ? { textDecoration: "none", color: "white" }
+                    : { display: "none" }
+                }
               >
                 <li
                   className={clsx({
                     [styles.active]:
-                      window.location.href === "http://localhost:3000/revuene-users"
+                      window.location.href ===
+                      "http://localhost:3000/revuene-users"
                         ? true
                         : false,
                   })}
@@ -471,7 +509,7 @@ function LayoutMain({ children }) {
                 style={{ display: "flex", alignItems: "center" }}
               >
                 <img
-                  src="https://www.shareicon.net/data/512x512/2016/08/05/806962_user_512x512.png"
+                  src={myProfile == null ? null : myProfile.avatar}
                   style={{
                     width: "30px",
                     height: "30px",
@@ -514,10 +552,10 @@ function LayoutMain({ children }) {
               <div className={clsx(cx("user-option-body"))}>
                 <img
                   style={{
-                    backgroundColor: "#5041bc",
+                    // backgroundColor: "#5041bc",
                     borderRadius: "50%",
                   }}
-                  src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                  src={myProfile == null ? null : myProfile.avatar}
                 ></img>
                 <div style={{ marginRight: "48px" }}>
                   <p>{Decode_token.fullname}</p>

@@ -229,7 +229,7 @@ function RevueneUsers() {
             ],
             datasets: [
               {
-                label: "VND",
+                label: "Người Đăng Ký",
                 backgroundColor: [
                   "#3e95cd",
                   "#8e5ea2",

@@ -12,8 +12,9 @@ const warning = require("../Category/assets/imgs/warning.png");
 function Brand() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
+  const brandSave = JSON.parse(localStorage.getItem("currentBrand"));
   let navigate = useNavigate();
-
+  console.log(brandSave);
   const refCate = useRef();
   const refIDCate = useRef();
   const refBrandID = useRef();
@@ -36,7 +37,6 @@ function Brand() {
   const [titleCategory, setTitleCategory] = useState("");
   const [imageIcon, setImageIcon] = useState();
 
-
   const [imageIconUpdate, setImageIconUpdate] = useState();
 
   const [nextType, setNextType] = useState();
@@ -51,20 +51,15 @@ function Brand() {
   const [toggleDropDownFilter, setToggleDropDownFilter] = useState(false);
   const [toggleOnOff, setToggleOnOff] = useState(false);
 
-
-
-  const [currentIDCate, setCurrentIDCate] = useState('')
+  const [currentIDCate, setCurrentIDCate] = useState("");
   const [currentTitleCate, setCurrentTitleCate] = useState("");
   const [currentIDBrand, setCurrentIDBrand] = useState("");
   const [currentTitleBrand, setCurrentTitleBrand] = useState("");
 
-  const [currentTitleFilter, setCurrentTitleFilter] = useState('Tất cả');
-  const [currentIDFilter, setCurrentIDFilter] = useState();
-
-
+  const [currentTitleFilter, setCurrentTitleFilter] = useState(brandSave.name);
+  const [currentIDFilter, setCurrentIDFilter] = useState(brandSave.id);
 
   console.log(currentIDCate, currentTitleCate, currentIDBrand);
-
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/category/", {
@@ -80,8 +75,8 @@ function Brand() {
       .then((data) => {
         setNextType(data.data[data.data.length - 1].type);
         setCategorys((prev) => [...prev, ...data.data]);
-       setCurrentIDCate(data.data[0]._id);
-       setCurrentTitleCate(data.data[0].title);
+        setCurrentIDCate(data.data[0]._id);
+        setCurrentTitleCate(data.data[0].title);
       });
   }, []);
 
@@ -155,25 +150,26 @@ function Brand() {
       body: JSON.stringify({
         title: titleCategory,
         category: currentIDCate,
-        active:toggleOnOff
-      })
+        active: toggleOnOff,
+      }),
     })
       .then((res) => res.json())
-      .then((res) => {
-        if (res.code == 200) {
-          refModal.current.innerHTML = `<h2>Successful</h2>`;
+      .then(
+        (res) => {
+          if (res.code == 200) {
+            refModal.current.innerHTML = `<h2>Successful</h2>`;
 
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
+            setTimeout(() => {
+              window.location.reload(false);
+            }, 1500);
+          }
         }
-      }
         // refModal.current.innerHTML = `<h2>Successful</h2>`;
-       
+
         // setTimeout(() => {
         //   window.location.reload(false);
         // }, 1500);
-      )
+      );
   };
   const handleDeleteBrand = () => {
     setToggleModalAdd5(true);
@@ -229,7 +225,7 @@ function Brand() {
       body: JSON.stringify({
         title: titleCategory,
         category: currentIDCate,
-        active : toggleOnOff
+        active: toggleOnOff,
       }),
     })
       .then((res) => res.json())
@@ -251,7 +247,7 @@ function Brand() {
     setCurrentIDBrand(id);
     setCurrentIDCate(category);
     setCurrentTitleCate(currentTitle.title);
-    const titleBrand = brands.find(item2 => item2._id == id)
+    const titleBrand = brands.find((item2) => item2._id == id);
     setCurrentTitleBrand(titleBrand.title);
     setToggleOnOff(active);
     setToggleModalAdd3(true);
@@ -260,23 +256,30 @@ function Brand() {
 
   const handleCancel = () => {
     setToggleModalAdd3(false);
-     setToggleButton(true);
+    setToggleButton(true);
     setTitleCategory("");
+    setToggleDropDown(false);
     setCurrentIDCate(categorys[0]._id);
     currentTitleCate.current = categorys[0].title;
-   
   };
   const handleChangeCurrentCate = (title, id) => {
     setCurrentTitleCate(title);
     setCurrentIDCate(id);
     setToggleDropDown(false);
   };
-  console.log(currentTitleBrand == titleCategory)
+  console.log(currentTitleBrand == titleCategory);
   const handleFilter = (id, title) => {
     setCurrentTitleFilter(title);
     setCurrentIDFilter(id);
     setToggleDropDownFilter(false);
-  }
+    localStorage.setItem(
+      "currentBrand",
+      JSON.stringify({
+        name: title,
+        id: id,
+      })
+    );
+  };
 
   return (
     <div className={clsx(cx("container"))}>
@@ -303,7 +306,13 @@ function Brand() {
               [styles.turnonDropDown]: toggleDropDownFilter,
             })}
           >
-            <p onClick={() => setCurrentTitleFilter("Tất cả")}>Tất cả</p>
+            <p onClick={() => { setCurrentTitleFilter("Tất Cả"); localStorage.setItem(
+              "currentBrand",
+              JSON.stringify({
+                name: 'Tất Cả',
+                id: null,
+              })
+            ); }}>Tất cả</p>
             {categorys.map((item, index) => {
               return (
                 <p
@@ -351,7 +360,7 @@ function Brand() {
             </tr>
           </thead>
           <tbody>
-            {currentTitleFilter == "Tất cả"
+            {currentTitleFilter == "Tất Cả"
               ? brands.map((brand, index) => {
                   return (
                     <tr
@@ -377,9 +386,7 @@ function Brand() {
                           .split("-")
                           .reverse()
                           .join("/")} */}
-                        {
-                           moment(brand.createdAt).format("DD-MM-yyy HH:mm A")
-                        }
+                        {moment(brand.createdAt).format("DD-MM-yyy HH:mm A")}
                       </td>
                     </tr>
                   );
@@ -421,6 +428,7 @@ function Brand() {
       </div>
 
       <div
+       
         onClick={handleCancel}
         className={clsx(cx("modal-add-brand"), {
           [styles.activemodaladd]: toggleModalAdd3,
@@ -428,7 +436,7 @@ function Brand() {
       >
         <div
           ref={refModal}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => { e.stopPropagation(); setToggleDropDown(false); }}
           className={clsx(cx("modal"))}
         >
           <div
@@ -451,14 +459,14 @@ function Brand() {
             <div className={clsx(cx("modal-body-group"))}>
               <p>Trạng Thái</p>
               <div
-                style={{animation:'none'}}
+                style={{ animation: "none" }}
                 onClick={() => setToggleOnOff(!toggleOnOff)}
                 className={clsx(cx("onoffbutton"), {
                   [styles.onToggle2]: toggleOnOff,
                 })}
               >
                 <div
-                  style={{ animation:'none'}}
+                  style={{ animation: "none" }}
                   className={clsx({
                     [styles.onToggle]: toggleOnOff,
                   })}
@@ -485,8 +493,9 @@ function Brand() {
             >
               <p>Danh Mục</p>
               <div
-                onClick={() => {
-                  setToggleDropDown(true);
+                onClick={(e) => {
+                  e.stopPropagation(0);
+                  setToggleDropDown(!toggleDropDown);
                 }}
                 style={{ animation: "none" }}
                 className={clsx(cx("modal-body-group-current-category"))}
