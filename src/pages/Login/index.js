@@ -100,6 +100,7 @@ function Login() {
                 img.style.width = "50px";
                 button.innerText = "Thử Lại";
                 button.addEventListener("click", () => {
+                  refModal.current.removeChild(img);
                   refModal.current.removeChild(h2);
                   refModal.current.removeChild(button);
                   setToggleModal(false);
@@ -120,6 +121,7 @@ function Login() {
           img.style.width = "80px";
           button.innerText = "Thử Lại";
           button.addEventListener("click", () => {
+            refModal.current.removeChild(img);
             refModal.current.removeChild(h2);
             refModal.current.removeChild(button);
             setToggleModal(false);
@@ -169,14 +171,6 @@ function Login() {
             div4.style.animation = "none";
             const h2 = document.createElement("h2");
             h2.innerText = "Đã Gửi Mã Đến Email Của Bạn !";
-            const textarea = document.createElement("textarea");
-            textarea.value = `mã người dùng của bạn là ${res.data["user"]}`;
-            textarea.style.height = "60px";
-            textarea.style.width = "200px";
-            const p = document.createElement("p");
-            p.innerText = "* lưu mã người dùng để đổi mật khẩu mới";
-            p.style.fontStyle = "italic";
-            p.style.fontSize = "10px ";
             const div5 = document.createElement("div");
             div5.style.animation = "none";
             const button = document.createElement("button");
@@ -210,12 +204,15 @@ function Login() {
               const span3 = document.createElement("span");
               span3.textContent = "Mã Bảo Mật";
               span3.style.fontSize = "14px";
-
               const input = document.createElement("input");
               const input2 = document.createElement("input");
               const input3 = document.createElement("input");
               const button = document.createElement("button");
               button.innerText = "Hủy";
+              button.addEventListener('click', () => {
+                refModal.current.removeChild(divChangePass);
+                 setToggleModal(false);
+              })
               const button2 = document.createElement("button");
               button2.innerText = "Lưu";
               button2.addEventListener("click", () => {
@@ -233,7 +230,7 @@ function Login() {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    user: input.value,
+                    user: res.data.user,
                     newPassword: input2.value,
                     verifyCode: input3.value,
                   }),
@@ -260,8 +257,8 @@ function Login() {
                   });
               });
 
-              divGroup.appendChild(span);
-              divGroup.appendChild(input);
+              // divGroup.appendChild(span);
+              // divGroup.appendChild(input);
 
               divGroup2.appendChild(span2);
               divGroup2.appendChild(input2);
@@ -284,8 +281,6 @@ function Login() {
             div5.appendChild(button);
             div5.appendChild(button2);
             div4.appendChild(h2);
-            div4.appendChild(textarea);
-            div4.appendChild(p);
             div4.appendChild(div5);
             refModal.current.removeChild(div3);
             refModal.current.appendChild(div4);

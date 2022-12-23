@@ -16,6 +16,7 @@ import DetailOrder from "../pages/Detail_Order";
 import Account from "../pages/Account";
 import Coupon from "../pages/Coupon";
 import Banner from "../pages/Banner";
+import RevueneUsers from "../pages/Revuene-users";
 
 
 const privateRoutes = [
@@ -107,6 +108,11 @@ const privateRoutes = [
   {
     path: "/banner",
     component: Banner,
+    layout: "MainLayout",
+  },
+  {
+    path: "/revuene-users",
+    component: RevueneUsers,
     layout: "MainLayout",
   },
 ];

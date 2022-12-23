@@ -33,7 +33,6 @@ import {
   FiShoppingCart,
   FiUsers,
 } from "react-icons/fi";
-import { connect } from "mqtt";
 
 export const DataSearchContext = createContext();
 
@@ -42,38 +41,81 @@ function LayoutMain({ children }) {
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const Decode_token = jwt_decode(DataLogin.token);
   const useRefActive = useRef();
+  const refNotifi = useRef();
+
   let navigate = useNavigate();
   let dollarUSLocale = Intl.NumberFormat("en-US");
 
   AOS.init();
 
-    //  const mqtt = require("mqtt");
-     const options = {
-       debug: true,
-       // Clean session
-       clean: true,
-       connectTimeout: 30000,
-       // Auth
-       clientId: "Hightech cms",
-       username: "test",
-       password: "123456",
-     };
-     const client = connect('ws://test.mosquitto.org:8080', options);
-     client.on("connect", function () {
-       client.subscribe("highttech-topic", function (err) {
-         if (!err) {
-           console.log("Thành Công");
-         }
-       });
-     });
+  const mqtt = require("mqtt");
+  const options = {
+    debug: true,
+    // Clean session
+    clean: true,
+    connectTimeout: 5000,
+    // Auth
+    clientId: Math.floor(Math.random() * (10000 - 1000)) + 1000,
+    username: "hightech",
+    password: "123456",
+  };
+  const client = mqtt.connect("ws://quyt.ddns.net:8887", options);
+  useEffect(() => {
+    // client.end();
+    client.on("connect", function () {
+      client.subscribe("highttech-topic", function (err) {
+        if (!err) {
+          console.log("Thành Công");
+        }
+      });
+    });
+  }, []);
 
-     client.on("message", function (topic, message) {
-       // message is Buffer
-       console.log(message.toString());
-       client.end();
-     });
+  client.on("message", function (topic, message) {
+    // message is Buffer
+
+    const div = document.createElement("div");
+    const div2 = document.createElement("div");
+    div.style.marginTop = " 10px";
+    const p = document.createElement("p");
+    p.innerText = "Thông Báo";
+    const p2 = document.createElement("p");
+    p2.innerText = "Bạn có đơn hàng mới";
+    const p3 = document.createElement("p");
+    p3.innerText = JSON.parse(message.toString()).shippingAddress.name;
+    const p4 = document.createElement("p");
+    p4.innerText = JSON.parse(message.toString()).shippingAddress.phone;
+    const p5 = document.createElement("p");
+    p5.innerText = JSON.parse(message.toString()).shippingAddress.address;
+    div2.appendChild(p);
+    div2.appendChild(p2);
+    div.appendChild(div2);
+    div.appendChild(p3);
+    div.appendChild(p4);
+    div.appendChild(p5);
+    div.addEventListener('mousedown', () => {
+      div.style.transform = 'scale(0.7)'
+      // navigate("/detail-order", { state: { id: JSON.parse(message.toString())._id } });
+      //  refNotifi.current.removeChild(div);
+    })
+    div.addEventListener("mouseup", () => {
+      // div.style.transform = "scale(0.7)";
+      navigate("/detail-order", { state: { id: JSON.parse(message.toString())._id } });
+       refNotifi.current.removeChild(div);
+    });
+    refNotifi.current.appendChild(div);
+
+    setTimeout(() => {
+      div.style.opacity = "0";
+      refNotifi.current.removeChild(div);
+    }, 5000);
+
+    console.log(JSON.parse(message.toString()));
+  });
 
   const [toggleUserOption, setToggleUserOption] = useState(false);
+  const [toggleNotification, setToggleNotification] = useState(false);
+
   const [search, setSearch] = useState("");
   const [menu, setMenu] = useState(false);
 
@@ -325,8 +367,18 @@ function LayoutMain({ children }) {
                   </div>
                 </li>
               </Link>
-              <Link style={{ textDecoration: "none", color: "white" }}>
-                <li>
+              <Link
+                to="/revuene-users"
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <li
+                  className={clsx({
+                    [styles.active]:
+                      window.location.href === "http://localhost:3000/revuene-users"
+                        ? true
+                        : false,
+                  })}
+                >
                   <div
                     style={{ pointerEvents: "none" }}
                     className={clsx(cx("bodyNav_group"))}
@@ -347,6 +399,23 @@ function LayoutMain({ children }) {
             [styles.asideNavActive2]: menu,
           })}
         >
+          <div ref={refNotifi} className={clsx(cx("content-notifi"))}>
+            {/* <div>
+              <div>
+                <p>Thông Báo</p>
+                <p>Bạn có đơn hàng mới</p>
+              </div>
+
+              <p>Tên: Quý</p>
+              <p>Số điện thoại: 093924999</p>
+              <p>Địa Chỉ: jenfiurnijgniurngurbgubu</p>
+            </div> */}
+            {/* <div>
+              <p>Thông Báo</p>
+              <p>Bạn có đơn hàng mới</p>
+            </div> */}
+          </div>
+
           <div onClick={handleToggleOff} className={clsx(cx("header"))}>
             <BsList
               style={{

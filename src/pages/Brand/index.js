@@ -6,6 +6,7 @@ import Table from "react-bootstrap/Table";
 import { BsPlusLg, BsCaretDownFill } from "react-icons/bs";
 import { FaArrowDown } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 const warning = require("../Category/assets/imgs/warning.png");
 
 function Brand() {
@@ -371,11 +372,14 @@ function Brand() {
                       <td>{index + 1}</td>
                       <td>{brand.title}</td>
                       <td>
-                        {brand.createdAt
+                        {/* {brand.createdAt
                           .substring(0, 10)
                           .split("-")
                           .reverse()
-                          .join("/")}
+                          .join("/")} */}
+                        {
+                           moment(brand.createdAt).format("DD-MM-yyy HH:mm A")
+                        }
                       </td>
                     </tr>
                   );

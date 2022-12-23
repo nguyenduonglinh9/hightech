@@ -7,6 +7,7 @@ import { BsPlusLg } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { BiCaretDown } from "react-icons/bi";
 import { datepicker } from "js-datepicker";
+import moment from "moment";
 const warning = require("../Category/assets/imgs/warning.png");
 
 function Orders() {
@@ -14,7 +15,11 @@ function Orders() {
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
 
- 
+  
+  var date = "2022-10-17T01:00:00";
+  var timeFormat = moment(date).format("DD-MM-yyy HH:mm A");
+
+
 
   const refCate = useRef();
   const refIDCate = useRef();
@@ -415,19 +420,18 @@ function Orders() {
             >
               <input
                 onChange={(e) => {
-                  console.log(e.target.value)
+                  console.log(e.target.value);
                   setDateSoft(
                     e.target.value == ""
                       ? null
                       : new Date(e.target.value)
-                        .toISOString()
-                        .substring(0, 10)
-                        .split("-")
-                        .reverse()
-                        .join("/")
-                  )
-                }
-                }
+                          .toISOString()
+                          .substring(0, 10)
+                          .split("-")
+                          .reverse()
+                          .join("/")
+                  );
+                }}
                 type="date"
               ></input>
             </div>
@@ -439,6 +443,12 @@ function Orders() {
             <tr>
               <th>
                 <p>Số thứ tự</p>
+              </th>
+              <th>
+                <p>Tên Khách Hàng</p>
+              </th>
+              <th>
+                <p>Địa Chỉ</p>
               </th>
               <th>
                 <p>Trạng thái</p>
@@ -459,6 +469,9 @@ function Orders() {
                         key={index}
                       >
                         <td>{index + 1}</td>
+                        <td>{category.shippingAddress.name}</td>
+                        <td style={{maxWidth:'200px'}}>{category.shippingAddress.address}</td>
+
                         <td>
                           <p
                             style={
@@ -477,11 +490,14 @@ function Orders() {
                           </p>
                         </td>
                         <td>
-                          {category.createdAt
+                          {/* {category.createdAt
                             .substring(0, 10)
                             .split("-")
                             .reverse()
-                            .join("/")}
+                            .join("/")} */}
+                          {
+                            moment(category.createdAt).format("DD-MM-yyy HH:mm A")
+                          }
                         </td>
                       </tr>
                     );
@@ -504,6 +520,10 @@ function Orders() {
                           key={index}
                         >
                           <td>{index + 1}</td>
+                          <td>{item.shippingAddress.name}</td>
+                          <td style={{ maxWidth: "200px" }}>
+                            {item.shippingAddress.address}
+                          </td>
                           <td>
                             <p
                               style={
@@ -525,11 +545,9 @@ function Orders() {
                             </p>
                           </td>
                           <td>
-                            {item.createdAt
-                              .substring(0, 10)
-                              .split("-")
-                              .reverse()
-                              .join("/")}
+                            {moment(item.createdAt).format(
+                              "DD-MM-yyy HH:mm A"
+                            )}
                           </td>
                         </tr>
                       );
@@ -547,6 +565,10 @@ function Orders() {
                         key={index2}
                       >
                         <td>{index2 + 1}</td>
+                        <td>{item2.shippingAddress.name}</td>
+                        <td style={{ maxWidth: "200px" }}>
+                          {item2.shippingAddress.address}
+                        </td>
                         <td>
                           <p
                             style={
@@ -565,11 +587,7 @@ function Orders() {
                           </p>
                         </td>
                         <td>
-                          {item2.createdAt
-                            .substring(0, 10)
-                            .split("-")
-                            .reverse()
-                            .join("/")}
+                          {moment(item2.createdAt).format("DD-MM-yyy HH:mm A")}
                         </td>
                       </tr>
                     );
@@ -595,6 +613,10 @@ function Orders() {
                         key={index}
                       >
                         <td>{index + 1}</td>
+                        <td>{item.shippingAddress.name}</td>
+                        <td style={{ maxWidth: "200px" }}>
+                          {item.shippingAddress.address}
+                        </td>
                         <td>
                           <p
                             style={
@@ -613,11 +635,7 @@ function Orders() {
                           </p>
                         </td>
                         <td>
-                          {item.createdAt
-                            .substring(0, 10)
-                            .split("-")
-                            .reverse()
-                            .join("/")}
+                          {moment(item.createdAt).format("DD-MM-yyy HH:mm A")}
                         </td>
                       </tr>
                     );

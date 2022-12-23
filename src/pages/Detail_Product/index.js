@@ -12,6 +12,8 @@ import {
 import { useNavigate } from "react-router-dom";
 const xmark = require("../../pages/Detail_Product/assets/fonts/img/x-mark.png");
 const success = require("../../pages/Detail_Product/assets/fonts/img/success.png");
+const deleteIcon = require("../../pages/Detail_Product/assets/fonts/img/delete.png");
+
 
 function DetailProduct() {
   const id = useLocation();
@@ -24,6 +26,8 @@ function DetailProduct() {
   const refSpec = useRef();
   const refModal = useRef();
   const refModalContainer = useRef();
+  const refSpec2 = useRef();
+
 
   const [product, setProduct] = useState({});
   const [category, setCategory] = useState([]);
@@ -213,6 +217,18 @@ function DetailProduct() {
     const arrDataInputDesc = listInputDesc.map((item, index) => {
       return item.firstChild.value;
     });
+    //xử lý specifications
+    const arr = [];
+    [...refSpec.current.children].map((item) => {
+      // setSpecifications((prev) => [
+      //   ...prev,
+      //   { title: item.children[0].value, content: item.children[1].value },
+      // ]);
+      arr.push({
+        title: item.children[0].value,
+        content: item.children[1].value,
+      });
+    });
     fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
       method: "PUT",
       headers: {
@@ -227,16 +243,16 @@ function DetailProduct() {
         salePrice: costPrice * (salePercent / 100),
         salePercent: salePercent,
         quantity: quantity,
-        specifications: specifications,
+        specifications: arr,
         category: currentCategoryID,
         brand: currentBrandID,
         favorite: false,
-        active:toggleOnOff
+        active: toggleOnOff,
       }),
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log(res)
+        console.log(res);
         if (res.code === 200) {
           const div = document.createElement("div");
           div.style.width = "300px";
@@ -269,13 +285,13 @@ function DetailProduct() {
 
           const h2 = document.createElement("h2");
           h2.innerText = res.message;
-          
+
           const div2 = document.createElement("div");
           div2.style.boxShadow = "none";
           const button = document.createElement("button");
           const button2 = document.createElement("button");
           button.innerText = "Thử lại";
-         
+
           button.style.margin = "5px";
 
           button.addEventListener("click", () => {
@@ -283,7 +299,7 @@ function DetailProduct() {
             setToggleModal2(false);
           });
           div2.appendChild(button);
-          div.appendChild(h2)
+          div.appendChild(h2);
           div.appendChild(div2);
           refModalContainer.current.appendChild(div);
           setToggleModal2(true);
@@ -333,6 +349,23 @@ function DetailProduct() {
       setToggleModal2(false);
     });
   };
+
+  const handleAppendSpec = () => {
+    const img = document.createElement("img");
+    img.setAttribute("src", deleteIcon);
+    img.style.width = "20px";
+    img.style.height = "20px";
+    img.addEventListener("click", () => {
+      refSpec.current.removeChild(div);
+    });
+    const div = document.createElement("div");
+    const input = document.createElement("input");
+    const input2 = document.createElement("input");
+    div.appendChild(input);
+    div.appendChild(input2);
+    div.appendChild(img);
+    refSpec.current.appendChild(div);
+  }
 
   return (
     <div className={clsx(cx("container"))}>
@@ -453,20 +486,33 @@ function DetailProduct() {
                       <div key={index2}>
                         <input value={item2.title}></input>
                         <input value={item2.content}></input>
+                        <img
+                          onClick={() => {
+                            const newArr = specifications.filter(
+                              (item, index3) => {
+                                return index3 !== index2;
+                              }
+                            );
+                            setSpecifications([...newArr]);
+                          }}
+                          style={{ width: "20px", height: "20px" }}
+                          src={deleteIcon}
+                        ></img>
                       </div>
                     );
                   })}
-              <button
-                onClick={handleUpdateJson}
-                style={
-                  specifications.length !== 0
-                    ? { display: "inline-block" }
-                    : { display: "none" }
-                }
-              >
-                Chỉnh sửa
-              </button>
             </div>
+            <BsPlusCircle onClick={handleAppendSpec} />
+            <button
+              onClick={handleUpdateJson}
+              style={
+                specifications.length !== 0
+                  ? { display: "inline-block" }
+                  : { display: "none" }
+              }
+            >
+              Chỉnh sửa
+            </button>
             {/* <BsPlusCircle onClick={handleAppendChildSpec} /> */}
           </div>
           <div className={clsx(cx("from-body-group"))}>

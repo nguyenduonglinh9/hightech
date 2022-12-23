@@ -30,6 +30,8 @@ function Product() {
   const DataSearch = useContext(DataSearchContext);
   let dollarUSLocale = Intl.NumberFormat("en-US");
 
+  //  const formated = new Intl.NumberFormat("vi-VN", config).format(money);
+
   if (isLogin2["isLoggin"] === false) {
     navigate("/");
   }
@@ -56,11 +58,10 @@ function Product() {
   const [curentItemName, setCurrentItemName] = useState("Tất Cả");
   const [idCate, setIdCate] = useState("634f9eea3f879eb6fc81bf01");
   const [loading, setLoading] = useState(false);
-  const [minPrice, setMinPrice] = useState();
-  const [maxPrice, setMaxPrice] = useState();
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
   const [softProduct, setSoftProduct] = useState([]);
   const [count, setCount] = useState(0);
-
 
   const softSearch = useRef();
 
@@ -131,7 +132,7 @@ function Product() {
         setProducts((prev) => [...prev, ...data.data]);
         setLoading(true);
       });
-  }, []); 
+  }, []);
 
   // console.log(list)
   const handleOpenCategory = () => {
@@ -243,23 +244,25 @@ function Product() {
             })}
           >
             <div style={{ display: "flex" }}>
-              <div>
+              <div onClick={(e) => e.stopPropagation()}>
                 <span>Từ</span>
                 <input
-                  value={minPrice}
+                  value={parseInt(minPrice).toLocaleString()}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) => {
                     e.stopPropagation();
                     setMinPrice(e.target.value);
+                    console.log(minPrice);
                   }}
-                  type="number"
+                  // onBlur={(e) => dollarUSLocale.format(e.target.value)}
+                  type="text"
                 ></input>
               </div>
               <div>
                 <span>Đến</span>
                 <input
                   onClick={(e) => e.stopPropagation()}
-                  value={maxPrice}
+                  value={dollarUSLocale.format(maxPrice)}
                   onChange={(e) => setMaxPrice(e.target.value)}
                   type="number"
                 ></input>
