@@ -23,7 +23,7 @@ import { useNavigate } from "react-router-dom";
 import AOS from "aos";
 import { FaSearch } from "react-icons/fa";
 import { CgBell } from "react-icons/cg";
-import { FiChevronDown, FiEdit } from "react-icons/fi";
+import { FiChevronDown, FiEdit, FiUserPlus } from "react-icons/fi";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import jwt_decode from "jwt-decode";
 import { BiLibrary } from "react-icons/bi";
@@ -43,7 +43,6 @@ function LayoutMain({ children }) {
   const useRefActive = useRef();
   const refNotifi = useRef();
   
-
 
   let navigate = useNavigate();
   let dollarUSLocale = Intl.NumberFormat("en-US");
@@ -67,7 +66,7 @@ function LayoutMain({ children }) {
     client.on("connect", function () {
       client.subscribe("highttech-topic", function (err) {
         if (!err) {
-          console.log("Thành Công");
+          // console.log("Thành Công");
         }
       });
     });
@@ -124,6 +123,9 @@ function LayoutMain({ children }) {
   const [searchResult, setSearchResult] = useState([]);
   const [myProfile, setMyProfile] = useState();
 
+  const [currentIndex, setCurrentIndex] = useState(1);
+
+
 
   useEffect(() => {
     fetch(`http://quyt.ddns.net:3000/product/?all=true&title=/${search}/i`, {
@@ -156,7 +158,6 @@ function LayoutMain({ children }) {
          setMyProfile(res.data);
        });
    }, []);
-   console.log(myProfile);
 
   const handleToggleOn = (e) => {
     setToggleUserOption(true);
@@ -197,15 +198,13 @@ function LayoutMain({ children }) {
             <ul>
               <p className={clsx(cx("title"))}>Quản Lý</p>
               <Link
+                onClick={() => setCurrentIndex(1)}
                 style={{ textDecoration: "none", color: "white" }}
                 to="/product"
               >
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/product"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex == 1 ? true : false,
                   })}
                 >
                   <div ref={useRefActive} className={clsx(cx("bodyNav_group"))}>
@@ -215,15 +214,13 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                onClick={() => setCurrentIndex(2)}
                 style={{ textDecoration: "none", color: "white" }}
                 to="/category"
               >
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/category"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex === 2 ? true : false,
                   })}
                 >
                   <div
@@ -236,15 +233,13 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                onClick={() => setCurrentIndex(3)}
                 style={{ textDecoration: "none", color: "white" }}
                 to="/brand"
               >
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/brand"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex === 3 ? true : false,
                   })}
                 >
                   <div
@@ -257,6 +252,7 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                onClick={() => setCurrentIndex(4)}
                 to="/users"
                 style={
                   Decode_token.role == "superadmin"
@@ -266,10 +262,7 @@ function LayoutMain({ children }) {
               >
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/users"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex === 4 ? true : false,
                   })}
                 >
                   <div
@@ -282,15 +275,13 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                onClick={() => setCurrentIndex(5)}
                 to="/coupon"
                 style={{ textDecoration: "none", color: "white" }}
               >
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/coupon"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex === 5 ? true : false,
                   })}
                 >
                   <div
@@ -303,15 +294,13 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                onClick={() => setCurrentIndex(6)}
                 to="/banner"
                 style={{ textDecoration: "none", color: "white" }}
               >
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/banner"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex === 6 ? true : false,
                   })}
                 >
                   <div
@@ -324,16 +313,14 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                onClick={() => setCurrentIndex(7)}
                 to="/orders"
                 style={{ textDecoration: "none", color: "white" }}
               >
                 <p className={clsx(cx("title"))}>Đơn Hàng</p>
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/orders"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex === 7 ? true : false,
                   })}
                 >
                   <div
@@ -376,6 +363,7 @@ function LayoutMain({ children }) {
                 </li>
               </Link> */}
               <Link
+                onClick={() => setCurrentIndex(8)}
                 to="/revuene"
                 style={
                   Decode_token.role == "superadmin"
@@ -385,10 +373,7 @@ function LayoutMain({ children }) {
               >
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href === "http://localhost:3000/revuene"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex === 8 ? true : false,
                   })}
                 >
                   <div
@@ -401,6 +386,7 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
+                onClick={() => setCurrentIndex(9)}
                 to="/revuene-users"
                 style={
                   Decode_token.role == "superadmin"
@@ -410,18 +396,14 @@ function LayoutMain({ children }) {
               >
                 <li
                   className={clsx({
-                    [styles.active]:
-                      window.location.href ===
-                      "http://localhost:3000/revuene-users"
-                        ? true
-                        : false,
+                    [styles.active]: currentIndex === 9 ? true : false,
                   })}
                 >
                   <div
                     style={{ pointerEvents: "none" }}
                     className={clsx(cx("bodyNav_group"))}
                   >
-                    <FaChartLine />
+                    <FiUserPlus />
                     <span>Người Dùng</span>
                   </div>
                 </li>

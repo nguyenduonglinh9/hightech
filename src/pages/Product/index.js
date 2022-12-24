@@ -28,28 +28,11 @@ function Product() {
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
   const productSave = JSON.parse(localStorage.getItem("currentProduct"));
-  console.log(productSave);
-  const DataSearch = useContext(DataSearchContext);
   let dollarUSLocale = Intl.NumberFormat("en-US");
-
-  //  const formated = new Intl.NumberFormat("vi-VN", config).format(money);
 
   if (isLogin2["isLoggin"] === false) {
     navigate("/");
   }
-
-  // const reftest = useRef()
-
-  // useEffect(() => {
-  //   noUiSlider.create(reftest.current, {
-  //     start: [20, 80],
-  //     connect: true,
-  //     range: {
-  //       min: 0,
-  //       max: 100,
-  //     },
-  //   });
-  // },[])
 
   const [category, setCategory] = useState([]);
   const [products, setProducts] = useState([]);
@@ -63,9 +46,9 @@ function Product() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
   const [softProduct, setSoftProduct] = useState([]);
-  const [count, setCount] = useState(0);
 
   const softSearch = useRef();
+  const refItem = useRef();
 
   useEffect(() => {
     localStorage.setItem(
@@ -73,22 +56,6 @@ function Product() {
       JSON.stringify({ name: curentItemName, id: idCate })
     );
   }, []);
-
-  // if (DataSearch != "") {
-  //   if (typeof DataSearch == "string") {
-  //     softSearch.current = products.filter((item, index) => {
-  //       return (
-  //         item.name.includes(DataSearch) ||
-  //         String(item.price).includes(DataSearch) ||
-  //         item.description.includes(DataSearch)
-  //       );
-  //     });
-  //   }
-  // } else {
-  //   softSearch.current = undefined;
-  // }
-
-  const refItem = useRef();
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/category/", {
@@ -143,17 +110,10 @@ function Product() {
       });
   }, []);
 
-  // console.log(list)
   const handleOpenCategory = () => {
     setToggleCategory(!toggleCategory);
   };
-  const handleOpenBrand = () => {
-    setToggleBrand(true);
-  };
-  function handleCloseItem() {
-    setToggleCategory(false);
-    setLoading(false);
-  }
+  
   const HandleDetail = (id) => {
     navigate("/detail-product", { state: { id: id } });
   };

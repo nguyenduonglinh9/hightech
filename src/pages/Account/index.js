@@ -31,7 +31,6 @@ function Account() {
   const refInputPhone = useRef();
   const refInputImage = useRef();
 
-
   const [toggleLoading, setToggleLoading] = useState(false);
   const [toggleChangepass, setToggleChangepass] = useState(false);
   const [toggleMessage, setToggleMessage] = useState(false);
@@ -177,7 +176,7 @@ function Account() {
     refNew.current.setAttribute("type", "password");
     setToggleEyeNew(false);
   };
-  console.log(myProflie)
+  console.log(myProflie);
 
   return (
     <div className={clsx(cx("container"))}>

@@ -127,6 +127,7 @@
   cursor: pointer;
   position: relative;
   border: 1px solid rgb(224, 224, 224);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
 .drop-down-menu-item {
   padding: 10px;
@@ -182,7 +183,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  overflow: scroll;
+ 
   .table {
     align-self: center;
     width: 95%;

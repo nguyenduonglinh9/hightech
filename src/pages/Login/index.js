@@ -98,7 +98,7 @@ function Login() {
                 localStorage.setItem(
                   "currentBrand",
                   JSON.stringify({
-                    name: "Tất cả",
+                    name: "Tất Cả",
                     id: null,
                   })
                 );

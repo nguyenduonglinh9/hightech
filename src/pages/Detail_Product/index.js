@@ -225,8 +225,8 @@ function DetailProduct() {
       //   { title: item.children[0].value, content: item.children[1].value },
       // ]);
       arr.push({
-        title: item.children[0].value,
-        content: item.children[1].value,
+        title: item.children[0].innerText,
+        content: item.children[1].innerText,
       });
     });
     fetch(`http://quyt.ddns.net:3000/product/${id.state.id}`, {
@@ -359,10 +359,12 @@ function DetailProduct() {
       refSpec.current.removeChild(div);
     });
     const div = document.createElement("div");
-    const input = document.createElement("input");
-    const input2 = document.createElement("input");
-    div.appendChild(input);
-    div.appendChild(input2);
+    const p = document.createElement("p");
+    p.contentEditable = true;
+    const p2 = document.createElement("p");
+    p2.contentEditable = true;
+    div.appendChild(p);
+    div.appendChild(p2);
     div.appendChild(img);
     refSpec.current.appendChild(div);
   }
@@ -484,8 +486,8 @@ function DetailProduct() {
                 : specifications.map((item2, index2) => {
                     return (
                       <div key={index2}>
-                        <input value={item2.title}></input>
-                        <input value={item2.content}></input>
+                        <p contentEditable={true}>{item2.title}</p>
+                        <p contentEditable={true}>{item2.content}</p>
                         <img
                           onClick={() => {
                             const newArr = specifications.filter(

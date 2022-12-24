@@ -89,7 +89,7 @@
   background-color: rgb(250, 251, 251);
   animation: fadeIn 1s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
   transition: all 0.25s cubic-bezier(0.075, 0.82, 0.165, 1);
-  overflow-y: scroll;
+  // overflow-y: scroll;
   overflow-x: hidden;
   position: relative;
   .content-notifi {

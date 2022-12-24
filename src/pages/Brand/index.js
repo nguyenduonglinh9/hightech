@@ -3,9 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import clsx from "clsx";
 import classNames from "classnames/bind";
 import Table from "react-bootstrap/Table";
-import { BsPlusLg, BsCaretDownFill } from "react-icons/bs";
+import { BsCaretDownFill } from "react-icons/bs";
 import { FaArrowDown } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 import moment from "moment";
 const warning = require("../Category/assets/imgs/warning.png");
 
@@ -13,53 +12,32 @@ function Brand() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const brandSave = JSON.parse(localStorage.getItem("currentBrand"));
-  let navigate = useNavigate();
-  console.log(brandSave);
+
   const refCate = useRef();
   const refIDCate = useRef();
-  const refBrandID = useRef();
   const refModal = useRef();
-  const refModal2 = useRef();
   const refModal3 = useRef();
-
-  // const currentIdCate = useRef();
-  // const currentTitleCate = useRef();
-  // const currentIdBrand = useRef();
-
-  // console.log(currentIdCate.current, currentTitleCate.current);
-
   const test = useRef();
+  const refMessage = useRef();
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
-
-  const [title, setTitle] = useState("");
   const [titleCategory, setTitleCategory] = useState("");
-  const [imageIcon, setImageIcon] = useState();
-
-  const [imageIconUpdate, setImageIconUpdate] = useState();
-
   const [nextType, setNextType] = useState();
+  const [currentIDCate, setCurrentIDCate] = useState("");
+  const [currentTitleCate, setCurrentTitleCate] = useState("");
+  const [currentIDBrand, setCurrentIDBrand] = useState("");
+  const [currentTitleBrand, setCurrentTitleBrand] = useState("");
+  const [currentTitleFilter, setCurrentTitleFilter] = useState(brandSave.name);
+  const [currentIDFilter, setCurrentIDFilter] = useState(brandSave.id);
 
-  const [toggleModalAdd, setToggleModalAdd] = useState(false);
-  const [toggleModalAdd2, setToggleModalAdd2] = useState(false);
   const [toggleModalAdd3, setToggleModalAdd3] = useState(false);
-  const [toggleModalAdd4, setToggleModalAdd4] = useState(false);
   const [toggleModalAdd5, setToggleModalAdd5] = useState(false);
   const [toggleDropDown, setToggleDropDown] = useState(false);
   const [toggleButton, setToggleButton] = useState(true);
   const [toggleDropDownFilter, setToggleDropDownFilter] = useState(false);
   const [toggleOnOff, setToggleOnOff] = useState(false);
-
-  const [currentIDCate, setCurrentIDCate] = useState("");
-  const [currentTitleCate, setCurrentTitleCate] = useState("");
-  const [currentIDBrand, setCurrentIDBrand] = useState("");
-  const [currentTitleBrand, setCurrentTitleBrand] = useState("");
-
-  const [currentTitleFilter, setCurrentTitleFilter] = useState(brandSave.name);
-  const [currentIDFilter, setCurrentIDFilter] = useState(brandSave.id);
-
-  console.log(currentIDCate, currentTitleCate, currentIDBrand);
+  const [toggleModalMessage, setToggleModalMessage] = useState(false);
 
   useEffect(() => {
     fetch("http://quyt.ddns.net:3000/category/", {
@@ -78,10 +56,10 @@ function Brand() {
         setCurrentIDCate(data.data[0]._id);
         setCurrentTitleCate(data.data[0].title);
       });
-  }, []);
+  }, [toggleModalAdd3]);
 
   useEffect(() => {
-    fetch("http://quyt.ddns.net:3000/brand/", {
+    fetch("http://quyt.ddns.net:3000/brand/?all=true", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -96,51 +74,20 @@ function Brand() {
       });
   }, []);
 
-  const handleToggleModal = (title, id) => {
-    refCate.current = title;
-    refIDCate.current = id;
-    setTitle("");
-    setToggleModalAdd(true);
-  };
-
-  const handleToggleModal2 = (title, brandID, id, titleCate) => {
-    // refIDCate.current = id;
-    // refCate.current = titleCate;
-    // refBrandID.current = brandID;
-    setTitle(title);
-    setToggleModalAdd2(true);
-  };
-
   const handleToggleModalAddCategory = () => {
     setToggleModalAdd3(true);
   };
 
-  const handleAddNewBrand = () => {
-    fetch("http://quyt.ddns.net:3000/brand/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-      body: JSON.stringify({
-        title: title,
-        category: refIDCate.current,
-      }),
-    })
-      .then((res) => {
-        res.json();
-        setToggleModalAdd(false);
-        window.location.reload(false);
-      })
-      .then((res) => console.log(res));
-  };
-
   const handleUpdateBrand = () => {
-    refModal.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
+    const div = document.createElement("div");
+    div.style.width = "50px";
+    div.style.height = "50px";
+    div.style.border = "7px solid transparent";
+    div.style.borderRadius = "50%";
+    div.style.borderTop = "7px solid rgb(3, 201, 215)";
+    refMessage.current.appendChild(div);
+    setToggleModalMessage(true);
 
-   </div>
-    `;
     fetch(`http://quyt.ddns.net:3000/brand/${currentIDBrand}`, {
       method: "PUT",
       headers: {
@@ -154,68 +101,53 @@ function Brand() {
       }),
     })
       .then((res) => res.json())
-      .then(
-        (res) => {
-          if (res.code == 200) {
-            refModal.current.innerHTML = `<h2>Successful</h2>`;
+      .then((res) => {
+        if (res.code == 200) {
+          refMessage.current.removeChild(div);
+          const h2 = document.createElement("h2");
+          h2.innerText = "Tác Vụ Thành Công";
+          refMessage.current.appendChild(h2);
+          setToggleModalMessage(true);
 
-            setTimeout(() => {
-              window.location.reload(false);
-            }, 1500);
-          }
+          setTimeout(() => {
+            setTitleCategory("");
+            setToggleOnOff(false);
+            setToggleModalAdd3(false);
+            setToggleModalMessage(false);
+            refMessage.current.removeChild(h2);
+          }, 1500);
+        } else {
+          refMessage.current.removeChild(div);
+          const divError = document.createElement("div");
+          divError.style.animation = "none";
+          divError.style.display = "flex";
+          divError.style.flexDirection = "column";
+          divError.style.alignItems = "center";
+          const h2 = document.createElement("h2");
+          h2.innerText = res.message;
+          const button = document.createElement("button");
+          button.innerText = "Thử Lại";
+          button.addEventListener("click", () => {
+            refMessage.current.removeChild(divError);
+            setToggleModalMessage(false);
+          });
+          divError.appendChild(h2);
+          divError.appendChild(button);
+          refMessage.current.appendChild(divError);
         }
-        // refModal.current.innerHTML = `<h2>Successful</h2>`;
-
-        // setTimeout(() => {
-        //   window.location.reload(false);
-        // }, 1500);
-      );
-  };
-  const handleDeleteBrand = () => {
-    setToggleModalAdd5(true);
-  };
-
-  const handleDeleteBrand2 = () => {
-    refModal3.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
-
-   </div>
-    `;
-    fetch(`http://quyt.ddns.net:3000/brand/${currentIDBrand}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": DataLogin.token,
-      },
-    })
-      .then((res) => {
-        res.json();
-        // setToggleModalAdd3(false);
-        // window.location.reload(false);
-      })
-      .then((res) => {
-        refModal3.current.innerHTML = `<h2>Successful</h2>`;
-
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
       });
   };
 
-  const handleUpdateFile = (e) => {
-    setImageIcon(e.target.files[0]);
-  };
-
-  const handleUpdateFile2 = (e) => {
-    setImageIconUpdate(e.target.files[0]);
-  };
-
   const handleAddNewCategory = () => {
-    refModal.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
+    const div = document.createElement("div");
+    div.style.width = "50px";
+    div.style.height = "50px";
+    div.style.border = "7px solid transparent";
+    div.style.borderRadius = "50%";
+    div.style.borderTop = "7px solid rgb(3, 201, 215)";
+    refMessage.current.appendChild(div);t 
+    setToggleModalMessage(true);
 
-   </div>
-    `;
     fetch("http://quyt.ddns.net:3000/brand/", {
       method: "POST",
       headers: {
@@ -230,11 +162,40 @@ function Brand() {
     })
       .then((res) => res.json())
       .then((res) => {
-        refModal.current.innerHTML = `<h2>Tác Vụ Thành Công</h2>`;
+        if (res.code == 200) {
+          refMessage.current.removeChild(div);
+          const h2 = document.createElement("h2");
+          h2.innerText = "Tác Vụ Thành Công";
+          refMessage.current.appendChild(h2);
+          setToggleModalMessage(true);
 
-        setTimeout(() => {
-          window.location.reload(false);
-        }, 1500);
+          setTimeout(() => {
+            setTitleCategory("");
+            setToggleOnOff(false);
+            setToggleModalAdd3(false);
+            setToggleModalMessage(false);
+            refMessage.current.removeChild(h2);
+            window.location.reload();
+          }, 1500);
+        } else {
+          refMessage.current.removeChild(div);
+          const divError = document.createElement("div");
+          divError.style.animation = "none";
+          divError.style.display = "flex";
+          divError.style.flexDirection = "column";
+          divError.style.alignItems = "center";
+          const h2 = document.createElement("h2");
+          h2.innerText = res.message;
+          const button = document.createElement("button");
+          button.innerText = "Thử Lại";
+          button.addEventListener("click", () => {
+            refMessage.current.removeChild(divError);
+            setToggleModalMessage(false);
+          });
+          divError.appendChild(h2);
+          divError.appendChild(button);
+          refMessage.current.appendChild(divError);
+        }
       })
       .catch((err) => {
         refModal.current.innerHTML = `<h2>${err}</h2>`;
@@ -255,9 +216,9 @@ function Brand() {
   };
 
   const handleCancel = () => {
-    setToggleModalAdd3(false);
     setToggleButton(true);
     setTitleCategory("");
+    setToggleModalAdd3(false);
     setToggleDropDown(false);
     setCurrentIDCate(categorys[0]._id);
     currentTitleCate.current = categorys[0].title;
@@ -267,7 +228,7 @@ function Brand() {
     setCurrentIDCate(id);
     setToggleDropDown(false);
   };
-  console.log(currentTitleBrand == titleCategory);
+
   const handleFilter = (id, title) => {
     setCurrentTitleFilter(title);
     setCurrentIDFilter(id);
@@ -306,13 +267,20 @@ function Brand() {
               [styles.turnonDropDown]: toggleDropDownFilter,
             })}
           >
-            <p onClick={() => { setCurrentTitleFilter("Tất Cả"); localStorage.setItem(
-              "currentBrand",
-              JSON.stringify({
-                name: 'Tất Cả',
-                id: null,
-              })
-            ); }}>Tất cả</p>
+            <p
+              onClick={() => {
+                setCurrentTitleFilter("Tất Cả");
+                localStorage.setItem(
+                  "currentBrand",
+                  JSON.stringify({
+                    name: "Tất Cả",
+                    id: null,
+                  })
+                );
+              }}
+            >
+              Tất cả
+            </p>
             {categorys.map((item, index) => {
               return (
                 <p
@@ -375,18 +343,10 @@ function Brand() {
                       }
                       key={index}
                     >
-                      {/* <td>
-                    <img src={category.icon}></img>
-                  </td> */}
                       <td>{index + 1}</td>
                       <td>{brand.title}</td>
                       <td>
-                        {/* {brand.createdAt
-                          .substring(0, 10)
-                          .split("-")
-                          .reverse()
-                          .join("/")} */}
-                        {moment(brand.createdAt).format("DD-MM-yyy HH:mm A")}
+                        {moment(brand.createdAt).format("DD-MM-yyyy HH:mm:ss")}
                       </td>
                     </tr>
                   );
@@ -403,14 +363,12 @@ function Brand() {
                           handleUpdateCategory(
                             brand3._id,
                             brand3.title,
-                            brand3.category
+                            brand3.category,
+                            brand3.active
                           )
                         }
                         key={index3}
                       >
-                        {/* <td>
-                    <img src={category.icon}></img>
-                  </td> */}
                         <td>{index3 + 1}</td>
                         <td>{brand3.title}</td>
                         <td>
@@ -428,7 +386,6 @@ function Brand() {
       </div>
 
       <div
-       
         onClick={handleCancel}
         className={clsx(cx("modal-add-brand"), {
           [styles.activemodaladd]: toggleModalAdd3,
@@ -436,7 +393,10 @@ function Brand() {
       >
         <div
           ref={refModal}
-          onClick={(e) => { e.stopPropagation(); setToggleDropDown(false); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            setToggleDropDown(false);
+          }}
           className={clsx(cx("modal"))}
         >
           <div
@@ -528,14 +488,6 @@ function Brand() {
             className={clsx(cx("modal-footer"))}
           >
             <button onClick={handleCancel}>Hủy</button>
-            {/* <button
-              className={clsx({
-                [styles.hidebutton]: toggleButton,
-              })}
-              onClick={handleDeleteBrand}
-            >
-              Xóa
-            </button> */}
             <button
               className={clsx({
                 [styles.hidebutton]: !toggleButton,
@@ -560,95 +512,12 @@ function Brand() {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* <div
-        onClick={handleCancel}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd4,
-        })}
-      >
         <div
-          ref={refModal2}
-          style={{ animation: "none" }}
-          onClick={(e) => e.stopPropagation()}
-          className={clsx(cx("modal"))}
-        >
-          <div
-            style={{ animation: "none" }}
-            className={clsx(cx("modal-header"))}
-          >
-            <h3>HIGH TECH</h3>
-            <p>Cập Nhật Thương Hiệu</p>
-          </div>
-          <div style={{ animation: "none" }} className={clsx(cx("modal-body"))}>
-            <div
-              style={{ animation: "none" }}
-              className={clsx(cx("modal-body-group"))}
-            >
-              <p>Tên</p>
-              <input
-                value={titleCategory}
-                onChange={(e) => setTitleCategory(e.target.value)}
-              ></input>
-            </div>
-            <div
-              style={{ animation: "none" }}
-              className={clsx(cx("modal-body-group"))}
-            >
-              <p>Hình Ảnh</p>
-              <input type="file" onChange={(e) => handleUpdateFile2(e)}></input>
-              <img
-                style={{ width: "100px" }}
-                src={
-                  typeof imageIconUpdate == "object"
-                    ? URL.createObjectURL(imageIconUpdate)
-                    : imageIconUpdate
-                }
-              ></img>
-            </div>
-          </div>
-          <div
-            style={{ animation: "none" }}
-            className={clsx(cx("modal-footer"))}
-          >
-            <button onClick={handleCancel}>Hủy</button>
-            <button onClick={handleDeleteCategory}>Xóa</button>
-            <button onClick={handleUpdateCate}>Lưu</button>
-          </div>
-        </div>
-      </div> */}
-
-      <div
-        onClick={() => setToggleModalAdd5(false)}
-        className={clsx(cx("modal-add-brand"), {
-          [styles.activemodaladd]: toggleModalAdd5,
-        })}
-      >
-        <div
-          ref={refModal3}
-          style={{ animation: "none" }}
-          onClick={(e) => e.stopPropagation()}
-          className={clsx(cx("modal"))}
-        >
-          <div
-            style={{ animation: "none" }}
-            className={clsx(cx("modal-header"))}
-          >
-            <img
-              style={{ width: "100px", height: "100px" }}
-              src={warning}
-            ></img>
-            <h3>Bạn muốn xóa thương hiệu này ?</h3>
-          </div>
-          <div
-            style={{ animation: "none" }}
-            className={clsx(cx("modal-footer"))}
-          >
-            <button onClick={handleDeleteBrand2}>Xóa</button>
-            <button onClick={() => setToggleModalAdd5(false)}>Hủy</button>
-          </div>
-        </div>
+          ref={refMessage}
+          className={clsx(cx("modal-message"), {
+            [styles.activemodaladd]: toggleModalMessage,
+          })}
+        ></div>
       </div>
     </div>
   );
