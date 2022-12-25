@@ -11,6 +11,7 @@ import {
 } from "react-icons/bs";
 import { BiEditAlt } from "react-icons/bi";
 import jwt_decode from "jwt-decode";
+import { type } from "@testing-library/user-event/dist/type";
 
 function Account() {
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
@@ -25,6 +26,10 @@ function Account() {
   const refMessage = useRef();
   const refOld = useRef();
   const refNew = useRef();
+  const refErrorEmail = useRef();
+  const refErrorName = useRef();
+
+
 
   const refInputEmail = useRef();
   const refInputName = useRef();
@@ -36,6 +41,11 @@ function Account() {
   const [toggleMessage, setToggleMessage] = useState(false);
 
   const [myProflie, setMyProfile] = useState();
+
+  const [email, setEmail] = useState()
+  const [avatar, setAvatar] = useState();
+  const [fullName, setFullName] = useState();
+  const [phone, setPhone] = useState();
 
   const [toggleEyeOld, setToggleEyeOld] = useState(false);
   const [toggleEyeNew, setToggleEyeNew] = useState(false);
@@ -54,9 +64,13 @@ function Account() {
       .then((res) => res.json())
       .then((res) => {
         setMyProfile(res.data);
+        setEmail(res.data.email);
+        setAvatar(res.data.avatar);
+        setFullName(res.data.fullname);
+        setPhone(res.data.phone);
       });
   }, []);
-  console.log(myProflie);
+  console.log(typeof avatar)
 
   const handleChangePass = () => {
     if (oldPass == null || newPass == null) {
@@ -176,6 +190,131 @@ function Account() {
     refNew.current.setAttribute("type", "password");
     setToggleEyeNew(false);
   };
+
+  const handleUpdateProfile = () => {
+    const div = document.createElement("div");
+    div.style.width = "50px";
+    div.style.height = "50px";
+    div.style.border = "5px solid transparent";
+    div.style.borderTop = "5px solid rgb(3,201,215)";
+    div.style.borderRadius = '50%';
+    refMessage.current.appendChild(div);
+    setToggleMessage(true);
+
+    if (typeof avatar === 'object') {
+       var promise = new Promise(function (resolve, reject) {
+         const dataImage = new FormData();
+         let avatarURL;
+         dataImage.append("files", avatar);
+         fetch("http://quyt.ddns.net:2607", {
+           method: "POST",
+           body: dataImage,
+         })
+           .then((res) => res.json())
+           .then((res) => {
+             console.log(res.data[0])
+             avatarURL = res.data[0];
+             resolve(avatarURL);
+           });
+       });
+
+       promise.then((avatarURL) => {
+         fetch("http://quyt.ddns.net:3000/access/me", {
+           method: "PUT",
+           headers: {
+             "Content-Type": "application/json",
+             "x-access-token": DataLogin.token,
+           },
+           body: JSON.stringify({
+             email: email,
+             avatar: avatarURL,
+             fullname: fullName,
+             phone: phone,
+           }),
+         })
+           .then((res) => res.json())
+           .then((res) => {
+             if (res.code == 200) {
+               refMessage.current.removeChild(div);
+               const h2 = document.createElement("h2");
+               h2.innerText = "Tác Vụ Thành Công";
+               refMessage.current.appendChild(h2);
+
+              //  setTimeout(() => {
+              //    window.location.reload();
+              //  }, 2000);
+             } else {
+               refMessage.current.removeChild(div);
+               const div2 = document.createElement("div");
+               const h2 = document.createElement("h2");
+               const button = document.createElement("button");
+               div2.style.animation = "none";
+               div2.style.display = "flex";
+               div2.style.flexDirection = "column";
+               div2.style.justifyContent = "center";
+               div2.style.alignItems = "center";
+               h2.innerText = res.message;
+               button.innerText = "Thử Lại";
+               div2.appendChild(h2);
+               div2.appendChild(button);
+               refMessage.current.appendChild(div2);
+               button.addEventListener("click", () => {
+                 refMessage.current.removeChild(div2);
+                 setToggleMessage(false);
+               });
+             }
+           });
+       });
+    }
+    else {
+       fetch("http://quyt.ddns.net:3000/access/me", {
+         method: "PUT",
+         headers: {
+           "Content-Type": "application/json",
+           "x-access-token": DataLogin.token,
+         },
+         body: JSON.stringify({
+           email: email,
+           avatar: avatar,
+           fullname: fullName,
+           phone: phone,
+         }),
+       })
+         .then((res) => res.json())
+         .then((res) => {
+           if (res.code == 200) {
+             refMessage.current.removeChild(div);
+             const h2 = document.createElement("h2");
+             h2.innerText = "Tác Vụ Thành Công";
+             refMessage.current.appendChild(h2);
+
+             setTimeout(() => {
+               window.location.reload();
+             }, 2000);
+           } else {
+             refMessage.current.removeChild(div);
+             const div2 = document.createElement("div");
+             const h2 = document.createElement("h2");
+             const button = document.createElement("button");
+             div2.style.animation = "none";
+             div2.style.display = "flex";
+             div2.style.flexDirection = "column";
+             div2.style.justifyContent = "center";
+             div2.style.alignItems = "center";
+             h2.innerText = res.message;
+             button.innerText = "Thử Lại";
+             div2.appendChild(h2);
+             div2.appendChild(button);
+             refMessage.current.appendChild(div2);
+             button.addEventListener("click", () => {
+               refMessage.current.removeChild(div2);
+               setToggleMessage(false);
+             });
+           }
+         });
+    }
+
+  }
   console.log(myProflie);
 
   return (
@@ -188,16 +327,34 @@ function Account() {
           <div ref={refErrEmail} className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>Email</p>
             <div
-              style={{ width: "100%", display: "flex", alignItems: "center" }}
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
               <input
                 ref={refInputEmail}
                 required
-                defaultValue={myProflie == null ? "" : myProflie.email}
-                disabled
+                defaultValue={email}
                 placeholder="ex: abc@gmail.com"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  e.target.value.match(
+                    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                  )
+                    ? (refErrorEmail.current.innerText = "")
+                    : (refErrorEmail.current.innerText = "Chưa Đúng Định Dạng");
+                }}
+                onBlur={(e) => {
+                  e.target.value.match(
+                    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                  )
+                    ? (refErrorEmail.current.innerText = "")
+                    : (refErrorEmail.current.innerText = "Chưa Đúng Định Dạng");
+                }}
               ></input>
-              <p></p>
+              <p style={{ color: "red" }} ref={refErrorEmail}></p>
               {/* <div onClick={(e) => (refInputEmail.current.disabled = false)}>
                 <BiEditAlt />
               </div> */}
@@ -213,31 +370,49 @@ function Account() {
                 ref={refInputImage}
                 required
                 // defaultValue={Decode_token.email}
-                disabled
                 type="file"
                 placeholder="ex: abc@gmail.com"
+                onChange={(e) => setAvatar(e.target.files[0])}
               ></input>
               <p></p>
               {/* <BiEditAlt
                 onClick={(e) => (refInputImage.current.disabled = false)}
               /> */}
             </div>
-            <img src={myProflie == null ? "" : myProflie.avatar}></img>
+            <img
+              src={
+                typeof avatar == "object" ? URL.createObjectURL(avatar) : avatar
+              }
+            ></img>
           </div>
 
           <div ref={refErrFullName} className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>Họ Và Tên</p>
             <div
-              style={{ width: "100%", display: "flex", alignItems: "center" }}
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
             >
               <input
                 ref={refInputName}
                 placeholder="ex: Nguyen Van A"
                 style={{ margin: "5px 0" }}
-                disabled
-                defaultValue={myProflie == null ? "" : myProflie.fullname}
+                defaultValue={fullName}
+                onChange={(e) => {
+                  setFullName(e.target.value);
+                  e.target.value === ""
+                    ? (refErrorName.current.innerText = "Không Bỏ Trống Ô Này")
+                    : (refErrorName.current.innerText = "");
+                }}
+                onBlur={(e) => {
+                  e.target.value === ""
+                    ? (refErrorName.current.innerText = "Không Bỏ Trống Ô Này")
+                    : (refErrorName.current.innerText = "");
+                }}
               ></input>
-              <p></p>
+              <p style={{ color: "red" }} ref={refErrorName}></p>
               {/* <BiEditAlt
                 onClick={(e) => (refInputName.current.disabled = false)}
               /> */}
@@ -251,10 +426,10 @@ function Account() {
             >
               <input
                 ref={refInputPhone}
-                defaultValue={myProflie == null ? "" : myProflie.phone}
-                disabled
+                defaultValue={phone}
                 placeholder="ex: 0932xxxxxx"
                 type="number"
+                onChange={(e) => setPhone(e.target.value)}
               ></input>
               <p></p>
               {/* <BiEditAlt
@@ -266,6 +441,23 @@ function Account() {
         <div className={clsx(cx("from-footer"))}>
           <div>
             <button onClick={() => navigate("/product")}>Trở Lại</button>
+          </div>
+          <div>
+            <button
+              disabled={
+                myProflie == null
+                  ? undefined
+                  : myProflie.email == email &&
+                    typeof avatar !== "object" &&
+                    myProflie.fullname == fullName &&
+                    myProflie.phone == phone
+                  ? true
+                  : false
+              }
+              onClick={handleUpdateProfile}
+            >
+              Cập Nhật Thông Tin
+            </button>
           </div>
           <div>
             <button onClick={() => setToggleChangepass(true)}>
