@@ -500,7 +500,7 @@ function Orders() {
                             .reverse()
                             .join("/")} */}
                           {
-                            moment(category.createdAt).format("DD-MM-yyy HH:mm A")
+                            moment(category.createdAt).format("DD-MM-yyy HH:mm:ss")
                           }
                         </td>
                       </tr>

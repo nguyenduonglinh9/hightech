@@ -4,6 +4,7 @@ import clsx from "clsx";
 import classNames from "classnames/bind";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BsPlusCircle, BsXCircleFill } from "react-icons/bs";
+import moment from "moment";
 
 function DetailOrder() {
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
@@ -135,7 +136,7 @@ function DetailOrder() {
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>Thông tin đơn hàng</p>
-            <p>Ngày tạo đơn : {order.createdAt}</p>
+            <p>Ngày tạo đơn : {moment(order.createdAt).format('DD-MM-yyyy HH:mm:ss')}</p>
             <div style={{}}>
               {order.length === 0
                 ? undefined
