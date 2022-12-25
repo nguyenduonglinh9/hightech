@@ -210,7 +210,7 @@ function AddProduct() {
         description: arrDataInputDesc,
         images: images,
         costPrice: costPrice,
-        salePrice: costPrice * (salePercent / 100),
+        salePrice: costPrice - costPrice * (salePercent / 100),
         salePercent: salePercent,
         quantity: quantity,
         specifications: arr,
@@ -413,37 +413,6 @@ function AddProduct() {
     });
   };
 
-  const handleAppendSpec = () => {
-    const img = document.createElement("img");
-    img.setAttribute("src", deleteIcon);
-    img.style.width = "20px";
-    img.style.height = "20px";
-    img.addEventListener("click", () => {
-      refSpec2.current.removeChild(img.parentNode);
-      console.dir(refSpec2.current);
-    });
-    const div = document.createElement("div");
-    const input = document.createElement("input");
-    const input2 = document.createElement("input");
-    div.appendChild(input);
-    div.appendChild(input2);
-    div.appendChild(img);
-    refSpec2.current.appendChild(div);
-
-    // const leng = refSpec2.current.children.length;
-
-    // const a = [...refSpec2.current.children].find((item,index) => {
-    //   // refTest.current.push({title: item.children[0].value, content: item.children[1].value})
-    //   return index == leng - 1
-    //   // setArr(prev => [...prev,
-    //   //   {
-    //   //     title: item[leng - 1].children[0].value,
-    //   //     content: item[leng - 1].children[1].value,
-    //   //   },
-    //   // ]);
-    // });
-    // setArr(prev => [...prev, {title: a.children[0].value, content: a.children[1].value}])
-  };
   const handleAppendSpec2 = () => {
     const img = document.createElement("img");
     img.setAttribute("src", deleteIcon);

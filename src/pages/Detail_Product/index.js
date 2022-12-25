@@ -240,7 +240,7 @@ function DetailProduct() {
         description: arrDataInputDesc,
         images: images,
         costPrice: costPrice,
-        salePrice: costPrice * (salePercent / 100),
+        salePrice: costPrice - costPrice * (salePercent / 100),
         salePercent: salePercent,
         quantity: quantity,
         specifications: arr,

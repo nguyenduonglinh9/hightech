@@ -47,6 +47,8 @@ function Product() {
   const [maxPrice, setMaxPrice] = useState(0);
   const [softProduct, setSoftProduct] = useState([]);
 
+  console.log(products);
+
   const softSearch = useRef();
   const refItem = useRef();
 
@@ -113,7 +115,7 @@ function Product() {
   const handleOpenCategory = () => {
     setToggleCategory(!toggleCategory);
   };
-  
+
   const HandleDetail = (id) => {
     navigate("/detail-product", { state: { id: id } });
   };
@@ -321,9 +323,6 @@ function Product() {
                 <p>Giá</p>
               </th>
               <th>
-                <p>Giá Khuyến Mãi</p>
-              </th>
-              <th>
                 <p>Danh Mục</p>
               </th>
               <th>
@@ -360,7 +359,7 @@ function Product() {
                           <td className={clsx(cx("title_td"))}>
                             {item2.title}
                           </td>
-                          <td>{dollarUSLocale.format(item2.costPrice)}</td>
+                          <td>{dollarUSLocale.format(item2.salePrice)}</td>
                           <td>
                             {category
                               .filter((cate) => cate._id == item2.category)
@@ -428,7 +427,7 @@ function Product() {
                           <img src={item.images[0]}></img>
                         </td>
                         <td className={clsx(cx("title_td"))}>{item.title}</td>
-                        <td>{dollarUSLocale.format(item.costPrice)}</td>
+                        <td>{dollarUSLocale.format(item.salePrice)}</td>
                         <td>
                           {category
                             .filter((cate) => cate._id == item.category)
@@ -569,7 +568,7 @@ function Product() {
                         <img src={product.images[0]}></img>
                       </td>
                       <td className={clsx(cx("title_td"))}>{product.title}</td>
-                      <td>{dollarUSLocale.format(product.costPrice)}</td>
+                      <td>{dollarUSLocale.format(product.salePrice)}</td>
                       <td>
                         {category
                           .filter((cate) => cate._id == product.category)
