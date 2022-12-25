@@ -15,6 +15,11 @@ function AddProduct() {
   const cx = classNames.bind(styles);
   let navigate = useNavigate();
 
+  const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
+  if (isLogin2["isLoggin"] === false) {
+    navigate("/");
+  }
+
   const refDesc = useRef();
   const refInputUpload = useRef();
   const refSpec = useRef();
@@ -34,7 +39,7 @@ function AddProduct() {
   const [imagesUpload, setImagesUpload] = useState([]);
 
   const [costPrice, setCostPrice] = useState(0);
-  const [salePercent, setSalePercent] = useState();
+  const [salePercent, setSalePercent] = useState(0);
   const [quantity, setQuantity] = useState(0);
   const [specifications, setSpecifications] = useState([]);
   const [toggleOnOff, setToggleOnOff] = useState(false);
@@ -111,8 +116,6 @@ function AddProduct() {
     }
   }, [brands]);
 
-  console.log(specifications);
-
   const handleAddProduct = () => {
     if (specifications.length == 0) {
       setToggleLoading(true);
@@ -181,10 +184,6 @@ function AddProduct() {
             });
             setToggleMessage(true);
           }
-
-          console.log(res);
-
-          // navigate("/product");
         });
     } else {
       setToggleLoading(true);
@@ -196,10 +195,6 @@ function AddProduct() {
       //xử lý specifications
       const arr = [];
       [...refSpec3.current.children].map((item) => {
-        // setSpecifications((prev) => [
-        //   ...prev,
-        //   { title: item.children[0].value, content: item.children[1].value },
-        // ]);
         arr.push({
           title: item.children[0].innerText,
           content: item.children[1].innerText,
@@ -257,8 +252,6 @@ function AddProduct() {
             });
             setToggleMessage(true);
           }
-
-          console.log(res);
         });
     }
   };
@@ -283,15 +276,11 @@ function AddProduct() {
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
-          //  setImagesUpload((prev) => [...prev, res["image"]["url"]]);
           setImages((prev) => [...prev, res.data[0]]);
         })
         .catch((err) => console.log(err));
     });
-    // setImages((prev) => [...prev, ...Array.from(e.target.files)]);
   };
-  console.log(images);
 
   const handleDeleteImage = (image, index) => {
     setImages(
@@ -339,7 +328,6 @@ function AddProduct() {
     div.style.height = "500px";
     div.style.display = "flex";
     div.style.flexDirection = "column";
-    // div.style.justifyContent = 'center'
     div.style.alignItems = "center";
     const textaera = document.createElement("textarea");
     textaera.style.width = "90%";
@@ -371,7 +359,6 @@ function AddProduct() {
       setToggleModal(false);
     });
   };
-  console.log(specifications);
 
   const handleUpdateJson = () => {
     const div = document.createElement("div");
@@ -379,7 +366,6 @@ function AddProduct() {
     div.style.height = "500px";
     div.style.display = "flex";
     div.style.flexDirection = "column";
-    // div.style.justifyContent = 'center'
     div.style.alignItems = "center";
     const textaera = document.createElement("textarea");
     textaera.value = JSON.stringify(specifications, undefined, 4);
@@ -431,7 +417,6 @@ function AddProduct() {
     div.appendChild(img);
     refSpec3.current.appendChild(div);
   };
-  console.log(arr);
 
   return (
     <div className={clsx(cx("container"))}>
@@ -524,6 +509,7 @@ function AddProduct() {
                 setSalePercent(e.target.value);
               }}
               placeholder="ex: 14.3"
+              type="number"
             ></input>
           </div>
           <div className={clsx(cx("from-body-group"))}>
@@ -541,24 +527,11 @@ function AddProduct() {
             <p style={{ fontWeight: "bold" }}>Thông Số Kỹ Thuật</p>
             <div className={clsx(cx("from-body-group-spec"))} ref={refSpec}>
               <div className={clsx(cx("from-body-group-spec-1"))}>
-                {/* <input placeholder="ex: Nhu cầu"></input>
-                <input placeholder="ex: Gaming, Văn phòng, Đồ họa - Kỹ thuật, Doanh nghiệp, Học sinh - Sinh viên"></input> */}
-                {/* {specifications.length == 0 ? (
-                  <>
-                    <div ref={refSpec2} style={{ width: "100%" }}>
-                     
-                    </div>
-                    <BsPlusCircle onClick={handleAppendSpec} />
-                  </>
-                ) : ( */}
                 <>
                   <div ref={refSpec3} style={{ width: "100%" }}>
                     {specifications.map((item, index) => {
                       return (
                         <div key={index}>
-                          {/* <input
-                            defaultValue={item.title}
-                          ></input> */}
                           <p contentEditable={true}>{item.title}</p>
                           <p contentEditable={true}>{item.content}</p>
                           <img
@@ -576,7 +549,6 @@ function AddProduct() {
                   </div>
                   <BsPlusCircle onClick={handleAppendSpec2} />
                 </>
-                {/* )} */}
 
                 <button
                   style={
@@ -601,7 +573,6 @@ function AddProduct() {
                 </button>
               </div>
             </div>
-            {/* <BsPlusCircle onClick={handleAppendChildSpec} /> */}
           </div>
           <div className={clsx(cx("from-body-group"))}>
             <p style={{ fontWeight: "bold" }}>Trạng Thái Sản Phẩm</p>

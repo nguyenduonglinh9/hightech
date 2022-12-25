@@ -14,6 +14,11 @@ function Category() {
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
 
+  const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
+  if (isLogin2["isLoggin"] === false) {
+    navigate("/");
+  }
+
   const refCate = useRef();
   const refIDCate = useRef();
   const refBrandID = useRef();

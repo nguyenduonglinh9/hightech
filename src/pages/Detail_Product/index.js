@@ -21,6 +21,11 @@ function DetailProduct() {
   const cx = classNames.bind(styles);
   let navigate = useNavigate();
 
+  const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
+  if (isLogin2["isLoggin"] === false) {
+    navigate("/");
+  }
+
   const refDesc = useRef();
   const refInputUpload = useRef();
   const refSpec = useRef();

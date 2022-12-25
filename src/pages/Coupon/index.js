@@ -13,6 +13,10 @@ function Coupon() {
   let navigate = useNavigate();
   let currentDate = new Date();
   let dollarUSLocale = Intl.NumberFormat("en-US");
+  const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
+  if (isLogin2["isLoggin"] === false) {
+    navigate("/");
+  }
 
   const refCate = useRef();
   const refIDCate = useRef();

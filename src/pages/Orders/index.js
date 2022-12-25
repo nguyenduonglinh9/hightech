@@ -14,6 +14,10 @@ function Orders() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
+  const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
+  if (isLogin2["isLoggin"] === false) {
+    navigate("/");
+  }
 
   
   var date = "2022-10-17T01:00:00";

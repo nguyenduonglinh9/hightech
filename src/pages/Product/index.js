@@ -47,8 +47,6 @@ function Product() {
   const [maxPrice, setMaxPrice] = useState(0);
   const [softProduct, setSoftProduct] = useState([]);
 
-  console.log(products);
-
   const softSearch = useRef();
   const refItem = useRef();
 

@@ -129,19 +129,6 @@ function LayoutMain({ children }) {
   const [currentIndex, setCurrentIndex] = useState(indexCurrent);
 
   const refContainer = useRef();
-  // refContainer.current.scrollTop = 1932;
-
-  // window.addEventListener("wheel", (e) => {
-  //    localStorage.setItem("position", refContainer.current.scrollTop);
-  // });
-
-  // useEffect(() => {
-  //   refContainer.current.scrollTo(0, y);
-
-  //   // return(localStorage.setItem("position", 0))
-  // });
-
-  console.log(currentIndex)
 
   useEffect(() => {
     fetch(`http://quyt.ddns.net:3000/product/?all=true&title=/${search}/i`, {

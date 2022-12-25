@@ -12,6 +12,10 @@ function RevueneUsers() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
+  const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
+  if (isLogin2["isLoggin"] === false) {
+    navigate("/");
+  }
   const min = 1990;
   const max = 2050;
   // const years = Array.from({ length: max - min + 1 }, (_, i) => i + min);
@@ -50,8 +54,6 @@ function RevueneUsers() {
       })
       .then((data) => {
         setUsers((prev) => [...prev, ...data.data]);
-
-      
       });
   }, [currentYear]);
 
@@ -74,91 +76,91 @@ function RevueneUsers() {
       })
       .then((data) => {
         setCustomers((prev) => [...prev, ...data.data]);
-          setThang1(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "1" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang2(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "2" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
+        setThang1(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "1" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang2(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "2" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
 
-          setThang3(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "4" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang4(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "4" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang5(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "5" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang6(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "6" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang7(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "7" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang8(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "8" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang9(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "9" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang10(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "10" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang11(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "11" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
-          setThang12(
-            data.data.filter(
-              (item) =>
-                moment(item.createdAt).format("MM") == "12" &&
-                moment(item.createdAt).format("yyyy") == currentYear
-            ).length
-          );
+        setThang3(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "4" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang4(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "4" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang5(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "5" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang6(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "6" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang7(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "7" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang8(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "8" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang9(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "9" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang10(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "10" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang11(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "11" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
+        setThang12(
+          data.data.filter(
+            (item) =>
+              moment(item.createdAt).format("MM") == "12" &&
+              moment(item.createdAt).format("yyyy") == currentYear
+          ).length
+        );
       });
   }, [currentYear]);
 
@@ -189,7 +191,9 @@ function RevueneUsers() {
               borderRadius: "5px",
             }}
           >
-            <p style={{ margin: "0px 10px",cursor:'pointer' }}>{currentYear}</p>
+            <p style={{ margin: "0px 10px", cursor: "pointer" }}>
+              {currentYear}
+            </p>
             <BsCaretDownFill />
             <div
               className={clsx(cx("drop-down-years"), {
@@ -269,7 +273,13 @@ function RevueneUsers() {
             },
           }}
         />
-       <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           <h3 style={{ display: "inline-block", width: "fit-content" }}>
             Danh sách người dùng
           </h3>
@@ -281,7 +291,7 @@ function RevueneUsers() {
               type="date"
             ></input>
           </div>
-       </div>
+        </div>
         <Table className={clsx(cx("table"))} striped bordered hover>
           <thead>
             <tr>

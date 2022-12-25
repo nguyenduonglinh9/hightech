@@ -6,12 +6,19 @@ import Table from "react-bootstrap/Table";
 import { BsCaretDownFill } from "react-icons/bs";
 import { FaArrowDown } from "react-icons/fa";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 const warning = require("../Category/assets/imgs/warning.png");
 
 function Brand() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const brandSave = JSON.parse(localStorage.getItem("currentBrand"));
+  const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
+  let navigate = useNavigate();
+
+  if (isLogin2["isLoggin"] === false) {
+    navigate("/");
+  }
 
   const refCate = useRef();
   const refIDCate = useRef();
@@ -20,7 +27,6 @@ function Brand() {
   const test = useRef();
   const refMessage = useRef();
   const refContainer = useRef();
-
 
   // useEffect(() => {
   //   window.addEventListener('wheel', (e) => {
@@ -118,13 +124,12 @@ function Brand() {
           setToggleModalMessage(true);
 
           setTimeout(() => {
-
             setTitleCategory("");
             setToggleOnOff(false);
             setToggleModalAdd3(false);
             setToggleModalMessage(false);
             refMessage.current.removeChild(h2);
-            window.location.reload()
+            window.location.reload();
           }, 1500);
         } else {
           refMessage.current.removeChild(div);
