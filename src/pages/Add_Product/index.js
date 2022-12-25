@@ -114,7 +114,6 @@ function AddProduct() {
   console.log(specifications);
 
   const handleAddProduct = () => {
-
     if (specifications.length == 0) {
       setToggleLoading(true);
       //xử lý state Description
@@ -135,7 +134,7 @@ function AddProduct() {
         description: arrDataInputDesc,
         images: images,
         costPrice: costPrice,
-        salePrice: costPrice * (salePercent / 100),
+        salePrice: costPrice - costPrice * (salePercent / 100),
         salePercent: salePercent,
         quantity: quantity,
         specifications: arr,
@@ -262,7 +261,6 @@ function AddProduct() {
           console.log(res);
         });
     }
-
   };
 
   const handleAppendChild = () => {
@@ -384,7 +382,7 @@ function AddProduct() {
     // div.style.justifyContent = 'center'
     div.style.alignItems = "center";
     const textaera = document.createElement("textarea");
-    textaera.value = JSON.stringify(specifications,undefined,4);
+    textaera.value = JSON.stringify(specifications, undefined, 4);
     textaera.style.width = "90%";
     textaera.style.height = "70%";
     textaera.style.margin = "10px 0px";
@@ -456,9 +454,9 @@ function AddProduct() {
     });
     const div = document.createElement("div");
     const p = document.createElement("p");
-    p.contentEditable = true
+    p.contentEditable = true;
     const p2 = document.createElement("p");
-     p2.contentEditable = true;
+    p2.contentEditable = true;
     div.appendChild(p);
     div.appendChild(p2);
     div.appendChild(img);

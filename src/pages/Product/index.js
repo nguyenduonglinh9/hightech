@@ -321,6 +321,9 @@ function Product() {
                 <p>Giá</p>
               </th>
               <th>
+                <p>Giá Khuyến Mãi</p>
+              </th>
+              <th>
                 <p>Danh Mục</p>
               </th>
               <th>
@@ -498,7 +501,7 @@ function Product() {
                           <img src={item.images[0]}></img>
                         </td>
                         <td className={clsx(cx("title_td"))}>{item.title}</td>
-                        <td>{dollarUSLocale.format(item.costPrice)}</td>
+                        <td>{dollarUSLocale.format(item.salePrice)}</td>
                         <td>
                           {category
                             .filter((cate) => cate._id == item.category)

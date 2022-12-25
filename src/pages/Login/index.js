@@ -102,6 +102,9 @@ function Login() {
                     id: null,
                   })
                 );
+                localStorage.setItem(
+                  "currentIndex",1
+                );
               } else if (
                 (res.code == 200 && res.data.role !== "superadmin") ||
                 res.data.role !== "admin"

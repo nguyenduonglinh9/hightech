@@ -40,6 +40,9 @@ function LayoutMain({ children }) {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   const Decode_token = jwt_decode(DataLogin.token);
+  const y = localStorage.getItem("position");
+  const indexCurrent = localStorage.getItem("currentIndex");
+
   const useRefActive = useRef();
   const refNotifi = useRef();
   
@@ -123,9 +126,22 @@ function LayoutMain({ children }) {
   const [searchResult, setSearchResult] = useState([]);
   const [myProfile, setMyProfile] = useState();
 
-  const [currentIndex, setCurrentIndex] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(indexCurrent);
 
+  const refContainer = useRef();
+  // refContainer.current.scrollTop = 1932;
 
+  // window.addEventListener("wheel", (e) => {
+  //    localStorage.setItem("position", refContainer.current.scrollTop);
+  // });
+
+  // useEffect(() => {
+  //   refContainer.current.scrollTo(0, y);
+
+  //   // return(localStorage.setItem("position", 0))
+  // });
+
+  console.log(currentIndex)
 
   useEffect(() => {
     fetch(`http://quyt.ddns.net:3000/product/?all=true&title=/${search}/i`, {
@@ -184,6 +200,22 @@ function LayoutMain({ children }) {
   return (
     <DataSearchContext.Provider value={search}>
       <div className={clsx(cx("container"))}>
+        <div ref={refNotifi} className={clsx(cx("content-notifi"))}>
+          {/* <div>
+            <div>
+              <p>Thông Báo</p>
+              <p>Bạn có đơn hàng mới</p>
+            </div>
+
+            <p>Tên: Quý</p>
+            <p>Số điện thoại: 093924999</p>
+            <p>Địa Chỉ: jenfiurnijgniurngurbgubu</p>
+          </div> */}
+          {/* <div>
+              <p>Thông Báo</p>
+              <p>Bạn có đơn hàng mới</p>
+            </div> */}
+        </div>
         <div
           className={clsx(cx("asideNav"), {
             [styles.asideNavActive]: menu,
@@ -198,7 +230,10 @@ function LayoutMain({ children }) {
             <ul>
               <p className={clsx(cx("title"))}>Quản Lý</p>
               <Link
-                onClick={() => setCurrentIndex(1)}
+                onClick={() => {
+                  setCurrentIndex(1);
+                  localStorage.setItem("currentIndex", 1);
+                }}
                 style={{ textDecoration: "none", color: "white" }}
                 to="/product"
               >
@@ -214,13 +249,16 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
-                onClick={() => setCurrentIndex(2)}
+                onClick={() => {
+                  setCurrentIndex(2);
+                  localStorage.setItem("currentIndex", 2);
+                }}
                 style={{ textDecoration: "none", color: "white" }}
                 to="/category"
               >
                 <li
                   className={clsx({
-                    [styles.active]: currentIndex === 2 ? true : false,
+                    [styles.active]: currentIndex == 2 ? true : false,
                   })}
                 >
                   <div
@@ -233,13 +271,16 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
-                onClick={() => setCurrentIndex(3)}
+                onClick={() => {
+                  setCurrentIndex(3);
+                  localStorage.setItem("currentIndex", 3);
+                }}
                 style={{ textDecoration: "none", color: "white" }}
                 to="/brand"
               >
                 <li
                   className={clsx({
-                    [styles.active]: currentIndex === 3 ? true : false,
+                    [styles.active]: currentIndex == 3 ? true : false,
                   })}
                 >
                   <div
@@ -252,7 +293,10 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
-                onClick={() => setCurrentIndex(4)}
+                onClick={() => {
+                  setCurrentIndex(4);
+                  localStorage.setItem("currentIndex", 4);
+                }}
                 to="/users"
                 style={
                   Decode_token.role == "superadmin"
@@ -262,7 +306,7 @@ function LayoutMain({ children }) {
               >
                 <li
                   className={clsx({
-                    [styles.active]: currentIndex === 4 ? true : false,
+                    [styles.active]: currentIndex == 4 ? true : false,
                   })}
                 >
                   <div
@@ -275,13 +319,16 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
-                onClick={() => setCurrentIndex(5)}
+                onClick={() => {
+                  setCurrentIndex(5);
+                  localStorage.setItem("currentIndex", 5);
+                }}
                 to="/coupon"
                 style={{ textDecoration: "none", color: "white" }}
               >
                 <li
                   className={clsx({
-                    [styles.active]: currentIndex === 5 ? true : false,
+                    [styles.active]: currentIndex == 5 ? true : false,
                   })}
                 >
                   <div
@@ -294,13 +341,16 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
-                onClick={() => setCurrentIndex(6)}
+                onClick={() => {
+                  setCurrentIndex(6);
+                  localStorage.setItem("currentIndex", 6);
+                }}
                 to="/banner"
                 style={{ textDecoration: "none", color: "white" }}
               >
                 <li
                   className={clsx({
-                    [styles.active]: currentIndex === 6 ? true : false,
+                    [styles.active]: currentIndex == 6 ? true : false,
                   })}
                 >
                   <div
@@ -313,14 +363,17 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
-                onClick={() => setCurrentIndex(7)}
+                onClick={() => {
+                  setCurrentIndex(7);
+                  localStorage.setItem("currentIndex", 7);
+                }}
                 to="/orders"
                 style={{ textDecoration: "none", color: "white" }}
               >
                 <p className={clsx(cx("title"))}>Đơn Hàng</p>
                 <li
                   className={clsx({
-                    [styles.active]: currentIndex === 7 ? true : false,
+                    [styles.active]: currentIndex == 7 ? true : false,
                   })}
                 >
                   <div
@@ -363,7 +416,10 @@ function LayoutMain({ children }) {
                 </li>
               </Link> */}
               <Link
-                onClick={() => setCurrentIndex(8)}
+                onClick={() => {
+                  setCurrentIndex(8);
+                  localStorage.setItem("currentIndex", 8);
+                }}
                 to="/revuene"
                 style={
                   Decode_token.role == "superadmin"
@@ -373,7 +429,7 @@ function LayoutMain({ children }) {
               >
                 <li
                   className={clsx({
-                    [styles.active]: currentIndex === 8 ? true : false,
+                    [styles.active]: currentIndex == 8 ? true : false,
                   })}
                 >
                   <div
@@ -386,7 +442,10 @@ function LayoutMain({ children }) {
                 </li>
               </Link>
               <Link
-                onClick={() => setCurrentIndex(9)}
+                onClick={() => {
+                  setCurrentIndex(9);
+                  localStorage.setItem("currentIndex", 9);
+                }}
                 to="/revuene-users"
                 style={
                   Decode_token.role == "superadmin"
@@ -396,7 +455,7 @@ function LayoutMain({ children }) {
               >
                 <li
                   className={clsx({
-                    [styles.active]: currentIndex === 9 ? true : false,
+                    [styles.active]: currentIndex == 9 ? true : false,
                   })}
                 >
                   <div
@@ -415,12 +474,13 @@ function LayoutMain({ children }) {
           </div> */}
         </div>
         <div
+          ref={refContainer}
           className={clsx(cx("content"), {
             [styles.asideNavActive2]: menu,
           })}
         >
-          <div ref={refNotifi} className={clsx(cx("content-notifi"))}>
-            {/* <div>
+          {/* <div ref={refNotifi} className={clsx(cx("content-notifi"))}>
+            <div>
               <div>
                 <p>Thông Báo</p>
                 <p>Bạn có đơn hàng mới</p>
@@ -429,12 +489,8 @@ function LayoutMain({ children }) {
               <p>Tên: Quý</p>
               <p>Số điện thoại: 093924999</p>
               <p>Địa Chỉ: jenfiurnijgniurngurbgubu</p>
-            </div> */}
-            {/* <div>
-              <p>Thông Báo</p>
-              <p>Bạn có đơn hàng mới</p>
-            </div> */}
-          </div>
+            </div>
+          </div> */}
 
           <div onClick={handleToggleOff} className={clsx(cx("header"))}>
             <BsList

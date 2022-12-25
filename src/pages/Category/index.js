@@ -9,17 +9,10 @@ import { browserHistory } from "react-router";
 const warning = require("../Category/assets/imgs/warning.png");
 const imageicon = require("../Category/assets/imgs/image.png");
 
-
-
 function Category() {
-  
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
-
-  
- 
-
 
   const refCate = useRef();
   const refIDCate = useRef();
@@ -27,29 +20,28 @@ function Category() {
   const refModal = useRef();
   const refModal2 = useRef();
   const refModal3 = useRef();
+  const refMessage = useRef();
+  const refMessage2 = useRef();
+
 
   const test = useRef();
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
-
   const [title, setTitle] = useState("");
   const [titleCategory, setTitleCategory] = useState("");
   const [imageIcon, setImageIcon] = useState();
-
   const [imageIconUpdate, setImageIconUpdate] = useState();
-
   const [nextType, setNextType] = useState();
   const [arrType, setArrType] = useState();
 
-
   const [toggleModalAdd, setToggleModalAdd] = useState(false);
-  const [toggleModalAdd2, setToggleModalAdd2] = useState(false);
   const [toggleModalAdd3, setToggleModalAdd3] = useState(false);
   const [toggleModalAdd4, setToggleModalAdd4] = useState(false);
   const [toggleModalAdd5, setToggleModalAdd5] = useState(false);
   const [toggleOnOff, setToggleOnOff] = useState(false);
-
+  const [toggleModalMessage, setToggleModalMessage] = useState(false);
+  const [toggleModalMessage2, setToggleModalMessage2] = useState(false);
 
 
   useEffect(() => {
@@ -64,13 +56,12 @@ function Category() {
         return response.json();
       })
       .then((data) => {
-         setArrType(
-           data.data.map((item) => {
-             return Number(item.type);
-           })
-         );
+        setArrType(
+          data.data.map((item) => {
+            return Number(item.type);
+          })
+        );
         setCategorys((prev) => [...prev, ...data.data]);
-       
       });
   }, []);
 
@@ -90,17 +81,9 @@ function Category() {
       });
   }, []);
 
-  const handleToggleModal = (title, id) => {
-    refCate.current = title;
-    refIDCate.current = id;
-    setTitle("");
-    setToggleModalAdd(true);
-  };
-
   const handleToggleModalAddCategory = () => {
     setToggleModalAdd3(true);
   };
-
 
   const handleUpdateFile = (e) => {
     setImageIcon(e.target.files[0]);
@@ -111,15 +94,19 @@ function Category() {
   };
 
   const handleAddNewCategory = () => {
-    refModal.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
+    const div = document.createElement("div");
+    div.style.width = "50px";
+    div.style.height = "50px";
+    div.style.border = "7px solid transparent";
+    div.style.borderRadius = "50%";
+    div.style.borderTop = "7px solid rgb(3, 201, 215)";
+    refMessage.current.appendChild(div);
+    setToggleModalMessage(true);
 
-   </div>
-    `;
     var promise = new Promise(function (resolve, reject) {
       //xử lý hình ảnh
       const dataImage = new FormData();
-      
+
       let URLIcon;
 
       dataImage.append("files", imageIcon);
@@ -135,7 +122,7 @@ function Category() {
         .catch((err) => console.log(err));
     });
     promise.then((URLIcon) => {
-      const type = Math.max(...arrType) + 1;
+      
       fetch("http://quyt.ddns.net:3000/category/", {
         method: "POST",
         headers: {
@@ -150,11 +137,40 @@ function Category() {
       })
         .then((res) => res.json())
         .then((res) => {
-          refModal.current.innerHTML = `<h2>Tác Vụ Thành Công</h2>`;
-          console.log(res);
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
+          if (res.code == 200) {
+            refMessage.current.removeChild(div);
+            const h2 = document.createElement("h2");
+            h2.innerText = "Tác Vụ Thành Công";
+            refMessage.current.appendChild(h2);
+            setToggleModalMessage(true);
+
+            setTimeout(() => {
+              setTitleCategory("");
+              setToggleOnOff(false);
+              setToggleModalAdd3(false);
+              setToggleModalMessage(false);
+              refMessage.current.removeChild(h2);
+              window.location.reload();
+            }, 1500);
+          } else {
+            refMessage.current.removeChild(div);
+            const divError = document.createElement("div");
+            divError.style.animation = "none";
+            divError.style.display = "flex";
+            divError.style.flexDirection = "column";
+            divError.style.alignItems = "center";
+            const h2 = document.createElement("h2");
+            h2.innerText = res.message;
+            const button = document.createElement("button");
+            button.innerText = "Thử Lại";
+            button.addEventListener("click", () => {
+              refMessage.current.removeChild(divError);
+              setToggleModalMessage(false);
+            });
+            divError.appendChild(h2);
+            divError.appendChild(button);
+            refMessage.current.appendChild(divError);
+          }
         })
         .catch((err) => {
           refModal.current.innerHTML = `<h2>${err}</h2>`;
@@ -171,57 +187,88 @@ function Category() {
   };
 
   const handleUpdateCate = () => {
-    refModal2.current.innerHTML = `
-   <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
+    const div = document.createElement("div");
+    div.style.width = "50px";
+    div.style.height = "50px";
+    div.style.border = "7px solid transparent";
+    div.style.borderRadius = "50%";
+    div.style.borderTop = "7px solid rgb(3, 201, 215)";
+    refMessage2.current.appendChild(div);
+    setToggleModalMessage2(true);
+    
+    if (typeof imageIconUpdate == "object") {
+      var promise = new Promise(function (resolve, reject) {
+        //xử lý hình ảnh
+        const dataImage = new FormData();
+        let URLIcon;
+        dataImage.append("files", imageIconUpdate);
+        fetch("http://quyt.ddns.net:2607", {
+          method: "POST",
+          body: dataImage,
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            URLIcon = res.data[0];
+            resolve(URLIcon);
+          })
+          .catch((err) => console.log(err));
+      });
+      promise.then((URLIcon) => {
+        fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": DataLogin.token,
+          },
+          body: JSON.stringify({
+            title: titleCategory,
+            icon: URLIcon,
+            active: toggleOnOff,
+          }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.code == 200) {
 
-   </div>
-    `;
-    if (typeof imageIconUpdate == 'object') {
-       var promise = new Promise(function (resolve, reject) {
-         //xử lý hình ảnh
-         const dataImage = new FormData();
-         let URLIcon;
-         dataImage.append("files", imageIconUpdate);
-         fetch("http://quyt.ddns.net:2607", {
-           method: "POST",
-           body: dataImage,
-         })
-           .then((res) => res.json())
-           .then((res) => {
-             console.log(res);
-             URLIcon = res.data[0];
-             resolve(URLIcon);
-           })
-           .catch((err) => console.log(err));
-       });
-       promise.then((URLIcon) => {
-         fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
-           method: "PUT",
-           headers: {
-             "Content-Type": "application/json",
-             "x-access-token": DataLogin.token,
-           },
-           body: JSON.stringify({
-             title: titleCategory,
-             icon: URLIcon,
-             active: toggleOnOff,
-           }),
-         })
-           .then((res) => res.json())
-           .then((res) => {
-             console.log(res);
-             refModal2.current.innerHTML = `<h2>Tác Vụ Thành Công</h2>`;
+              refMessage2.current.removeChild(div);
+              const h2 = document.createElement("h2");
+              h2.innerText = "Tác Vụ Thành Công";
+              refMessage2.current.appendChild(h2);
+              setToggleModalMessage2(true);
 
-             setTimeout(() => {
-               window.location.reload(false);
-             }, 1500);
-           })
-           .catch((err) => {
-             refModal2.current.innerHTML = `<h2>${err}</h2>`;
-           });
-       });
-    }
-    else {
+              setTimeout(() => {
+                setToggleOnOff(false);
+                setToggleModalAdd3(false);
+                setToggleModalMessage2(false);
+                // refMessage2.current.removeChild(h2);
+                window.location.reload();
+              }, 1500);
+            } else {
+              refMessage2.current.removeChild(div);
+              const divError = document.createElement("div");
+              divError.style.animation = "none";
+              divError.style.display = "flex";
+              divError.style.flexDirection = "column";
+              divError.style.alignItems = "center";
+              const h2 = document.createElement("h2");
+              h2.innerText = res.message;
+              const button = document.createElement("button");
+              button.innerText = "Thử Lại";
+              button.addEventListener("click", () => {
+                refMessage2.current.removeChild(divError);
+                setToggleModalMessage2(false);
+              });
+              divError.appendChild(h2);
+              divError.appendChild(button);
+              refMessage2.current.appendChild(divError);
+            }
+          })
+          .catch((err) => {
+            refModal2.current.innerHTML = `<h2>${err}</h2>`;
+          });
+      });
+    } else {
       fetch(`http://quyt.ddns.net:3000/category/${refIDCate.current}`, {
         method: "PUT",
         headers: {
@@ -236,26 +283,48 @@ function Category() {
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res);
-          refModal2.current.innerHTML = `<h2>Tác Vụ Thành Công</h2>`;
+           if (res.code == 200) {
+             refMessage2.current.removeChild(div);
+             const h2 = document.createElement("h2");
+             h2.innerText = "Tác Vụ Thành Công";
+             refMessage2.current.appendChild(h2);
+             setToggleModalMessage2(true);
 
-          setTimeout(() => {
-            window.location.reload(false);
-          }, 1500);
+             setTimeout(() => {
+               setToggleOnOff(false);
+               setToggleModalAdd3(false);
+               setToggleModalMessage2(false);
+               refMessage2.current.removeChild(h2);
+               window.location.reload();
+             }, 1500);
+           } else {
+             refMessage2.current.removeChild(div);
+             const divError = document.createElement("div");
+             divError.style.animation = "none";
+             divError.style.display = "flex";
+             divError.style.flexDirection = "column";
+             divError.style.alignItems = "center";
+             const h2 = document.createElement("h2");
+             h2.innerText = res.message;
+             const button = document.createElement("button");
+             button.innerText = "Thử Lại";
+             button.addEventListener("click", () => {
+               refMessage2.current.removeChild(divError);
+               setToggleModalMessage2(false);
+             });
+             divError.appendChild(h2);
+             divError.appendChild(button);
+             refMessage2.current.appendChild(divError);
+           }
         })
         .catch((err) => {
           refModal2.current.innerHTML = `<h2>${err}</h2>`;
         });
     }
-     
   };
 
-  const handleDeleteCategory = () => {
-    setToggleModalAdd5(true)
-    
-  };
   const handleDeleteCategory2 = () => {
-     refModal3.current.innerHTML = `
+    refModal3.current.innerHTML = `
    <div style="width:50px;height:50px;border:7px solid transparent;border-radius:50%;border-top:7px solid rgb(3, 201, 215);">
 
    </div>
@@ -278,12 +347,12 @@ function Category() {
         }, 1500);
       })
       .catch((err) => (refModal3.current.innerHTML = `<h2>${err}</h2>`));
-  }
-  
+  };
+
   const handleCancel = () => {
-    setTitleCategory('');
+    setTitleCategory("");
     setToggleModalAdd4(false);
-  }
+  };
 
   return (
     <div className={clsx(cx("container"))}>
@@ -346,6 +415,7 @@ function Category() {
           </tbody>
         </Table>
       </div>
+
       <div
         onClick={() => setToggleModalAdd3(false)}
         className={clsx(cx("modal-add-brand"), {
@@ -427,6 +497,12 @@ function Category() {
             <button onClick={handleAddNewCategory}>Lưu</button>
           </div>
         </div>
+        <div
+          ref={refMessage}
+          className={clsx(cx("modal-message"), {
+            [styles.turnonMessage]: toggleModalMessage,
+          })}
+        ></div>
       </div>
 
       <div
@@ -514,6 +590,12 @@ function Category() {
             <button onClick={handleUpdateCate}>Lưu</button>
           </div>
         </div>
+        <div
+          ref={refMessage2}
+          className={clsx(cx("modal-message"), {
+            [styles.turnonMessage]: toggleModalMessage2,
+          })}
+        ></div>
       </div>
 
       <div

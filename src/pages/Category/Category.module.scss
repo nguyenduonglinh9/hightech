@@ -100,6 +100,7 @@
     padding: 20px;
     width: 50%;
     min-height: 60%;
+    height: 80%;
     background-color: white;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     border-radius: 20px;
@@ -357,6 +358,57 @@
     transform: translateY(-50%);
   }
 }
+.modal-message {
+    margin: 20px;
+    padding: 20px;
+    width: 50%;
+    min-height: 60%;
+    height: 80%;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 20px;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    display: none;
+    div {
+      animation: xoay 1s linear infinite;
+      button {
+        background-color: #fff;
+        border: 1px solid #d5d9d9;
+        border-radius: 8px;
+        box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+        box-sizing: border-box;
+        color: #0f1111;
+        cursor: pointer;
+        display: inline-block;
+        font-family: "Amazon Ember", sans-serif;
+        font-size: 13px;
+        line-height: 29px;
+        padding: 0 10px 0 11px;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        vertical-align: middle;
+        width: 100px;
+      }
+
+      button:hover {
+        background-color: #f7fafa;
+      }
+
+      button:focus {
+        border-color: #008296;
+        box-shadow: rgba(213, 217, 217, 0.5) 0 2px 5px 0;
+        outline: 0;
+      }
+    }
+  }
 .onToggle {
   left: 75% !important;
 }
@@ -365,6 +417,9 @@
 }
 .onToggle3 {
   opacity: 0;
+}
+.turnonMessage{
+  display: flex !important;
 }
 @keyframes xoay {
   to {

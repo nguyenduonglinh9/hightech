@@ -11,6 +11,81 @@
   height: 100vh;
   display: flex;
   overflow: hidden;
+  position: relative;
+  .content-notifi {
+    position: fixed;
+    display: block;
+    flex-direction: column;
+    right: 10px;
+    top: 10px;
+    z-index: 11111111111;
+  
+    div {
+      // position: absolute;
+      width: 400px;
+      height: 110px;
+      background-color: #fff;
+      z-index: 11111111111;
+      box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+      border-radius: 5px;
+      border-left: 7px solid rgb(3, 201, 215);
+      margin: 10px 0px;
+      // right: 10px;
+      // top: 10px;
+      transform: translateX(100%);
+      opacity: 0;
+      // display: flex;
+      animation: notification 1s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+      transition: all 1.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+      z-index: 7;
+
+      div {
+        display: flex;
+        box-shadow: none;
+        border: none;
+        height: fit-content;
+        width: -moz-fit-content;
+        width: fit-content;
+        animation: none;
+        transform: translateX(0);
+        opacity: 1;
+        margin: 0;
+        p {
+          margin: 0;
+        }
+        p:first-child {
+          margin: 10px;
+          padding: 5px 10px;
+          background-color: lightcoral;
+          color: #fff !important;
+          border-radius: 15px;
+          font-size: 14px;
+          height: fit-content;
+        }
+        p:last-child {
+          margin: 10px;
+          padding: 5px 10px;
+          color: black;
+          border-radius: 15px;
+          font-size: 16px;
+        }
+      }
+
+      p {
+        background-color: none !important;
+        margin: 3px 15px;
+        font-size: 13px;
+        font-family: Roboto, "Segoe UI", GeezaPro, "DejaVu Serif", "sans-serif",
+          -apple-system, BlinkMacSystemFont;
+        font-size: 12px;
+        color: rgb(114, 114, 114);
+      }
+
+      // display: none;
+      // display: flex;
+      // transform: translateX(0);
+    }
+  }
 }
 .asideNav {
   flex: 1.05;
@@ -89,15 +164,16 @@
   background-color: rgb(250, 251, 251);
   animation: fadeIn 1s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
   transition: all 0.25s cubic-bezier(0.075, 0.82, 0.165, 1);
-  // overflow-y: scroll;
-  overflow-x: hidden;
-  position: relative;
+   overflow-y: scroll;
+  //overflow-x: hidden;
+  // padding-bottom: 20px;
+  scroll-behavior: smooth;
   .content-notifi {
-    position: absolute;
+    position: fixed;
     display: block;
     flex-direction: column;
     right: 10px;
-    top: 10px;
+    top: 50px;
     z-index: 11111111111;
   
     div {

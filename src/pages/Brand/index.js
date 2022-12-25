@@ -19,6 +19,14 @@ function Brand() {
   const refModal3 = useRef();
   const test = useRef();
   const refMessage = useRef();
+  const refContainer = useRef();
+
+
+  // useEffect(() => {
+  //   window.addEventListener('wheel', (e) => {
+  //     console.dir(refContainer.current);
+  //   })
+  // },[])
 
   const [categorys, setCategorys] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -110,11 +118,13 @@ function Brand() {
           setToggleModalMessage(true);
 
           setTimeout(() => {
+
             setTitleCategory("");
             setToggleOnOff(false);
             setToggleModalAdd3(false);
             setToggleModalMessage(false);
             refMessage.current.removeChild(h2);
+            window.location.reload()
           }, 1500);
         } else {
           refMessage.current.removeChild(div);
@@ -145,7 +155,7 @@ function Brand() {
     div.style.border = "7px solid transparent";
     div.style.borderRadius = "50%";
     div.style.borderTop = "7px solid rgb(3, 201, 215)";
-    refMessage.current.appendChild(div);t 
+    refMessage.current.appendChild(div);
     setToggleModalMessage(true);
 
     fetch("http://quyt.ddns.net:3000/brand/", {
@@ -243,7 +253,7 @@ function Brand() {
   };
 
   return (
-    <div className={clsx(cx("container"))}>
+    <div ref={refContainer} className={clsx(cx("container"))}>
       <div className={clsx(cx("container-header"))}>
         <div
           onClick={() => setToggleDropDownFilter(!toggleDropDownFilter)}
