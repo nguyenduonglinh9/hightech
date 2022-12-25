@@ -50,6 +50,30 @@ function DetailOrder() {
 
   const handleDeleteUser = () => {
     setToggleLoading(true);
+
+    fetch(`http://quyt.ddns.net:3000/order/${id.state.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": DataLogin.token,
+      },
+      body: JSON.stringify({
+        status: "Cancelled",
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        window.location.reload(false);
+
+        // setTimeout(() => {
+        //   navigate("/orders");
+        //   // window.location.reload(false);
+        // }, 1500);
+
+        // setToggleLoading(false);
+      });
+
   };
   console.log(order);
 
@@ -101,7 +125,10 @@ function DetailOrder() {
                 {order.length == 0 ? " " : order.shippingAddress.name}
               </p>
               <p>Số liên hệ : {order.phone}</p>
-              <p>Địa chỉ nhận hàng : {order.length == 0 ? " " : order.shippingAddress.address}</p>
+              <p>
+                Địa chỉ nhận hàng :{" "}
+                {order.length == 0 ? " " : order.shippingAddress.address}
+              </p>
               <p>Phương thức thanh toán : {order.paymentMethod}</p>
             </div>
             <p></p>
@@ -153,10 +180,24 @@ function DetailOrder() {
             <button onClick={() => navigate("/orders")}>Trở lại</button>
           </div>
           <div>
-            <button onClick={handleDeleteUser}>Xóa</button>
+            <button
+              style={
+                order.status == "Completed" || order.status == "Cancelled"
+                  ? { display: "none" }
+                  : null
+              }
+              onClick={handleDeleteUser}
+            >
+              Hủy Đơn Hàng
+            </button>
           </div>
           <div>
             <button
+              style={
+                order.status == "Completed" || order.status == "Cancelled"
+                  ? { display: "none" }
+                  : null
+              }
               className={clsx({
                 [styles.activebutton]: true,
               })}
