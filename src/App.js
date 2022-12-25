@@ -5,6 +5,7 @@ import LayoutMain from "./components/Layout/LayoutMain";
 
 
 function App() {
+  
   document.title = 'Quản Trị HighTech';
   return (
     <div style={{height:'100%'}}>

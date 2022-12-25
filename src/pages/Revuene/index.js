@@ -16,7 +16,7 @@ function Revuene() {
   const cx = classNames.bind(styles);
   const DataLogin = JSON.parse(localStorage.getItem("DataLogin"));
   let navigate = useNavigate();
-  let dollarUSLocale = Intl.NumberFormat("en-US");
+  let dollarUSLocale = Intl.NumberFormat("vi-VN");
   const isLogin2 = JSON.parse(localStorage.getItem("isLogin"));
   if (isLogin2["isLoggin"] === false) {
     navigate("/");
