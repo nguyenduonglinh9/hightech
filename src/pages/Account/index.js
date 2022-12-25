@@ -240,9 +240,9 @@ function Account() {
                h2.innerText = "Tác Vụ Thành Công";
                refMessage.current.appendChild(h2);
 
-              //  setTimeout(() => {
-              //    window.location.reload();
-              //  }, 2000);
+               setTimeout(() => {
+                 window.location.reload();
+               }, 2000);
              } else {
                refMessage.current.removeChild(div);
                const div2 = document.createElement("div");
